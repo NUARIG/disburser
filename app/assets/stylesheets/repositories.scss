@@ -1,0 +1,97 @@
+#repositories {
+  @include grid-row();
+
+  .repositories_header {
+    @include grid-column(
+     $columns: 24
+    );
+
+    .banner {
+      vertical-align: middle;
+    }
+
+    #search_repositories_form {
+      @include grid-column(
+       $columns: 24
+      );
+
+      label {
+        font-weight: bold;
+        margin-bottom: .5rem;
+        padding-left: .25rem;
+      }
+
+      .search {
+        @include grid-column(
+          $columns: 6
+        );
+				@include grid-column-collapse();
+      }
+
+      .navigation {
+        margin-top: 2rem;
+        @include grid-column(
+          $columns: 5
+        );
+				#search_repositories_button {
+					margin-bottom: 0;
+				}
+      }
+    }
+  }
+
+  .repositories_list {
+		@include grid-column(
+		  $columns: 24
+		);
+
+    th .current {
+      padding-right: 2em;
+      background-repeat: no-repeat;
+      background-position: right center;
+    }
+
+    th .asc {
+      background-image: asset_url("drop25.png");
+    }
+
+    th .desc {
+      background-image: asset_url("drop27.png");
+    }
+
+    table {
+      @include grid-column(
+       $columns: 24
+      );
+    }
+  }
+}
+
+#repository {
+  @include grid-row();
+
+  .name {
+    @include grid-column(
+     $columns: 12
+    );
+  }
+
+  .data {
+    @include grid-column(
+     $columns: 12
+    );
+  }
+
+  .specimens {
+    @include grid-column(
+     $columns: 12
+    );
+  }
+  .navigation {
+    padding: 1rem;
+    @include grid-column-offset(12);
+    @include grid-column(
+     $columns: 12
+    );
+  }
+}

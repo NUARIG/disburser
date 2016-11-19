@@ -1,0 +1,42 @@
+- content_for(:title) do
+  Repositories
+
+#repositories
+  .repositories_header
+    .banner
+      %h2
+        %b
+          Repositories
+    = form_tag repositories_url(), method: 'get', id: 'search_repositories_form'  do
+      .search
+        = label_tag :search, 'Search'
+        = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
+      .navigation
+        %button{ type: 'submit', id: 'search_repositories_button', class: 'tiny button' }
+          Search
+        = link_to 'Clear', repositories_url()
+  .repositories_list
+    = will_paginate @repositories, renderer: FoundationPagination::Rails
+    %table
+      %thead
+        %tr
+          %th.name{ width: 200 }
+            = sortable 'name'
+          %th.data{ width: 200 }
+            = sortable 'data'
+          %th.specimens{ width: 200 }
+            = sortable 'specimens'
+          %th.edit{ width: 100 }
+      %tbody
+        - @repositories.each do |respository|
+          = content_tag_for(:tr, respository) do
+            %td.name
+              = respository.name
+            %td.data
+              = respository.data
+            %td.specimens
+              = respository.specimens
+            %td.edit
+              = link_to 'Edit', edit_repository_url(respository), { class: 'edit_repository_link' }
+    = will_paginate @repositories, renderer: FoundationPagination::Rails
+    = link_to 'New Repository', new_repository_url(), { class: 'new_repository_link' }

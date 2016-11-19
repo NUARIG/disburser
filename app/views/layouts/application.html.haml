@@ -1,0 +1,17 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "width=device-width, initial-scale=1.0", :name => "viewport"}/
+    %title= content_for?(:title) ? yield(:title) : "P1 Sandbox"
+    = stylesheet_link_tag    "application"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+  %body{ class: "#{controller_name} #{action_name}"}
+    .flash.small-centered{ 'data-closable' => true }
+      - flash.each do |name, msg|
+        = content_tag :div, class: "callout small #{name}" do
+          %button.close-button{"aria-label" => "dismiss alert", "data-close" => "", :type => "button"}
+            %span{"aria-hidden" => "true"} ×
+          = msg
+    = yield
