@@ -1,0 +1,67 @@
+# ldapadd -x -h localhost -p 3389 -D "cn=admin,dc=test,dc=com" -w secret -f base.ldif
+
+dn: dc=test,dc=com
+objectClass: dcObject
+objectClass: organizationalUnit
+dc: test
+ou: Test
+
+dn: ou=people,dc=test,dc=com
+objectClass: organizationalUnit
+ou: people
+
+dn: cn=mjg994,ou=people,dc=test,dc=com
+objectClass: inetOrgPerson
+objectClass: authorizations
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: mjg994
+mail: m-gurley@northwestern.edu
+uid: mjg994
+cn: mjg994
+authorizationRole: blogUser
+userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
+ =
+
+dn: cn=yab944,ou=people,dc=test,dc=com
+objectClass: inetOrgPerson
+objectClass: authorizations
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: yab944
+mail: y-bushmanova@northwestern.edu
+uid: yab944
+cn: yab944
+authorizationRole: blogUser
+userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
+ =
+
+dn: cn=jrp156,ou=people,dc=test,dc=com
+objectClass: inetOrgPerson
+objectClass: authorizations
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: jrp156
+mail: jalpa-patel@northwestern.edu
+uid: jrp156
+cn: jrp156
+authorizationRole: blogUser
+userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
+ =
+
+dn: cn=ssf5957,ou=people,dc=test,dc=com
+objectClass: inetOrgPerson
+objectClass: authorizations
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: ssf5957
+mail: samer.sharba@northwestern.edu
+uid: ssf5957
+cn: ssf5957
+authorizationRole: blogUser
+userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
+ =

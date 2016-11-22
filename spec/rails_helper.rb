@@ -9,6 +9,7 @@ require 'rspec/rails'
 require 'factory_girl'
 require 'capybara/rails'
 require 'capybara/rspec'
+require 'devise'
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 Capybara.register_driver :chrome do |app|
@@ -81,5 +82,11 @@ RSpec.configure do |config|
 
   config.after(:each) do
     DatabaseCleaner.clean
+  end
+
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Warden::Test::Helpers
+  config.before(:each, js: true) do
+    Warden.test_mode!
   end
 end

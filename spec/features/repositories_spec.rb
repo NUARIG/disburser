@@ -3,7 +3,8 @@ RSpec.feature 'Repositories', type: :feature do
   before(:each) do
     @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
     @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', data: false, specimens: true)
-
+    @moomin_user = FactoryGirl.create(:user, email: 'moomin@momin.com', password: 'password', username: 'moomin')
+    login_as(@moomin_user, scope: :user)
     visit repositories_path
   end
 
@@ -49,7 +50,7 @@ RSpec.feature 'Repositories', type: :feature do
     repository_rorty_institute[:data] = true
     repository_rorty_institute[:specimens] = true
     fill_in 'Name', with: repository_rorty_institute[:name]
-    check('Title')
+    check('Data')
     check('Specimens')
     click_button('Save')
 

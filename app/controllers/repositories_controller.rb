@@ -1,6 +1,7 @@
 class RepositoriesController < ApplicationController
+  before_action :authenticate_user!
+  before_action :load_repository, only: [:edit, :update]
   helper_method :sort_column, :sort_direction
-  before_filter :load_repository, only: [:edit, :update]
 
   def index
     params[:page]||= 1

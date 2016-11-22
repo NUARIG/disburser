@@ -1,4 +1,4 @@
-class Repository < ActiveRecord::Base
+class Repository < ApplicationRecord
   validates_presence_of :name
 
   scope :search_across_fields, ->(search_token, options={}) do

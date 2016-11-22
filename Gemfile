@@ -26,6 +26,8 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'american_date'
 gem 'cocoon'
+gem 'devise', '~> 4.2'
+gem 'devise_ldap_authenticatable'
 gem 'foundation-rails'
 gem 'haml'
 gem 'record_tag_helper'
