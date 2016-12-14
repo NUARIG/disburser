@@ -5,8 +5,7 @@
   .repositories_header
     .banner
       %h2
-        %b
-          Repositories
+        Repositories
     = form_tag repositories_url(), method: 'get', id: 'search_repositories_form'  do
       .search
         = label_tag :search, 'Search'

@@ -67,8 +67,12 @@
   }
 }
 
-#repository {
+#new_repository, #edit_repository {
   @include grid-row();
+
+  #specimen_types {
+    margin-top: 4rem;
+  }
 
   .name {
     @include grid-column(
@@ -93,5 +97,24 @@
     @include grid-column(
      $columns: 12
     );
+  }
+
+  .details {
+    .repository {
+      @include grid-column(
+       $columns: 8
+      );
+    }
+
+    .users {
+      @include grid-column(
+       $columns: 8
+      );
+    }
+    .specimen_types {
+      @include grid-column(
+       $columns: 8
+      );
+    }
   }
 }

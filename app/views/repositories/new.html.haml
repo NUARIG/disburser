@@ -1,1 +1,14 @@
-= render 'repository'
+- content_for(:title) do
+  New Repository
+#new_repository
+  %h2
+    New Repository
+  = form_for @repository, html: { class: 'repository_form' } do |f|
+    = render 'repository', repository: @repository, f: f
+    .navigation
+      %p.help-text
+        %span{ class: 'required' }
+          *
+        Indicates required field
+      = f.submit 'Next', class: 'button'
+      = link_to 'Cancel', repositories_url, class: 'cancel-link button warning'

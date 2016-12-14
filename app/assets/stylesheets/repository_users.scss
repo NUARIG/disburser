@@ -1,0 +1,107 @@
+#repository_users {
+  @include grid-row();
+
+  .repository_users_header {
+    @include grid-column(
+     $columns: 24
+    );
+
+    .banner {
+      vertical-align: middle;
+    }
+
+    #search_repository_users_form {
+      @include grid-column(
+       $columns: 24
+      );
+
+      label {
+        font-weight: bold;
+        margin-bottom: .5rem;
+        padding-left: .25rem;
+      }
+
+      .search {
+        @include grid-column(
+          $columns: 6
+        );
+				@include grid-column-collapse();
+      }
+
+      .navigation {
+        margin-top: 2rem;
+        @include grid-column(
+          $columns: 5
+        );
+				#search_repository_users_button {
+					margin-bottom: 0;
+				}
+      }
+    }
+  }
+
+  .repository_users_list {
+		@include grid-column(
+		  $columns: 24
+		);
+
+    th .current {
+      padding-right: 2em;
+      background-repeat: no-repeat;
+      background-position: right center;
+    }
+
+    th .asc {
+      background-image: asset_url("drop25.png");
+    }
+
+    th .desc {
+      background-image: asset_url("drop27.png");
+    }
+
+    table {
+      @include grid-column(
+       $columns: 24
+      );
+    }
+  }
+
+  .details {
+    .repository {
+      @include grid-column(
+       $columns: 8
+      );
+    }
+
+    .users {
+      @include grid-column(
+       $columns: 8
+      );
+    }
+    .specimen_types {
+      @include grid-column(
+       $columns: 8
+      );
+    }
+  }
+}
+
+#repository_user {
+  @include grid-row();
+
+  .new_repository_user_form {
+    .username {
+      margin-bottom: 2rem;
+    }
+    .navigation {
+      margin-top: 3rem;
+    }
+  }
+
+  .edit_repository_user_form {
+    .navigation {
+      margin-top: 2rem;
+    }
+  }
+}
+

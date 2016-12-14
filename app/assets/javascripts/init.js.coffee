@@ -3,5 +3,5 @@ window.Disburser ||= {}
 Disburser.init = ->
   $(document).foundation()
 
-$(document).on 'page:load ready', ->
+$(document).on 'turbolinks:load', ->
   Disburser.init()

@@ -1,0 +1,10 @@
+%tr{ class: 'nested-fields specimen_type' }
+  %td.field.name
+    = f.text_field :name
+    - if validation_errors?(f.object, :name)
+      %p.error= format_validation_errors(f.object, :name)
+  %td.field.volume
+    = f.check_box :volume
+    = f.hidden_field :id
+  %td.remove
+    = link_to_remove_association 'Remove', f

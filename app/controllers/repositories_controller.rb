@@ -1,6 +1,6 @@
 class RepositoriesController < ApplicationController
   before_action :authenticate_user!
-  before_action :load_repository, only: [:edit, :update]
+  before_action :load_repository, only: [:edit, :show, :update]
   helper_method :sort_column, :sort_direction
 
   def index
@@ -20,29 +20,45 @@ class RepositoriesController < ApplicationController
 
     if @repository.save
       flash[:success] = 'You have successfully created a repository.'
-      redirect_to repositories_url
+      redirect_to edit_repository_url(@repository)
     else
       flash.now[:alert] = 'Failed to create repository.'
       render action: 'new'
     end
   end
 
+  def show
+    redirect_to edit_repository_url(@repository)
+  end
+
   def edit
   end
 
   def update
-    if @repository.update(repository_params)
-      flash[:success] = 'You have successfully updated a repository.'
-      redirect_to repositories_url
+    if @repository.update_attributes(repository_params)
+      case params[:tab]
+      when 'specimen_types'
+        flash[:success] = 'You have successfully updated specimen types.'
+        redirect_to repository_specimen_types_url(@repository)
+      else
+        flash[:success] = 'You have successfully updated a repository.'
+        redirect_to edit_repository_url(@repository)
+      end
     else
-      flash.now[:alert] = 'Failed to update repository.'
-      render action: 'edit'
+      case params[:tab]
+      when 'specimen_types'
+        flash.now[:alert] = 'Failed to update specimen types.'
+        render 'specimen_types/index'
+      else
+        flash.now[:alert] = 'Failed to update repository.'
+        render action: 'edit'
+      end
     end
   end
 
   private
     def repository_params
-      params.require(:repository).permit(:name, :data, :specimens)
+      params.require(:repository).permit(:name, :data, :specimens, specimen_types_attributes: [:id, :name, :volume, :_destroy])
     end
 
     def load_repository

@@ -1,0 +1,63 @@
+#repository_user
+  %h3
+    User
+  = form_for [@repository, @repository_user], html: { class: 'edit_repository_user_form' }, remote: true, validate: true do |f|
+    .row
+      .username
+        %div{class: 'small-4 columns' }
+          %label{for: 'username' }
+            Username
+        %div{class: 'small-20 columns' }
+          = @repository_user.user.username
+    .row
+      .first_name
+        %div{class: 'small-4 columns' }
+          %label{for: 'first_name' }
+            First Name
+        %div{class: 'small-20 columns' }
+          = @repository_user.user.first_name
+    .row
+      .last_name
+        %div{class: 'small-4 columns' }
+          %label{for: 'last_name' }
+            Last Name
+        %div{class: 'small-20 columns' }
+          = @repository_user.user.last_name
+    .row
+      .last_name
+        %div{class: 'small-4 columns' }
+          %label{for: 'last_name' }
+            Email
+        %div{class: 'small-20 columns' }
+          = @repository_user.user.email
+    .row
+      .administrator
+        %div{class: 'small-4 columns' }
+          %label{for: 'repository_user_administrator', class: 'text-left' }
+            Administrator?
+        %div{class: 'small-20 columns' }
+          = f.check_box :administrator
+    .row
+      .committe
+        %div{class: 'small-4 columns' }
+          %label{for: 'repository_user_committee' }
+            Committee Member?
+        %div{class: 'small-20 columns' }
+          = f.check_box :committee
+    .row
+      .specimen_resource
+        %div{class: 'small-4 columns' }
+          %label{for: 'repository_user_specimen_resource' }
+            Specimen Resource?
+        %div{class: 'small-20 columns' }
+          = f.check_box :specimen_resource
+    .row
+      .data_resource
+        %div{class: 'small-4 columns' }
+          %label{for: 'repository_user_data_resource' }
+            Data Resource?
+        %div{class: 'small-20 columns' }
+          = f.check_box :data_resource
+    .navigation
+      = f.submit 'Save', class: 'button'
+      = link_to 'Cancel', '', class: 'cancel-link button warning'

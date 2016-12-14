@@ -14,7 +14,10 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require foundation
-//= require cocoon
+//= require select2/select2
 //= require turbolinks
+//= require cocoon
 //= require init
 //= require disburser.repository
+//= require disburser.repository_user
+

@@ -1,0 +1,30 @@
+- content_for(:title) do
+  Specimen Types
+
+#edit_repository
+  %h2
+    Repository
+  = render 'repositories/navigation'
+  .specimen_types_list
+    = form_for @repository, url: bulk_update_repository_specimen_types_url(@repository), html: { class: 'repository_form' } do |f|
+      = hidden_field_tag 'tab', 'specimen_types'
+      %table{ id: 'specimen_types' }
+        %thead
+          %tr
+            %th.username{ width: 200 }
+              Name
+            %th.username{ width: 200 }
+              Volume?
+            %th.remove{ width: 100 }
+        %tbody
+          = f.fields_for :specimen_types, include_id: false do |specimen_type|
+            = render 'specimen_types/specimen_type_fields', f: specimen_type
+      .links
+        = link_to_add_association 'Add', f, :specimen_types, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#specimen_types tbody', partial: 'specimen_types/specimen_type_fields'
+      .navigation
+        %p.help-text
+          %span{ class: 'required' }
+            *
+          Indicates required field
+        = f.submit 'Save', class: 'button'
+        = link_to 'Cancel', repositories_url, class: 'cancel-link button warning'

@@ -17,4 +17,18 @@ module ApplicationHelper
       end
     end
   end
+
+  def active?(css_class, url_parameters)
+    current_request?(url_parameters) ? css_class : ''
+  end
+
+  def current_request?(*requests)
+    requests.each do |request|
+      if request[:controller] == controller.controller_name
+        return true if request[:action].is_a?(Array) && request[:action].include?(controller.action_name) && request
+        return true if request[:action] == controller.action_name
+      end
+    end
+    false
+  end
 end

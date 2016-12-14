@@ -1,0 +1,67 @@
+- content_for(:title) do
+  Repository Users
+
+#repository_users
+  %h2
+    Repository
+  = render 'repositories/navigation'
+  .repository_users_header
+    = form_tag repository_repository_users_url(@repository), method: 'get', id: 'search_repository_users_form'  do
+      .search
+        = label_tag :search, 'Search'
+        = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
+      .navigation
+        %button{ type: 'submit', id: 'search_repository_users_button', class: 'tiny button' }
+          Search
+        = link_to 'Clear', repository_repository_users_url(@repository)
+  .repository_users_list
+    = will_paginate @repository_users, renderer: FoundationPagination::Rails
+    %table
+      %thead
+        %tr
+          %th.username{ width: 200 }
+            = sortable 'users.username', 'Username'
+          %th.first_name{ width: 200 }
+            = sortable 'users.first_name', 'First'
+          %th.last_name{ width: 200 }
+            = sortable 'users.last_name', 'Last'
+          %th.email{ width: 200 }
+            = sortable 'users.email', 'Email'
+          %th.administrator{ width: 200 }
+            = sortable 'repository_users.administrator', 'Administrator?'
+          %th.committee{ width: 200 }
+            = sortable 'repository_users.committee', 'Committee?'
+          %th.specimen_resource{ width: 200 }
+            = sortable 'repository_users.specimen_resource', 'Specimen?'
+          %th.data_resource{ width: 200 }
+            = sortable 'repository_users.data_resource', 'Data?'
+          %th.edit{ width: 100 }
+      %tbody
+        - @repository_users.each do |respository_user|
+          = content_tag_for(:tr, respository_user) do
+            %td.username
+              = respository_user.user.username
+            %td.first_name
+              = respository_user.user.first_name
+            %td.last_name
+              = respository_user.user.last_name
+            %td.email
+              = respository_user.user.email
+            %td.administrator
+              = respository_user.administrator
+            %td.committee
+              = respository_user.committee
+            %td.specimen_resource
+              = respository_user.specimen_resource
+            %td.data_resource
+              = respository_user.data_resource
+            %td.edit
+              = link_to 'Edit', edit_repository_repository_user_url(@repository, respository_user), { class: 'repository_user_link' }
+    = will_paginate @repository_users, renderer: FoundationPagination::Rails
+    = link_to 'New User', new_repository_repository_user_url(@repository), { class: 'repository_user_link' }
+
+
+#repository_user_modal.reveal.large{ "data-reveal" => "" }
+  .repository_user
+  %button.close-button{"aria-label" => "Close modal", "data-close" => "", :type => "button"}
+    %span{"aria-hidden" => "true"} &times;

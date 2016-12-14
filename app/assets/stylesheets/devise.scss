@@ -1,0 +1,8 @@
+.devise {
+   @include grid-row();
+  .session {
+    @include grid-column(
+     $columns: 24
+    );
+  }
+}

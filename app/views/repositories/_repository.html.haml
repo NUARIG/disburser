@@ -1,37 +1,23 @@
-%h3
-  Repository:
-#repository
-  = form_for @repository, html: { class: 'repository_form' } do |f|
-    .row
-      .name
-        %label{for: 'name' }
-          Name
-          %span{ class: 'required' }
-            *
-          = f.text_field :name
-          - if validation_errors?(@repository, :name)
-            %p.error= format_validation_errors(@repository, :name)
-      .data
-        %label{for: 'data' }
-          Data
-          %span{ class: 'required' }
-            *
-          = f.check_box :data
-          - if validation_errors?(@repository, :data)
-            %p.error= format_validation_errors(@repository, :data)
-    .row
-      .specimens
-        %label{for: 'data' }
-          Specimens
-          %span{ class: 'required' }
-            *
-          = f.check_box :specimens
-          - if validation_errors?(@repository, :specimens)
-            %p.error= format_validation_errors(@repository, :specimens)
-    .navigation
-      %p.help-text
-        %span{ class: 'required' }
-          *
-        Indicates required field
-      = f.submit 'Save', class: 'button'
-      = link_to 'Cancel', repositories_url, class: 'cancel-link button warning'
+.row
+  .name
+    %label{for: 'name' }
+      Name
+      %span{ class: 'required' }
+        *
+      = f.text_field :name
+      - if validation_errors?(repository, :name)
+        %p.error= format_validation_errors(repository, :name)
+.row
+  .data
+    %div{class: 'small-4 columns' }
+      %label{for: 'repository_data' }
+        Data?
+    %div{class: 'small-20 columns' }
+      = f.check_box :data
+.row
+  .data
+    %div{class: 'small-4 columns' }
+      %label{for: 'repository_specimens' }
+        Specimens?
+    %div{class: 'small-20 columns' }
+      = f.check_box :specimens
