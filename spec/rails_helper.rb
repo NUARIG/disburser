@@ -89,4 +89,10 @@ RSpec.configure do |config|
   config.before(:each, js: true) do
     Warden.test_mode!
   end
+
+  config.after(:all) do
+    if Rails.env.test?
+      FileUtils.rm_rf(Dir["#{Rails.root}/spec/support/uploads"])
+    end
+  end
 end

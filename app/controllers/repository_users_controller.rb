@@ -38,7 +38,6 @@ class RepositoryUsersController < ApplicationController
   end
 
   def show
-
   end
 
   def update

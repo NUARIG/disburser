@@ -8,6 +8,10 @@ Rails.application.routes.draw do
         patch 'bulk_update'
       end
     end
+
+    member do
+      get :download_file
+    end
   end
 
   resources :users, only: :index

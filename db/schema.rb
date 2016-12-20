@@ -16,11 +16,13 @@ ActiveRecord::Schema.define(version: 20161212180540) do
   enable_extension "plpgsql"
 
   create_table "repositories", force: :cascade do |t|
-    t.string   "name",       null: false
+    t.string   "name",            null: false
     t.boolean  "data"
     t.boolean  "specimens"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "irb_template"
+    t.string   "data_dictionary"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "repository_users", force: :cascade do |t|

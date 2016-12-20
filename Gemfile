@@ -25,6 +25,7 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 
 gem 'american_date'
+gem 'carrierwave', '>= 1.0.0.rc', '< 2.0'
 gem 'cocoon'
 gem 'devise', '~> 4.2'
 gem 'devise_ldap_authenticatable'

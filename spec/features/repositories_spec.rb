@@ -52,14 +52,17 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in 'Name', with: repository_rorty_institute[:name]
     check('Data?')
     check('Specimens?')
+    attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
+    attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
     click_button('Next')
-    sleep(1)
     repository = Repository.where(name: repository_rorty_institute[:name]).first
     expect(current_path).to eq(edit_repository_path(repository))
     expect(page).to have_css('.menu li.repository.active')
     expect(page.has_field?('Name', with: repository_rorty_institute[:name])).to be_truthy
     expect(page.has_checked_field?('Data?')).to be_truthy
     expect(page.has_checked_field?('Specimens?')).to be_truthy
+    expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
+    expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
     click_link('Users')
     expect(page).to have_css('.menu li.users.active')
     click_link('Specimen Types')
@@ -69,7 +72,12 @@ RSpec.feature 'Repositories', type: :feature do
   scenario 'Creating a repository with validation', js: true, focus: false  do
     click_link('New Repository')
     fill_in 'Name', with: nil
+    attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
+    attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
     click_button('Next')
+
+    expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
+    expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
     within(".flash .callout") do
       expect(page).to have_content('Failed to create repository.')
@@ -78,6 +86,13 @@ RSpec.feature 'Repositories', type: :feature do
     within(".name .error") do
       expect(page).to have_content("can't be blank")
     end
+
+    attach_file('IRB Template', Rails.root + 'spec/fixtures/files/peanuts.docx')
+    attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/moomins.docx')
+    fill_in 'Name', with: 'Moomin Repository'
+    click_button('Next')
+    expect(page).to have_css('a.irb_template_url', text: 'peanuts.docx')
+    expect(page).to have_css('a.data_dictionary_url', text: 'moomins.docx')
   end
 
   scenario 'Editing a repository', js: true, focus: false do
@@ -98,12 +113,33 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in 'Name', with: repository_moomin[:name]
     uncheck('Data')
     check('Specimens')
+
+    attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
+    attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
+
     click_button('Save')
 
     expect(page).to have_css('.menu li.repository.active')
     expect(page.has_field?('Name', with: repository_moomin[:name])).to be_truthy
     expect(page.has_unchecked_field?('Data?')).to be_truthy
     expect(page.has_checked_field?('Specimens?')).to be_truthy
+    expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
+    expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
+
+    within(".irb_template") do
+      check('Remove file')
+    end
+
+    click_button('Save')
+
+    expect(page).to_not have_css('a.irb_template_url', text: 'moomins.docx')
+
+    within(".data_dictionary") do
+      check('Remove file')
+    end
+
+    click_button('Save')
+    expect(page).to_not have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
     visit repositories_path
     match_repository_row(repository_moomin, 1)
@@ -202,7 +238,7 @@ RSpec.feature 'Repositories', type: :feature do
     end
   end
 
-  scenario 'Editing a repository with validation', js: true, focus: false do
+  scenario 'Editing a repository with validation', js: true, focus: true do
     within(".repository:nth-of-type(1)") do
       click_link('Edit')
     end
@@ -214,9 +250,25 @@ RSpec.feature 'Repositories', type: :feature do
       expect(page).to have_content('Failed to update repository.')
     end
     expect(page).to have_css('.name .field_with_errors')
+
     within(".name .error") do
       expect(page).to have_content("can't be blank")
     end
+
+    attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
+    attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
+    click_button('Save')
+
+    expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
+    expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
+
+    fill_in 'Name', with: 'Preanuts Repository'
+    click_button('Save')
+
+    expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
+    expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
+
+    expect(page.has_field?('Name', with: 'Preanuts Repository')).to be_truthy
 
     click_link('Users')
     expect(page).to have_css('.menu li.users.active')

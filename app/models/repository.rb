@@ -4,7 +4,14 @@ class Repository < ApplicationRecord
   has_many :specimen_types, -> { order(:name) }
   accepts_nested_attributes_for :specimen_types, reject_if: :all_blank, allow_destroy: true
 
+  mount_uploader :irb_template, IrbTemplateUploader
+  mount_uploader :data_dictionary, DataDictionaryUploader
+
   validates_presence_of :name
+  validates_size_of :irb_template, maximum: 10.megabytes, message: 'must be less than 10MB'
+  validates_size_of :data_dictionary, maximum: 10.megabytes, message: 'must be less than 10MB'
+
+  after_destroy :remove_irb_template!, :remove_data_dictionary!
 
   scope :search_across_fields, ->(search_token, options={}) do
     if search_token

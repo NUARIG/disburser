@@ -1,6 +1,6 @@
 class RepositoriesController < ApplicationController
   before_action :authenticate_user!
-  before_action :load_repository, only: [:edit, :show, :update]
+  before_action :load_repository, only: [:edit, :show, :update, :download_file]
   helper_method :sort_column, :sort_direction
 
   def index
@@ -56,9 +56,20 @@ class RepositoriesController < ApplicationController
     end
   end
 
+  def download_file
+    case params[:file_type]
+    when 'irb_template'
+      file = @repository.irb_template.path
+    when 'data_dictionary'
+      file = @repository.data_dictionary.path
+    end
+
+    return send_file file, disposition: 'attachment', x_sendfile: true unless file.blank?
+  end
+
   private
     def repository_params
-      params.require(:repository).permit(:name, :data, :specimens, specimen_types_attributes: [:id, :name, :volume, :_destroy])
+      params.require(:repository).permit(:name, :data, :specimens, :irb_template, :irb_template_cache, :remove_irb_template, :data_dictionary, :data_dictionary_cache, :remove_data_dictionary,  specimen_types_attributes: [:id, :name, :volume, :_destroy])
     end
 
     def load_repository

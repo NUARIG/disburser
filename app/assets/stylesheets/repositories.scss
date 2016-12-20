@@ -86,6 +86,19 @@
     );
   }
 
+  .irb_template {
+    @include grid-column(
+     $columns: 12
+    );
+  }
+
+  .data_dictionary {
+    @include grid-column(
+     $columns: 12
+    );
+  }
+
+
   .specimens {
     @include grid-column(
      $columns: 12

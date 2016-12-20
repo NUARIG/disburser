@@ -21,3 +21,41 @@
         Specimens?
     %div{class: 'small-20 columns' }
       = f.check_box :specimens
+.row
+  .irb_template
+    %div{class: 'small-5 columns' }
+      %label{for: 'repository_irb_template' }
+        IRB Template
+    %div{class: 'small-19 columns' }
+      %div
+        - if repository.irb_template? && !repository.new_record?
+          = link_to download_file_repository_url(repository, file_type: 'irb_template'), 'data-turbolinks' => false, class: 'irb_template_url' do
+            %i
+            = repository.irb_template.file.filename
+        - if repository.irb_template? && repository.new_record?
+          = link_to repository.irb_template.identifier, "#{repository.irb_template.url}",  class: 'irb_template_url'
+        = f.file_field :irb_template
+        = f.hidden_field :irb_template_cache
+        - if repository.irb_template? && !repository.new_record?
+          %label{for: 'repository_remove_irb_template' }
+            Remove file
+            = f.check_box :remove_irb_template
+.row
+  .data_dictionary
+    %div{class: 'small-5 columns' }
+      %label{for: 'repository_data_dictionary' }
+        Data Dictionary
+    %div{class: 'small-19 columns' }
+      %div
+        - if repository.data_dictionary? && !repository.new_record?
+          = link_to download_file_repository_url(repository, file_type: 'data_dictionary'), 'data-turbolinks' => false, class: 'data_dictionary_url' do
+            %i
+            = repository.data_dictionary.file.filename
+        - if repository.data_dictionary? && repository.new_record?
+          = link_to repository.data_dictionary.identifier, "#{repository.data_dictionary.url}", class: 'data_dictionary_url'
+        = f.file_field :data_dictionary
+        = f.hidden_field :data_dictionary_cache
+        - if repository.data_dictionary? && !repository.new_record?
+          %label{for: 'repository_remove_data_dictionary' }
+            Remove file
+            = f.check_box :remove_data_dictionary
