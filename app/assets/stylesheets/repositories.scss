@@ -67,7 +67,7 @@
   }
 }
 
-#new_repository, #edit_repository {
+#new_repository, #edit_repository, #edit_repository_content {
   @include grid-row();
 
   #specimen_types {
@@ -115,18 +115,24 @@
   .details {
     .repository {
       @include grid-column(
-       $columns: 8
+       $columns: 6
       );
     }
 
-    .users {
+    .repository_content {
       @include grid-column(
-       $columns: 8
+       $columns: 6
+      );
+    }
+
+    .repository_users {
+      @include grid-column(
+       $columns: 6
       );
     }
     .specimen_types {
       @include grid-column(
-       $columns: 8
+       $columns: 6
       );
     }
   }

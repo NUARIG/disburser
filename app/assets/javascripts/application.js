@@ -17,6 +17,7 @@
 //= require select2/select2
 //= require turbolinks
 //= require cocoon
+//= require ckeditor/init
 //= require init
 //= require disburser.repository
 //= require disburser.repository_user

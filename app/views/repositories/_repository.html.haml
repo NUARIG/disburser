@@ -23,10 +23,10 @@
       = f.check_box :specimens
 .row
   .irb_template
-    %div{class: 'small-5 columns' }
+    %div{class: 'small-6 columns' }
       %label{for: 'repository_irb_template' }
         IRB Template
-    %div{class: 'small-19 columns' }
+    %div{class: 'small-18 columns' }
       %div
         - if repository.irb_template? && !repository.new_record?
           = link_to download_file_repository_url(repository, file_type: 'irb_template'), 'data-turbolinks' => false, class: 'irb_template_url' do
@@ -42,10 +42,10 @@
             = f.check_box :remove_irb_template
 .row
   .data_dictionary
-    %div{class: 'small-5 columns' }
+    %div{class: 'small-6 columns' }
       %label{for: 'repository_data_dictionary' }
         Data Dictionary
-    %div{class: 'small-19 columns' }
+    %div{class: 'small-18 columns' }
       %div
         - if repository.data_dictionary? && !repository.new_record?
           = link_to download_file_repository_url(repository, file_type: 'data_dictionary'), 'data-turbolinks' => false, class: 'data_dictionary_url' do

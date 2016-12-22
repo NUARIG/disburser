@@ -6,6 +6,8 @@ class CreateRepositories < ActiveRecord::Migration[5.0]
       t.boolean   :specimens,         null: true
       t.string    :irb_template,      null: true
       t.string    :data_dictionary,   null: true
+      t.text      :data_content,      null: true
+      t.text      :specimen_content,  null: true
       t.timestamps                    null: false
     end
   end

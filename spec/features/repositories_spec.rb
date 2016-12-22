@@ -64,9 +64,11 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
     click_link('Users')
-    expect(page).to have_css('.menu li.users.active')
+    expect(page).to have_css('.menu li.repository_users.active')
     click_link('Specimen Types')
     expect(page).to have_css('.menu li.specimen_types.active')
+    click_link('Content')
+    expect(page).to have_css('.menu li.repository_content.active')
   end
 
   scenario 'Creating a repository with validation', js: true, focus: false  do
@@ -148,8 +150,17 @@ RSpec.feature 'Repositories', type: :feature do
       click_link('Edit')
     end
 
+    click_link('Content')
+    expect(page).to have_css('.menu li.repository_content.active')
+    fill_in_ckeditor 'repository_data_content', :with => 'Be a good moomin!'
+    fill_in_ckeditor 'repository_specimen_content', :with => 'Be a really good moomin!'
+    click_button('Save')
+    expect(page).to have_css('.menu li.repository_content.active')
+    expect(read_ckeditor('repository_data_content')).to eq("<p>Be a good moomin!</p>\n")
+    expect(read_ckeditor('repository_specimen_content')).to eq("<p>Be a really good moomin!</p>\n")
+
     click_link('Users')
-    expect(page).to have_css('.menu li.users.active')
+    expect(page).to have_css('.menu li.repository_users.active')
     moomins = [{ username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com' }, { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }]
     moominpapa = [{ username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com' }]
     allow(User).to receive(:find_ldap_entries_by_name).with('moomin').and_return(moomins)
@@ -238,7 +249,7 @@ RSpec.feature 'Repositories', type: :feature do
     end
   end
 
-  scenario 'Editing a repository with validation', js: true, focus: true do
+  scenario 'Editing a repository with validation', js: true, focus: false do
     within(".repository:nth-of-type(1)") do
       click_link('Edit')
     end
@@ -271,7 +282,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page.has_field?('Name', with: 'Preanuts Repository')).to be_truthy
 
     click_link('Users')
-    expect(page).to have_css('.menu li.users.active')
+    expect(page).to have_css('.menu li.repository_users.active')
 
     click_link('New User')
     click_button('Save')
@@ -354,4 +365,19 @@ def match_repository_user_row(repository_user, index)
   within(".repository_user:nth-of-type(#{index}) .data_resource") do
     expect(page).to have_content(repository_user[:data_resource].to_s)
   end
+end
+
+
+def fill_in_ckeditor(locator, opts)
+  content = opts.fetch(:with).to_json
+  page.execute_script <<-SCRIPT
+    CKEDITOR.instances['#{locator}'].setData(#{content});
+    $('textarea##{locator}').text(#{content});
+  SCRIPT
+end
+
+def read_ckeditor(locator)
+  page.evaluate_script <<-SCRIPT
+    CKEDITOR.instances['#{locator}'].getData();
+  SCRIPT
 end

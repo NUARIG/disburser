@@ -1,0 +1,26 @@
+- content_for(:title) do
+  Edit Repository Content
+
+#edit_repository_content
+  %h2
+    Repository
+  = render 'repositories/navigation'
+  = form_for @repository, url: repository_content_url(@repository), html: { class: 'repository_form' } do |f|
+    .row
+      .data_content
+        %h2
+          Data Content
+        = f.cktext_area :data_content
+    .row
+      .specimen_content
+        %h2
+          Specimen Content
+        = f.cktext_area :specimen_content
+
+    .navigation
+      %p.help-text
+        %span{ class: 'required' }
+          *
+        Indicates required field
+      = f.submit 'Save', class: 'button'
+      = link_to 'Cancel', repositories_url, class: 'cancel-link button warning'

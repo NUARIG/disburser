@@ -36,23 +36,10 @@ class RepositoriesController < ApplicationController
 
   def update
     if @repository.update_attributes(repository_params)
-      case params[:tab]
-      when 'specimen_types'
-        flash[:success] = 'You have successfully updated specimen types.'
-        redirect_to repository_specimen_types_url(@repository)
-      else
-        flash[:success] = 'You have successfully updated a repository.'
-        redirect_to edit_repository_url(@repository)
-      end
+      redirect_to edit_repository_url(@repository)
     else
-      case params[:tab]
-      when 'specimen_types'
-        flash.now[:alert] = 'Failed to update specimen types.'
-        render 'specimen_types/index'
-      else
-        flash.now[:alert] = 'Failed to update repository.'
-        render action: 'edit'
-      end
+      flash.now[:alert] = 'Failed to update repository.'
+      render action: 'edit'
     end
   end
 
@@ -69,7 +56,7 @@ class RepositoriesController < ApplicationController
 
   private
     def repository_params
-      params.require(:repository).permit(:name, :data, :specimens, :irb_template, :irb_template_cache, :remove_irb_template, :data_dictionary, :data_dictionary_cache, :remove_data_dictionary,  specimen_types_attributes: [:id, :name, :volume, :_destroy])
+      params.require(:repository).permit(:name, :data, :specimens, :irb_template, :irb_template_cache, :remove_irb_template, :data_dictionary, :data_dictionary_cache, :remove_data_dictionary, specimen_types_attributes: [:id, :name, :volume, :_destroy])
     end
 
     def load_repository
