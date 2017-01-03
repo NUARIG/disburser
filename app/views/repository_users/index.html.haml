@@ -3,40 +3,37 @@
 
 #repository_users
   %h2
-    Repository
+    = "Repository: #{@repository.name}"
   = render 'repositories/navigation'
   .repository_users_header
     = form_tag repository_repository_users_url(@repository), method: 'get', id: 'search_repository_users_form'  do
-      .search
-        = label_tag :search, 'Search'
+      .search_box
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
-      .navigation
+      .search_buttons
         %button{ type: 'submit', id: 'search_repository_users_button', class: 'tiny button' }
           Search
         = link_to 'Clear', repository_repository_users_url(@repository)
   .repository_users_list
     = will_paginate @repository_users, renderer: FoundationPagination::Rails
-    %table
-      %thead
-        %tr
-          %th.username{ width: 200 }
-            = sortable 'users.username', 'Username'
-          %th.first_name{ width: 200 }
-            = sortable 'users.first_name', 'First'
-          %th.last_name{ width: 200 }
-            = sortable 'users.last_name', 'Last'
-          %th.email{ width: 200 }
-            = sortable 'users.email', 'Email'
-          %th.administrator{ width: 200 }
-            = sortable 'repository_users.administrator', 'Administrator?'
-          %th.committee{ width: 200 }
-            = sortable 'repository_users.committee', 'Committee?'
-          %th.specimen_resource{ width: 200 }
-            = sortable 'repository_users.specimen_resource', 'Specimen?'
-          %th.data_resource{ width: 200 }
-            = sortable 'repository_users.data_resource', 'Data?'
-          %th.edit{ width: 100 }
-      %tbody
+    %table.stack
+      %tr
+        %th.username{ width: 200 }
+          = sortable 'users.username', 'Username'
+        %th.first_name{ width: 200 }
+          = sortable 'users.first_name', 'First'
+        %th.last_name{ width: 200 }
+          = sortable 'users.last_name', 'Last'
+        %th.email{ width: 200 }
+          = sortable 'users.email', 'Email'
+        %th.administrator{ width: 200 }
+          = sortable 'repository_users.administrator', 'Administrator?'
+        %th.committee{ width: 200 }
+          = sortable 'repository_users.committee', 'Committee?'
+        %th.specimen_resource{ width: 200 }
+          = sortable 'repository_users.specimen_resource', 'Specimen?'
+        %th.data_resource{ width: 200 }
+          = sortable 'repository_users.data_resource', 'Data?'
+        %th.edit
         - @repository_users.each do |respository_user|
           = content_tag_for(:tr, respository_user) do
             %td.username
@@ -62,6 +59,6 @@
 
 
 #repository_user_modal.reveal.large{ "data-reveal" => "" }
-  .repository_user
+  #repository_user
   %button.close-button{"aria-label" => "Close modal", "data-close" => "", :type => "button"}
     %span{"aria-hidden" => "true"} &times;

@@ -3,7 +3,7 @@
 
 #edit_repository
   %h2
-    Repository
+    = "Repository: #{@repository.name}"
   = render 'repositories/navigation'
   = form_for @repository, html: { class: 'repository_form', multipart: true } do |f|
     = render 'repository', repository: @repository, f: f

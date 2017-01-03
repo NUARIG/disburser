@@ -1,0 +1,20 @@
+- content_for(:title) do
+  = "Repository: #{@repository.name}"
+#repository
+  %h2
+    = "Repository: #{@repository.name}"
+
+  .row
+    .specimen_content_header{ class: 'small-11 columns' }
+      %b
+        Specimen
+    .divider{ class: 'small-1 columns' }
+    .data_content_header{ class: 'small-12 columns' }
+      %b
+        Data
+  .row
+    .specimen_content{ class: 'small-11 columns' }
+      = raw @repository.specimen_content
+    .divider{ class: 'small-1 columns' }
+    .data_content{ class: 'small-12 columns' }
+      = raw @repository.data_content

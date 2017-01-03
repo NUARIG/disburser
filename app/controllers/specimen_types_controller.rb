@@ -1,4 +1,5 @@
 class SpecimenTypesController < ApplicationController
+  before_action :authenticate_user!
   before_action :load_repository, only: [:index, :bulk_update]
 
   def index

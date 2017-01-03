@@ -1,7 +1,8 @@
 #repository_users {
   @include grid-row();
-
   .repository_users_header {
+    margin-top: 1.5rem;
+
     @include grid-column(
      $columns: 24
     );
@@ -15,24 +16,24 @@
        $columns: 24
       );
 
-      label {
-        font-weight: bold;
-        margin-bottom: .5rem;
-        padding-left: .25rem;
+      .search_box{
+        @include grid-column-offset(12);
+
+        @include grid-column(
+          $columns: 8
+        );
+
+				#search_repositories_button {
+					margin-bottom: 0;
+				}
+        @include grid-column-collapse();
       }
 
-      .search {
+      .search_buttons{
         @include grid-column(
-          $columns: 6
+          $columns: 4
         );
-				@include grid-column-collapse();
-      }
 
-      .navigation {
-        margin-top: 2rem;
-        @include grid-column(
-          $columns: 5
-        );
 				#search_repository_users_button {
 					margin-bottom: 0;
 				}
@@ -41,12 +42,12 @@
   }
 
   .repository_users_list {
-		@include grid-column(
-		  $columns: 24
-		);
+    @include grid-column(
+      $columns: 24
+    );
 
     th .current {
-      padding-right: 2em;
+      padding-right: 2rem;
       background-repeat: no-repeat;
       background-position: right center;
     }
@@ -54,20 +55,14 @@
     th .asc {
       background-image: asset_url("drop25.png");
     }
-
     th .desc {
       background-image: asset_url("drop27.png");
-    }
-
-    table {
-      @include grid-column(
-       $columns: 24
-      );
     }
   }
 
   .details {
     .repository {
+      padding-left: 0 !important;
       @include grid-column(
        $columns: 6
       );
@@ -110,4 +105,3 @@
     }
   }
 }
-

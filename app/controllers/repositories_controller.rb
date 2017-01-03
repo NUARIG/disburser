@@ -1,5 +1,5 @@
 class RepositoriesController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:show]
   before_action :load_repository, only: [:edit, :show, :update, :download_file]
   helper_method :sort_column, :sort_direction
 
@@ -8,7 +8,8 @@ class RepositoriesController < ApplicationController
     options = {}
     options[:sort_column] = sort_column
     options[:sort_direction] = sort_direction
-    @repositories = Repository.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+
+    @repositories = current_user.repositories.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def new
@@ -28,7 +29,6 @@ class RepositoriesController < ApplicationController
   end
 
   def show
-    redirect_to edit_repository_url(@repository)
   end
 
   def edit

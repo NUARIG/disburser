@@ -49,11 +49,13 @@ $global-font-size: 100%;
 $global-width: rem-calc(1200);
 $global-lineheight: 1.5;
 $foundation-palette: (
-  primary: #2199e8,
-  secondary: #777,
+  primary: #61468b,
+//  primary: #2199e8,
+  secondary: #493568,
   success: #3adb76,
   warning: #ffae00,
   alert: #ec5840,
+  link: #337ab7
 );
 $light-gray: #e6e6e6;
 $medium-gray: #cacaca;
@@ -139,7 +141,7 @@ $code-font-weight: $global-weight-normal;
 $code-background: $light-gray;
 $code-border: 1px solid $medium-gray;
 $code-padding: rem-calc(2 5 1);
-$anchor-color: $primary-color;
+$anchor-color: map-get($foundation-palette, link);
 $anchor-color-hover: scale-color($anchor-color, $lightness: -14%);
 $anchor-text-decoration: none;
 $anchor-text-decoration-hover: none;
@@ -380,7 +382,7 @@ $menu-margin: 0;
 $menu-margin-nested: 1rem;
 $menu-item-padding: 0.7rem 1rem;
 $menu-item-color-active: $white;
-$menu-item-background-active: map-get($foundation-palette, primary);
+$menu-item-background-active: map-get($foundation-palette, secondary);
 $menu-icon-spacing: 0.25rem;
 
 // 23. Meter
@@ -559,9 +561,9 @@ $tooltip-radius: $global-radius;
 // -----------
 
 $topbar-padding: 0.5rem;
-$topbar-background: $light-gray;
+//$topbar-background: $light-gray;
+$topbar-background: $primary-color;
 $topbar-submenu-background: $topbar-background;
 $topbar-title-spacing: 1rem;
 $topbar-input-width: 200px;
 $topbar-unstack-breakpoint: medium;
-

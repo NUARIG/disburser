@@ -3,47 +3,69 @@ RSpec.feature 'Repositories', type: :feature do
   before(:each) do
     @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
     @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', data: false, specimens: true)
-    @moomin_user = FactoryGirl.create(:user, email: 'moomin@momin.com', password: 'password', username: 'moomin')
-    login_as(@moomin_user, scope: :user)
-    visit repositories_path
+    @repository_bossy_bear = FactoryGirl.create(:repository, name: 'Bossy Bear', data: false, specimens: true)
+    @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
+    @repository_moomin.repository_users.build(username: 'hbaines', administrator: true)
+    @repository_moomin.save!
+    @repository_peanuts.repository_users.build(username: 'hbaines', administrator: true)
+    @repository_peanuts.save!
+    @harold_user = User.where(username: 'hbaines').first
+    login_as(@harold_user, scope: :user)
+    visit root_path
+  end
+
+  scenario 'Not seeing a list of my repositories', js: true, focus: false do
+    @paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com', administator: false,  committee: false, specimen_resource: false, data_resource: false }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@paul)
+    @repository_moomin.repository_users.build(username: 'hbaines', administrator: false, committee: true)
+    @repository_moomin.save!
+    @paul_user = User.where(username: 'pkonerko').first
+    click_link('Log out')
+    login_as(@paul_user, scope: :user)
+    visit root_path
+    expect(page).to_not have_css('.menu li.my_repositories')
   end
 
   scenario 'Visiting repositories and sorting', js: true, focus: false do
-    match_repository_row(@repository_moomin, 1)
-    match_repository_row(@repository_peanuts, 2)
+    click_link('My Repositories')
+    not_match_repository(@repository_bossy_bear)
+    match_repository_row(@repository_moomin, 0)
+    match_repository_row(@repository_peanuts, 1)
 
     click_link('Name')
-
-    match_repository_row(@repository_peanuts, 1)
-    match_repository_row(@repository_moomin, 2)
+    sleep(1)
+    match_repository_row(@repository_peanuts, 0)
+    match_repository_row(@repository_moomin, 1)
 
     click_link('Name')
-
-    match_repository_row(@repository_moomin, 1)
-    match_repository_row(@repository_peanuts, 2)
+    sleep(1)
+    match_repository_row(@repository_moomin, 0)
+    match_repository_row(@repository_peanuts, 1)
 
     click_link('Data')
-
-    match_repository_row(@repository_peanuts, 1)
-    match_repository_row(@repository_moomin, 2)
+    sleep(1)
+    match_repository_row(@repository_peanuts, 0)
+    match_repository_row(@repository_moomin, 1)
 
     click_link('Data')
-
-    match_repository_row(@repository_moomin, 1)
-    match_repository_row(@repository_peanuts, 2)
-
-    click_link('Specimens')
-
-    match_repository_row(@repository_moomin, 1)
-    match_repository_row(@repository_peanuts, 2)
-
-    click_link('Specimens')
-
+    sleep(1)
+    match_repository_row(@repository_moomin, 0)
     match_repository_row(@repository_peanuts, 1)
-    match_repository_row(@repository_moomin, 2)
+
+    click_link('Specimens')
+    sleep(1)
+    match_repository_row(@repository_moomin, 0)
+    match_repository_row(@repository_peanuts, 1)
+
+    click_link('Specimens')
+    sleep(1)
+    match_repository_row(@repository_peanuts, 0)
+    match_repository_row(@repository_moomin, 1)
   end
 
   scenario 'Creating a repository', js: true, focus: false  do
+    click_link('My Repositories')
     click_link('New Repository')
     repository_rorty_institute = {}
     repository_rorty_institute[:name] = 'Rorty Institute'
@@ -64,14 +86,18 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
     click_link('Users')
+    sleep(1)
     expect(page).to have_css('.menu li.repository_users.active')
     click_link('Specimen Types')
+    sleep(1)
     expect(page).to have_css('.menu li.specimen_types.active')
     click_link('Content')
+    sleep(1)
     expect(page).to have_css('.menu li.repository_content.active')
   end
 
   scenario 'Creating a repository with validation', js: true, focus: false  do
+    click_link('My Repositories')
     click_link('New Repository')
     fill_in 'Name', with: nil
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
@@ -98,6 +124,7 @@ RSpec.feature 'Repositories', type: :feature do
   end
 
   scenario 'Editing a repository', js: true, focus: false do
+    click_link('My Repositories')
     within(".repository:nth-of-type(1)") do
       click_link('Edit')
     end
@@ -144,7 +171,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page).to_not have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
     visit repositories_path
-    match_repository_row(repository_moomin, 1)
+    match_repository_row(repository_moomin, 0)
 
     within(".repository:nth-of-type(1)") do
       click_link('Edit')
@@ -177,11 +204,13 @@ RSpec.feature 'Repositories', type: :feature do
     moominmama = { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(moominmama)
     click_button('Save')
+    sleep(1)
     repository_user = moominmama
     repository_user[:administrator] = true
     repository_user[:committee] = true
     repository_user[:specimen_resource] = true
     repository_user[:data_resource] = true
+    match_repository_user_row(@harold_user, 0)
     match_repository_user_row(repository_user, 1)
 
     repository_user = @repository_moomin.repository_users.joins(:user).where('users.username = ?', repository_user[:username]).first
@@ -206,6 +235,7 @@ RSpec.feature 'Repositories', type: :feature do
     repository_user[:specimen_resource] = false
     repository_user[:data_resource] = false
     click_button('Save')
+    sleep(1)
     match_repository_user_row(repository_user, 1)
     click_link('Specimen Types')
     expect(page).to have_css('.menu li.specimen_types.active')
@@ -250,6 +280,7 @@ RSpec.feature 'Repositories', type: :feature do
   end
 
   scenario 'Editing a repository with validation', js: true, focus: false do
+    click_link('My Repositories')
     within(".repository:nth-of-type(1)") do
       click_link('Edit')
     end
@@ -320,53 +351,25 @@ RSpec.feature 'Repositories', type: :feature do
 end
 
 def match_repository_row(repository, index)
-  within(".repository:nth-of-type(#{index}) .name") do
-    expect(page).to have_content(repository[:name])
-  end
+  expect(all('.repository')[index].find('.name')).to have_content(repository[:name])
+  expect(all('.repository')[index].find('.data')).to have_content(repository[:data])
+  expect(all('.repository')[index].find('.specimens')).to have_content(repository[:specimens])
+end
 
-  within(".repository:nth-of-type(#{index}) .data") do
-    expect(page).to have_content(repository[:data].to_s)
-  end
-
-  within(".repository:nth-of-type(#{index}) .specimens") do
-    expect(page).to have_content(repository[:specimens].to_s)
-  end
+def not_match_repository(repository)
+  expect(page).to_not have_content(repository[:name])
 end
 
 def match_repository_user_row(repository_user, index)
-  within(".repository_user:nth-of-type(#{index}) .username") do
-    expect(page).to have_content(repository_user[:username])
-  end
-
-  within(".repository_user:nth-of-type(#{index}) .first_name") do
-    expect(page).to have_content(repository_user[:first_name])
-  end
-
-  within(".repository_user:nth-of-type(#{index}) .last_name") do
-    expect(page).to have_content(repository_user[:last_name])
-  end
-
-  within(".repository_user:nth-of-type(#{index}) .email") do
-    expect(page).to have_content(repository_user[:email])
-  end
-
-  within(".repository_user:nth-of-type(#{index}) .administrator") do
-    expect(page).to have_content(repository_user[:administrator].to_s)
-  end
-
-  within(".repository_user:nth-of-type(#{index}) .committee") do
-    expect(page).to have_content(repository_user[:committee].to_s)
-  end
-
-  within(".repository_user:nth-of-type(#{index}) .specimen_resource") do
-    expect(page).to have_content(repository_user[:specimen_resource].to_s)
-  end
-
-  within(".repository_user:nth-of-type(#{index}) .data_resource") do
-    expect(page).to have_content(repository_user[:data_resource].to_s)
-  end
+  expect(all('.repository_user')[index].find('.username')).to have_content(repository_user[:username])
+  expect(all('.repository_user')[index].find('.first_name')).to have_content(repository_user[:first_name])
+  expect(all('.repository_user')[index].find('.last_name')).to have_content(repository_user[:last_name])
+  expect(all('.repository_user')[index].find('.email')).to have_content(repository_user[:email])
+  expect(all('.repository_user')[index].find('.administrator')).to have_content(repository_user[:administrator])
+  expect(all('.repository_user')[index].find('.committee')).to have_content(repository_user[:committee])
+  expect(all('.repository_user')[index].find('.specimen_resource')).to have_content(repository_user[:specimen_resource])
+  expect(all('.repository_user')[index].find('.data_resource')).to have_content(repository_user[:data_resource])
 end
-
 
 def fill_in_ckeditor(locator, opts)
   content = opts.fetch(:with).to_json

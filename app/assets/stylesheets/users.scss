@@ -1,0 +1,7 @@
+#user {
+  @include grid-row();
+
+  .user_header {
+    @include grid-row();
+  }
+}

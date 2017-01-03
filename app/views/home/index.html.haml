@@ -33,7 +33,6 @@
               = respository.data
             %td.specimens
               = respository.specimens
-            %td.edit
-              = link_to 'Edit', edit_repository_url(respository), { class: 'edit_repository_link' }
+            %td.view
+              = link_to 'View', repository_url(respository), { class: 'show_repository_link' }
     = will_paginate @repositories, renderer: FoundationPagination::Rails
-    = link_to 'New Repository', new_repository_url(), { class: 'new_repository_link' }

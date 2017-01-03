@@ -1,4 +1,5 @@
 class RepositoryUsersController < ApplicationController
+  before_action :authenticate_user!
   helper_method :sort_column, :sort_direction
   before_action :load_repository, only: [:index, :new, :create, :edit]
   before_action :load_repository_user, only: [:edit, :update]

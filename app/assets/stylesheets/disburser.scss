@@ -4,5 +4,26 @@
 }
 
 .notice {
-  background-color: #e1faea;
+  background-color: #b0a2c5;
+}
+
+.top-bar {
+  .menu-text a {
+    color: white !important;
+  }
+}
+
+.close-button {
+  top: .1rem !important;
+}
+
+.details li {
+  background-color: $primary-color;
+  a {
+    color: white !important;
+  }
+}
+
+.select2 {
+  width: 100% !important;
 }

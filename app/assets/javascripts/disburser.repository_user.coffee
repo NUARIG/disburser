@@ -3,7 +3,7 @@ class Disburser.RepositoryUser
   render: (link) ->
     $(link).on 'click', (e) ->
       $modal = $('#repository_user_modal')
-      $repository_user = $('#repository_user_modal .repository_user')
+      $repository_user = $('#repository_user_modal #repository_user')
       $.ajax(this.href).done (response) ->
         $repository_user.html(response)
         $modal.foundation 'open'

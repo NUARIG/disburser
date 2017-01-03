@@ -4,7 +4,7 @@
   = form_for [@repository, @repository_user], html: { class: 'new_repository_user_form' }, remote: true, validate: true do |f|
     = link_to '', users_url(repository_id: @repository.id), class: 'hide', id: 'users_url'
     .row
-      .username
+      .username{class: 'small-24' }
         %label{for: 'username' }
           %i{ class: 'instructions' }
             Enter first name and/or last name
@@ -13,31 +13,31 @@
           %p.error= format_validation_errors(@repository_user, :username)
     .row
       .administrator
-        %div{class: 'small-4 columns' }
+        %div{class: 'small-14 large-4 columns' }
           %label{for: 'repository_user_administrator', class: 'text-left' }
             Administrator?
-        %div{class: 'small-20 columns' }
+        %div{class: 'small-10 large-20 columns' }
           = f.check_box :administrator
     .row
-      .committee
-        %div{class: 'small-4 columns' }
-          %label{for: 'repository_user_committee', class: 'text-left' }
+      .committe
+        %div{class: 'small-14 large-4 columns' }
+          %label{for: 'repository_user_committee' }
             Committee Member?
-        %div{class: 'small-20 columns' }
+        %div{class: 'small-10 large-20 columns' }
           = f.check_box :committee
     .row
       .specimen_resource
-        %div{class: 'small-4 columns' }
-          %label{for: 'repository_user_specimen_resource', class: 'text-left'  }
+        %div{class: 'small-14 large-4 columns' }
+          %label{for: 'repository_user_specimen_resource' }
             Specimen Resource?
-        %div{class: 'small-20 columns' }
+        %div{class: 'small-10 large-20 columns' }
           = f.check_box :specimen_resource
     .row
       .data_resource
-        %div{class: 'small-4 columns' }
-          %label{for: 'repository_user_data_resource', class: 'text-left' }
+        %div{class: 'small-14 large-4 columns' }
+          %label{for: 'repository_user_data_resource' }
             Data Resource?
-        %div{class: 'small-20 columns' }
+        %div{class: 'small-10 large-20 columns' }
           = f.check_box :data_resource
       .navigation
         = f.submit 'Save', class: 'button'

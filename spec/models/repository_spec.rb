@@ -4,6 +4,7 @@ require 'active_support'
 RSpec.describe Repository, type: :model do
   it { should have_many :repository_users }
   it { should have_many :specimen_types }
+  it { should have_many :users }
   it { should validate_presence_of :name }
 
   it 'can search accross fields (by name)', focus: false do

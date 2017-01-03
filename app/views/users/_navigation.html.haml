@@ -1,0 +1,9 @@
+%ul.details.menu
+  %li.repository{ class: active?('active', controller: 'repositories', action: ['edit', 'update']) }
+    = link_to 'Details', edit_repository_url(@repository), { class: 'edit_repository_link' }
+  %li.repository_content{ class: active?('active', controller: 'contents', action: ['edit', 'update']) }
+    = link_to 'Content', edit_repository_content_url(@repository), { class: 'edit_repository_content_link' }
+  %li.repository_users{ class: active?('active', controller: 'repository_users', action: 'index') }
+    = link_to 'Users', repository_repository_users_url(@repository), { class: 'repository_repository_users_link' }
+  %li.specimen_types{ class: active?('active', controller: 'specimen_types', action: ['index', 'bulk_update']) }
+    = link_to 'Specimen Types', repository_specimen_types_url(@repository), { class: 'repository_specime_types_link' }

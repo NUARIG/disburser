@@ -3,17 +3,17 @@
 
 #edit_repository_content
   %h2
-    Repository
+    = "Repository: #{@repository.name}"
   = render 'repositories/navigation'
   = form_for @repository, url: repository_content_url(@repository), html: { class: 'repository_form' } do |f|
     .row
       .data_content
-        %h2
+        %h3
           Data Content
         = f.cktext_area :data_content
     .row
       .specimen_content
-        %h2
+        %h3
           Specimen Content
         = f.cktext_area :specimen_content
 

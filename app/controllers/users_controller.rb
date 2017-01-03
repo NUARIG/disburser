@@ -1,5 +1,8 @@
 class UsersController < ApplicationController
+  before_action :authenticate_user!
   before_action :load_repository, only: :index
+  before_action :load_user, only: :show
+
   def index
     params[:page]||= 1
     @all_users = User.search_ldap(params[:q], @repository)
@@ -15,8 +18,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def show
+  end
+
   private
     def load_repository
       @repository = Repository.find(params[:repository_id])
+    end
+
+    def load_user
+      @user = User.find(params[:id])
     end
 end

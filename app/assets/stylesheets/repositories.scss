@@ -2,10 +2,7 @@
   @include grid-row();
 
   .repositories_header {
-    @include grid-column(
-     $columns: 24
-    );
-
+    @include grid-row();
     .banner {
       vertical-align: middle;
     }
@@ -15,24 +12,24 @@
        $columns: 24
       );
 
-      label {
-        font-weight: bold;
-        margin-bottom: .5rem;
-        padding-left: .25rem;
+      .search_box{
+        @include grid-column-offset(12);
+
+        @include grid-column(
+          $columns: 8
+        );
+
+				#search_repositories_button {
+					margin-bottom: 0;
+				}
+        @include grid-column-collapse();
       }
 
-      .search {
+      .search_buttons{
         @include grid-column(
-          $columns: 6
+          $columns: 4
         );
-				@include grid-column-collapse();
-      }
 
-      .navigation {
-        margin-top: 2rem;
-        @include grid-column(
-          $columns: 5
-        );
 				#search_repositories_button {
 					margin-bottom: 0;
 				}
@@ -70,40 +67,14 @@
 #new_repository, #edit_repository, #edit_repository_content {
   @include grid-row();
 
-  #specimen_types {
-    margin-top: 4rem;
-  }
-
   .name {
-    @include grid-column(
-     $columns: 12
-    );
+    margin-top: 2rem;
   }
 
-  .data {
-    @include grid-column(
-     $columns: 12
-    );
+  #specimen_types {
+    margin-top: 2rem;
   }
 
-  .irb_template {
-    @include grid-column(
-     $columns: 12
-    );
-  }
-
-  .data_dictionary {
-    @include grid-column(
-     $columns: 12
-    );
-  }
-
-
-  .specimens {
-    @include grid-column(
-     $columns: 12
-    );
-  }
   .navigation {
     padding: 1rem;
     @include grid-column-offset(12);
@@ -113,7 +84,9 @@
   }
 
   .details {
+    @include grid-row();
     .repository {
+      padding-left: 0 !important;
       @include grid-column(
        $columns: 6
       );
@@ -131,9 +104,19 @@
       );
     }
     .specimen_types {
+      padding-right: 0 !important;
       @include grid-column(
        $columns: 6
       );
     }
+  }
+}
+
+#repository {
+  @include grid-row();
+
+  .specimen_content_header, .data_content_header {
+    background-color: $primary-color;
+    color: black;
   }
 }

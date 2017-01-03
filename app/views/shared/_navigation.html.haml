@@ -1,0 +1,25 @@
+#disburser_navigation
+  .title-bar{"data-hide-for" => "medium", "data-responsive-toggle" => "disburser-menu"}
+    %button.menu-icon{"data-toggle" => "disburser-menu", type: "button"}
+    .title-bar-title Menu
+  #disburser-menu.top-bar
+    .top-bar-left
+      %ul.dropdown.menu{"data-dropdown-menu" => ""}
+        %li.disburser.menu-text
+          = link_to 'Disburser', root_url
+        %li.home.menu-text{ class: active?('active', controller: 'home', action: ['index']) }
+          = link_to 'Home', root_url
+        - if user_signed_in? && current_user.repository_administrator?
+          %li.my_repositories.menu-text{ class: active?('active', controller: 'repositories', action: ['index']) }
+            = link_to "My Repositories", repositories_url
+    .top-bar-right
+      %ul.menu
+        - if user_signed_in?
+          %li.profile.menu-text{ class: active?('active', controller: 'users', action: ['show']) }
+            = link_to "Profile (#{current_user.username})", user_url(current_user)
+        - else
+          %li.login.menu-text{ class: active?('active', controller: 'sessions', action: ['new']) }
+            = link_to 'Login', new_user_session_url
+        %li.log_out.menu-text
+          - if user_signed_in?
+            = link_to "Log out", destroy_user_session_path, method: :delete

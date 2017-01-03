@@ -15,7 +15,7 @@ Rails.application.routes.draw do
     resource :content, only: [:edit, :update]
   end
 
-  resources :users, only: :index
+  resources :users, only: [:index, :show]
 
-  root 'repositories#index'
+  root 'home#index'
 end

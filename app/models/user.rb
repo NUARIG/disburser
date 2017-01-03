@@ -3,6 +3,7 @@ require './lib/ldap'
 class User < ApplicationRecord
   devise :ldap_authenticatable, :trackable, :timeoutable
   has_many :repository_users
+  has_many :repositories, through: :repository_users
 
   #Class Methods
   def self.search_ldap(search_token, repository = nil)
@@ -51,5 +52,9 @@ class User < ApplicationRecord
       self.last_name = user[:last_name]
       self.email = user[:email]
     end
+  end
+
+  def repository_administrator?
+    repository_users.any? { |repository_user| repository_user.administrator }
   end
 end
