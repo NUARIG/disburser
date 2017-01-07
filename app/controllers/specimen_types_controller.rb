@@ -3,9 +3,11 @@ class SpecimenTypesController < ApplicationController
   before_action :load_repository, only: [:index, :bulk_update]
 
   def index
+    authorize SpecimenType.new(repository: @repository)
   end
 
   def bulk_update
+    authorize SpecimenType.new(repository: @repository)
     if @repository.update_attributes(repository_params)
       flash[:success] = 'You have successfully updated specimen types.'
       redirect_to repository_specimen_types_url(@repository)

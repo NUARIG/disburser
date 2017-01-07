@@ -36,4 +36,5 @@
             %td.edit
               = link_to 'Edit', edit_repository_url(respository), { class: 'edit_repository_link' }
     = will_paginate @repositories, renderer: FoundationPagination::Rails
-    = link_to 'New Repository', new_repository_url(), { class: 'new_repository_link' }
+    - if policy(Repository).new?
+      = link_to 'New Repository', new_repository_url(), { class: 'new_repository_link' }

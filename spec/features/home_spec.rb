@@ -8,7 +8,7 @@ RSpec.feature 'Repositories', type: :feature do
     visit root_path
   end
 
-  scenario 'Visiting home repositories and sorting', js: true, focus: false do
+  scenario 'Visiting home repositories and sorting', js: true, focus: true do
     match_repository_row(@repository_moomin, 0)
     match_repository_row(@repository_peanuts, 1)
 

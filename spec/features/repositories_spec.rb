@@ -65,6 +65,8 @@ RSpec.feature 'Repositories', type: :feature do
   end
 
   scenario 'Creating a repository', js: true, focus: false  do
+    @harold_user.system_administrator = true
+    @harold_user.save
     click_link('My Repositories')
     click_link('New Repository')
     repository_rorty_institute = {}
@@ -97,6 +99,8 @@ RSpec.feature 'Repositories', type: :feature do
   end
 
   scenario 'Creating a repository with validation', js: true, focus: false  do
+    @harold_user.system_administrator = true
+    @harold_user.save
     click_link('My Repositories')
     click_link('New Repository')
     fill_in 'Name', with: nil

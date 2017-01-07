@@ -9,7 +9,7 @@
           = link_to 'Disburser', root_url
         %li.home.menu-text{ class: active?('active', controller: 'home', action: ['index']) }
           = link_to 'Home', root_url
-        - if user_signed_in? && current_user.repository_administrator?
+        - if user_signed_in? && policy(Repository).index?
           %li.my_repositories.menu-text{ class: active?('active', controller: 'repositories', action: ['index']) }
             = link_to "My Repositories", repositories_url
     .top-bar-right

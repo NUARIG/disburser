@@ -7,7 +7,6 @@
   = render 'repositories/navigation'
   .specimen_types_list
     = form_for @repository, url: bulk_update_repository_specimen_types_url(@repository), html: { class: 'repository_form' } do |f|
-      = hidden_field_tag 'tab', 'specimen_types'
       %table{ id: 'specimen_types' }
         %thead
           %tr

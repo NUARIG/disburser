@@ -4,19 +4,27 @@ class RepositoriesController < ApplicationController
   helper_method :sort_column, :sort_direction
 
   def index
+    authorize Repository
     params[:page]||= 1
     options = {}
     options[:sort_column] = sort_column
     options[:sort_direction] = sort_direction
 
-    @repositories = current_user.repositories.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+    if current_user.system_administrator
+      r = Repository
+    else
+      r = current_user.repositories
+    end
+    @repositories = r.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def new
+    authorize Repository
     @repository = Repository.new()
   end
 
   def create
+    authorize Repository
     @repository = Repository.new(repository_params)
 
     if @repository.save
@@ -32,10 +40,13 @@ class RepositoriesController < ApplicationController
   end
 
   def edit
+    authorize @repository
   end
 
   def update
+    authorize @repository
     if @repository.update_attributes(repository_params)
+      flash[:success] = 'You have successfully updated a repository.'
       redirect_to edit_repository_url(@repository)
     else
       flash.now[:alert] = 'Failed to update repository.'

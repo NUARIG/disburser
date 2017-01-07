@@ -5,6 +5,7 @@ class RepositoryUsersController < ApplicationController
   before_action :load_repository_user, only: [:edit, :update]
 
   def index
+    authorize @repository.repository_users.new
     params[:page]||= 1
     options = {}
     options[:sort_column] = sort_column
@@ -14,6 +15,7 @@ class RepositoryUsersController < ApplicationController
 
   def new
     @repository_user = @repository.repository_users.new
+    authorize @repository_user
     @users = []
     respond_to do |format|
       format.html { render layout: false }
@@ -22,6 +24,7 @@ class RepositoryUsersController < ApplicationController
 
   def create
     @repository_user = @repository.repository_users.new(repository_user_params)
+    authorize @repository_user
     respond_to do |format|
       if @repository_user.save
         format.js { }
@@ -33,15 +36,14 @@ class RepositoryUsersController < ApplicationController
   end
 
   def edit
+    authorize @repository_user
     respond_to do |format|
       format.html { render layout: false }
     end
   end
 
-  def show
-  end
-
   def update
+    authorize @repository_user
     respond_to do |format|
       if @repository_user.update_attributes(repository_user_params)
         format.js { }
@@ -53,7 +55,7 @@ class RepositoryUsersController < ApplicationController
 
   private
     def repository_user_params
-      params.require(:repository_user).permit(:username, :administrator, :committee, :specimen_resource, :data_resource)
+      params.require(:repository_user).permit(:repository_id, :username, :administrator, :committee, :specimen_resource, :data_resource)
     end
 
     def load_repository
