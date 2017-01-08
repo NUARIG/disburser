@@ -115,6 +115,11 @@
 #repository {
   @include grid-row();
 
+  .new_request {
+    text-align: right;
+    margin-bottom: 1rem;
+  }
+
   .specimen_content_header, .data_content_header {
     background-color: $primary-color;
     color: black;

@@ -3,7 +3,9 @@
 #repository
   %h2
     = "Repository: #{@repository.name}"
-
+  .row
+    .new_request{ class: 'small-offset-12 small-12 columns' }
+      = link_to 'Make a request!', new_repository_disburser_request_url(@repository), { class: 'new_repository_request_link' }
   .row
     .specimen_content_header{ class: 'small-11 columns' }
       %b

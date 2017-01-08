@@ -12,6 +12,10 @@
         - if user_signed_in? && policy(Repository).index?
           %li.my_repositories.menu-text{ class: active?('active', controller: 'repositories', action: ['index']) }
             = link_to "My Repositories", repositories_url
+        - if user_signed_in?
+          %li.my_requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: ['index']) }
+            = link_to "My Requests", disburser_requests_url
+
     .top-bar-right
       %ul.menu
         - if user_signed_in?

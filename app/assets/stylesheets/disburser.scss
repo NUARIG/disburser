@@ -1,7 +1,16 @@
 .field_with_errors {
   border-style: solid;
   border-color: $alert-color;
+
+  input {
+    margin-bottom: 0rem;
+  }
+
 }
+.error {
+  display: inline;
+}
+
 
 .notice {
   background-color: #b0a2c5;

@@ -1,0 +1,36 @@
+- content_for(:title) do
+  Requests
+
+#disburser_requests
+  .disburser_requests_header
+    %h2
+      Requests
+    = form_tag disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
+      .search_box
+        = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
+      .search_buttons
+        %button{ type: 'submit', id: 'search_disburser_requests_button', class: 'tiny button' }
+          Search
+        = link_to 'Clear', disburser_requests_url(mine: params[:mine])
+  .disburser_requests_list
+    = will_paginate @disburser_requests, renderer: FoundationPagination::Rails
+    %table
+      %thead
+        %tr
+          %th.name{ width: 200 }
+            = sortable 'title'
+          %th.specimens{ width: 200 }
+            = sortable 'specimens'
+          %th.edit{ width: 100 }
+      %tbody
+        - @disburser_requests.each do |disburser_request|
+          = content_tag_for(:tr, disburser_request) do
+            %td.title
+              = disburser_request.title
+            %td.specimens
+              = disburser_request.specimens
+            %td.edit
+              = link_to 'Edit', edit_repository_disburser_request_url(disburser_request.repository,  disburser_request), { class: 'edit_repository_link' }
+    = will_paginate @disburser_requests, renderer: FoundationPagination::Rails
+    / - if policy(Repository).new?
+    /   = link_to 'New Repository', new_repository_url(), { class: 'new_repository_link' }

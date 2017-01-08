@@ -1,0 +1,99 @@
+.row
+  .submitter{class: 'small-12 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'request_submitter' }
+        Submitter
+    %div{class: 'small-12 large-19 columns' }
+      = @disburser_request.submitter.full_name
+  .investigator{class: 'small-12 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'request_investigator' }
+        Investigator
+        %span{ class: 'required' }
+          *
+    %div{class: 'small-12 large-19 columns' }
+      = f.text_field :investigator
+      - if validation_errors?(@disburser_request, :investigator)
+        %p.error= format_validation_errors(@disburser_request, :investigator)
+.row
+  .title{class: 'small-12 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'request_title' }
+        Title
+        %span{ class: 'required' }
+          *
+    %div{class: 'small-12 large-19 columns' }
+      = f.text_field :title
+      - if validation_errors?(@disburser_request, :title)
+        %p.error= format_validation_errors(@disburser_request, :title)
+  .irb_number{class: 'small-12 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'request_irb_number' }
+        IRB Number
+        %span{ class: 'required' }
+          *
+    %div{class: 'small-12 large-19 columns' }
+      = f.text_field :irb_number
+      - if validation_errors?(@disburser_request, :irb_number)
+        %p.error= format_validation_errors(@disburser_request, :irb_number)
+.row
+  .title{class: 'small-12 columns' }
+    %fieldset.large-12.columns
+      = f.check_box :specimens
+      %label{for: 'disburser_request_specimens'} Specimens?
+      = f.check_box :feasibility
+      %label{for: 'disburser_request_feasibility'} Feasibility?
+  .methods_justifications{class: 'small-12 columns' }
+    %div{class: 'small-8 large-12 columns' }
+      %label{for: 'request_methods_justifications' }
+        Methods/Justifications
+        %span{ class: 'required' }
+          *
+    %div{class: 'small-16 large-12 columns' }
+      %div
+        - if @disburser_request.methods_justifications? && !@disburser_request.new_record?
+          = link_to download_file_repository_disburser_request_url(@disburser_request, file_type: 'methods_justifications'), 'data-turbolinks' => false, class: 'methods_justifications_url' do
+            %i
+            = @disburser_request.methods_justifications.file.filename
+        - if @disburser_request.methods_justifications? && @disburser_request.new_record?
+          = link_to @disburser_request.methods_justifications.identifier, "#{@disburser_request.methods_justifications.url}",  class: 'methods_justifications_url'
+        = f.file_field :methods_justifications, class: "#{@disburser_request.methods_justifications? ? 'hide' : '' }"
+        = f.hidden_field :methods_justifications_cache, value: @disburser_request.methods_justifications
+        = link_to 'Remove', '', 'data-turbolinks' => false,  class: "alert button tiny remove_methods_justifications_link #{@disburser_request.methods_justifications? ? '' : 'hide' }"
+        - if validation_errors?(@disburser_request, :methods_justifications)
+          %p.error= format_validation_errors(@disburser_request, :methods_justifications)
+.row
+  .cohort_criteria{class: 'small-24 columns' }
+    %label{for: 'request_cohort_criteria' }
+      Cohort Criteria
+      %span{ class: 'required' }
+        *
+    = f.text_area :cohort_criteria, rows: 2
+    - if validation_errors?(@disburser_request, :cohort_criteria)
+      %p.error= format_validation_errors(@disburser_request, :cohort_criteria)
+.row
+  .data_for_cohort{class: 'small-24 columns' }
+    %label{for: 'request_data_for_cohort' }
+      Data for cohort
+      %span{ class: 'required' }
+        *
+    = f.text_area :data_for_cohort, rows: 2
+    - if validation_errors?(@disburser_request, :data_for_cohort)
+      %p.error= format_validation_errors(@disburser_request, :data_for_cohort)
+.row
+  .disburser_request_details{class: 'small-24 columns' }
+    %table{ id: 'disburser_request_details' }
+      %thead
+        %tr
+          %th.quantity{ width: 200 }
+            Quantity
+          %th.volume{ width: 200 }
+            Volume
+          %th.comments{ width: 200 }
+            Comments
+          %th.remove{ width: 100 }
+      %tbody
+        = f.fields_for :disburser_request_details do |disburser_request_detail|
+          = render 'disburser_request_details/disburser_request_detail_fields', f: disburser_request_detail
+    .links
+      = link_to_add_association 'Add', f, :disburser_request_details, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#disburser_request_details tbody', partial: 'disburser_request_details/disburser_request_detail_fields', class: 'button tiny primary'

@@ -4,6 +4,7 @@ class Repository < ApplicationRecord
   accepts_nested_attributes_for :repository_users, reject_if: :all_blank, allow_destroy: true
   has_many :specimen_types, -> { order(:name) }
   accepts_nested_attributes_for :specimen_types, reject_if: :all_blank, allow_destroy: true
+  has_many :disburser_requests
 
   mount_uploader :irb_template, IrbTemplateUploader
   mount_uploader :data_dictionary, DataDictionaryUploader

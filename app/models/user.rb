@@ -1,9 +1,11 @@
 require './lib/ldap'
 
-class User < ApplicationRecord
+# class User < ApplicationRecord
+class User < ActiveRecord::Base
   devise :ldap_authenticatable, :trackable, :timeoutable
   has_many :repository_users
   has_many :repositories, through: :repository_users
+  has_many :disburser_requests, class_name: 'DiburserRequest', foreign_key: :submitter_id
 
   #Class Methods
   def self.search_ldap(search_token, repository = nil)
@@ -56,5 +58,9 @@ class User < ApplicationRecord
 
   def repository_administrator?
     repository_users.any? { |repository_user| repository_user.administrator }
+  end
+
+  def full_name
+    [first_name.titleize, last_name.titleize].reject { |n| n.nil? or n.blank? }.join(' ')
   end
 end

@@ -1,0 +1,11 @@
+%tr{ class: 'nested-fields disburser_request_detail' }
+  %td.field.quantity
+    = f.number_field :quantity
+    - if validation_errors?(f.object, :quantity)
+      %p.error= format_validation_errors(f.object, :quantity)
+  %td.field.volume
+    = f.text_field :volume
+  %td.field.comments
+    = f.text_area :comments, rows: 2
+  %td.remove
+    = link_to_remove_association 'Remove', f, class: 'button tiny alert'

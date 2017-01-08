@@ -1,0 +1,14 @@
+- content_for(:title) do
+  Request
+#disburser_request
+  %h2
+    = "Request for: #{@disburser_request.repository.name}"
+  = form_for [@repository, @disburser_request], html: { class: 'disburser_request_form', multipart: true  } do |f|
+    = render 'disburser_request', repository: @repository, f: f
+    .navigation{class: 'small-offset-12 small-12 large-offset-20 large-4 columns' }
+      %p.help-text
+        %span{ class: 'required' }
+          *
+        Indicates required field
+      = f.submit 'Save', class: 'button'
+      = link_to 'Cancel', disburser_requests_url, class: 'cancel-link button warning'
