@@ -12,10 +12,10 @@ class RepositoryPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.system_administrator || record.repository_administator?(user)
+    user.system_administrator || record.repository_administrator?(user)
   end
 
   def update?
-    user.system_administrator || record.repository_administator?(user)
+    user.system_administrator || record.repository_administrator?(user)
   end
 end

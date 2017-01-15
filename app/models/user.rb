@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   devise :ldap_authenticatable, :trackable, :timeoutable
   has_many :repository_users
   has_many :repositories, through: :repository_users
-  has_many :disburser_requests, class_name: 'DiburserRequest', foreign_key: :submitter_id
+  has_many :disburser_requests, foreign_key: :submitter_id
 
   #Class Methods
   def self.search_ldap(search_token, repository = nil)
@@ -56,11 +56,27 @@ class User < ActiveRecord::Base
     end
   end
 
+  def admin?
+    self.system_administrator || repository_administrator?
+  end
+
   def repository_administrator?
     repository_users.any? { |repository_user| repository_user.administrator }
   end
 
   def full_name
     [first_name.titleize, last_name.titleize].reject { |n| n.nil? or n.blank? }.join(' ')
+  end
+
+  def after_ldap_authentication
+    hydrate_from_ldap
+  end
+
+  def admin_disbursr_requests
+    if self.system_administrator
+      DisburserRequest
+    else
+      DisburserRequest.where(repository_id: repository_users.where('administrator = ?', true).map(&:repository_id))
+    end
   end
 end

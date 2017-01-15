@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  resources :disburser_requests, only: :index, path: 'requests'
+  resources :disburser_requests, only: :index, path: 'requests' do
+    collection do
+      get :admin
+      get :committee
+    end
+  end
+
   resources :repositories do
     resources :repository_users
     resources :disburser_requests, except: :index, path: 'requests' do

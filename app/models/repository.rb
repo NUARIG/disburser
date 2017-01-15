@@ -31,7 +31,7 @@ class Repository < ApplicationRecord
     s
   end
 
-  def repository_administator?(user)
-    repository_users.where(administrator: true, user_id: user.id).any?
+  def repository_administrator?(user)
+    repository_users.where(user_id: user.id, administrator: true).any?
   end
 end

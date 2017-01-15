@@ -67,4 +67,9 @@ RSpec.describe User, type: :model do
     harold_user = User.where(username: 'hbaines').first
     expect(harold_user.repository_administrator?).to be_falsy
   end
+
+  it "can present a user's full name", focus: false do
+    user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
+    expect(user.full_name).to eq('Moomintroll Moomin')
+  end
 end

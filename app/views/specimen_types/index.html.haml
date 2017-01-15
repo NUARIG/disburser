@@ -19,8 +19,8 @@
           = f.fields_for :specimen_types, include_id: false do |specimen_type|
             = render 'specimen_types/specimen_type_fields', f: specimen_type
       .links
-        = link_to_add_association 'Add', f, :specimen_types, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#specimen_types tbody', partial: 'specimen_types/specimen_type_fields'
-      .navigation
+        = link_to_add_association 'Add', f, :specimen_types, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#specimen_types tbody', partial: 'specimen_types/specimen_type_fields', class: 'button tiny primary'
+      .navigation{class: 'small-offset-12 small-12 large-offset-20 large-4 columns' }
         %p.help-text
           %span{ class: 'required' }
             *

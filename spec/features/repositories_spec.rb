@@ -1,73 +1,73 @@
 require 'rails_helper'
 RSpec.feature 'Repositories', type: :feature do
   before(:each) do
-    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
-    @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', data: false, specimens: true)
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
+    @peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts', data: false, specimens: true)
     @repository_bossy_bear = FactoryGirl.create(:repository, name: 'Bossy Bear', data: false, specimens: true)
     @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
-    @repository_moomin.repository_users.build(username: 'hbaines', administrator: true)
-    @repository_moomin.save!
-    @repository_peanuts.repository_users.build(username: 'hbaines', administrator: true)
-    @repository_peanuts.save!
+    @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
+    @moomin_repository.save!
+    @peanuts_repository.repository_users.build(username: 'hbaines', administrator: true)
+    @peanuts_repository.save!
     @harold_user = User.where(username: 'hbaines').first
     login_as(@harold_user, scope: :user)
     visit root_path
   end
 
-  scenario 'Not seeing a list of my repositories', js: true, focus: false do
+  scenario 'Not seeing a list of Repositories', js: true, focus: false do
     @paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com', administator: false,  committee: false, specimen_resource: false, data_resource: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@paul)
-    @repository_moomin.repository_users.build(username: 'hbaines', administrator: false, committee: true)
-    @repository_moomin.save!
+    @moomin_repository.repository_users.build(username: 'hbaines', administrator: false, committee: true)
+    @moomin_repository.save!
     @paul_user = User.where(username: 'pkonerko').first
     click_link('Log out')
     login_as(@paul_user, scope: :user)
     visit root_path
-    expect(page).to_not have_css('.menu li.my_repositories')
+    expect(page).to_not have_css('.menu li.repositories')
   end
 
   scenario 'Visiting repositories and sorting', js: true, focus: false do
-    click_link('My Repositories')
+    click_link('Repositories')
     not_match_repository(@repository_bossy_bear)
-    match_repository_row(@repository_moomin, 0)
-    match_repository_row(@repository_peanuts, 1)
+    match_repository_row(@moomin_repository, 0)
+    match_repository_row(@peanuts_repository, 1)
 
     click_link('Name')
     sleep(1)
-    match_repository_row(@repository_peanuts, 0)
-    match_repository_row(@repository_moomin, 1)
+    match_repository_row(@peanuts_repository, 0)
+    match_repository_row(@moomin_repository, 1)
 
     click_link('Name')
     sleep(1)
-    match_repository_row(@repository_moomin, 0)
-    match_repository_row(@repository_peanuts, 1)
+    match_repository_row(@moomin_repository, 0)
+    match_repository_row(@peanuts_repository, 1)
 
     click_link('Data')
     sleep(1)
-    match_repository_row(@repository_peanuts, 0)
-    match_repository_row(@repository_moomin, 1)
+    match_repository_row(@peanuts_repository, 0)
+    match_repository_row(@moomin_repository, 1)
 
     click_link('Data')
     sleep(1)
-    match_repository_row(@repository_moomin, 0)
-    match_repository_row(@repository_peanuts, 1)
+    match_repository_row(@moomin_repository, 0)
+    match_repository_row(@peanuts_repository, 1)
 
     click_link('Specimens')
     sleep(1)
-    match_repository_row(@repository_moomin, 0)
-    match_repository_row(@repository_peanuts, 1)
+    match_repository_row(@moomin_repository, 0)
+    match_repository_row(@peanuts_repository, 1)
 
     click_link('Specimens')
     sleep(1)
-    match_repository_row(@repository_peanuts, 0)
-    match_repository_row(@repository_moomin, 1)
+    match_repository_row(@peanuts_repository, 0)
+    match_repository_row(@moomin_repository, 1)
   end
 
   scenario 'Creating a repository', js: true, focus: false  do
     @harold_user.system_administrator = true
     @harold_user.save
-    click_link('My Repositories')
+    click_link('Repositories')
     click_link('New Repository')
     repository_rorty_institute = {}
     repository_rorty_institute[:name] = 'Rorty Institute'
@@ -101,7 +101,7 @@ RSpec.feature 'Repositories', type: :feature do
   scenario 'Creating a repository with validation', js: true, focus: false  do
     @harold_user.system_administrator = true
     @harold_user.save
-    click_link('My Repositories')
+    click_link('Repositories')
     click_link('New Repository')
     fill_in 'Name', with: nil
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
@@ -128,13 +128,13 @@ RSpec.feature 'Repositories', type: :feature do
   end
 
   scenario 'Editing a repository', js: true, focus: false do
-    click_link('My Repositories')
+    click_link('Repositories')
     within(".repository:nth-of-type(1)") do
       click_link('Edit')
     end
 
     expect(page).to have_css('.menu li.repository.active')
-    expect(page.has_field?('Name', with: @repository_moomin.name)).to be_truthy
+    expect(page.has_field?('Name', with: @moomin_repository.name)).to be_truthy
     expect(page.has_checked_field?('Data?')).to be_truthy
     expect(page.has_unchecked_field?('Specimens?')).to be_truthy
 
@@ -217,7 +217,7 @@ RSpec.feature 'Repositories', type: :feature do
     match_repository_user_row(@harold_user, 0)
     match_repository_user_row(repository_user, 1)
 
-    repository_user = @repository_moomin.repository_users.joins(:user).where('users.username = ?', repository_user[:username]).first
+    repository_user = @moomin_repository.repository_users.joins(:user).where('users.username = ?', repository_user[:username]).first
     within("#repository_user_#{repository_user.id}") do
       click_link('Edit')
     end
@@ -284,7 +284,7 @@ RSpec.feature 'Repositories', type: :feature do
   end
 
   scenario 'Editing a repository with validation', js: true, focus: false do
-    click_link('My Repositories')
+    click_link('Repositories')
     within(".repository:nth-of-type(1)") do
       click_link('Edit')
     end
@@ -344,7 +344,6 @@ RSpec.feature 'Repositories', type: :feature do
     sleep(1)
     click_link('Add')
     click_button('Save')
-
 
     expect(page).to have_css('.specimen_type:nth-of-type(1) .name .field_with_errors')
 

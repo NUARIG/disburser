@@ -10,16 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170108003049) do
+ActiveRecord::Schema.define(version: 20170110214353) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "disburser_request_details", force: :cascade do |t|
     t.integer  "disburser_request_id", null: false
+    t.integer  "specimen_type_id",     null: false
     t.integer  "quantity",             null: false
     t.string   "volume"
     t.text     "comments"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  create_table "disburser_request_statuses", force: :cascade do |t|
+    t.integer  "disburser_request_id", null: false
+    t.string   "status",               null: false
+    t.string   "username",             null: false
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
@@ -32,21 +41,12 @@ ActiveRecord::Schema.define(version: 20170108003049) do
     t.string   "irb_number",             null: false
     t.boolean  "specimens"
     t.boolean  "feasibility"
-    t.text     "methods_justifications"
+    t.text     "methods_justifications", null: false
     t.text     "cohort_criteria",        null: false
     t.text     "data_for_cohort",        null: false
-    t.string   "data_status",            null: false
-    t.string   "specimens_status"
     t.string   "status",                 null: false
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
-  end
-
-  create_table "peanuts", force: :cascade do |t|
-    t.integer  "disburser_request_id", null: false
-    t.string   "name",                 null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
   end
 
   create_table "repositories", force: :cascade do |t|
@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 20170108003049) do
     t.string   "last_name"
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
-    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["email"], name: "index_users_on_email", using: :btree
     t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
   end
 

@@ -7,7 +7,7 @@
   = render 'repositories/navigation'
   = form_for @repository, html: { class: 'repository_form', multipart: true } do |f|
     = render 'repository', repository: @repository, f: f
-    .navigation
+    .navigation{class: 'small-offset-12 small-12 large-offset-20 large-4 columns' }
       %p.help-text
         %span{ class: 'required' }
           *

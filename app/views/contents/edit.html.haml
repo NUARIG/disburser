@@ -17,10 +17,6 @@
           Specimen Content
         = f.cktext_area :specimen_content
 
-    .navigation
-      %p.help-text
-        %span{ class: 'required' }
-          *
-        Indicates required field
+    .navigation{class: 'small-offset-12 small-12 large-offset-20 large-4 columns' }
       = f.submit 'Save', class: 'button'
       = link_to 'Cancel', repositories_url, class: 'cancel-link button warning'

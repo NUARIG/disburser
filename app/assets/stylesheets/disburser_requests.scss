@@ -70,4 +70,21 @@
     margin-top: 1rem;
     margin-left: 1rem;
   }
+  .submitter {
+    margin-bottom: 1rem;
+  }
+
+  .current_status {
+    label {
+      font-weight: bold;
+      display: inline;
+    }
+  }
+
+  .status {
+    label {
+      display: inline;
+    }
+    margin-bottom: 1rem;
+  }
 }

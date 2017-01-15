@@ -1,13 +1,14 @@
 .row
-  .submitter{class: 'small-12 columns' }
+  .submitter{class: 'small-24 columns' }
     %div{class: 'small-12 large-5 columns' }
-      %label{for: 'request_submitter' }
+      %label{for: 'disburser_request_submitter' }
         Submitter
     %div{class: 'small-12 large-19 columns' }
       = @disburser_request.submitter.full_name
-  .investigator{class: 'small-12 columns' }
+.row
+  .investigator{class: 'small-24 columns' }
     %div{class: 'small-12 large-5 columns' }
-      %label{for: 'request_investigator' }
+      %label{for: 'disburser_request_investigator' }
         Investigator
         %span{ class: 'required' }
           *
@@ -16,9 +17,9 @@
       - if validation_errors?(@disburser_request, :investigator)
         %p.error= format_validation_errors(@disburser_request, :investigator)
 .row
-  .title{class: 'small-12 columns' }
+  .title{class: 'small-24 columns' }
     %div{class: 'small-12 large-5 columns' }
-      %label{for: 'request_title' }
+      %label{for: 'disburser_request_title' }
         Title
         %span{ class: 'required' }
           *
@@ -26,9 +27,10 @@
       = f.text_field :title
       - if validation_errors?(@disburser_request, :title)
         %p.error= format_validation_errors(@disburser_request, :title)
-  .irb_number{class: 'small-12 columns' }
+.row
+  .irb_number{class: 'small-24 columns' }
     %div{class: 'small-12 large-5 columns' }
-      %label{for: 'request_irb_number' }
+      %label{for: 'disburser_request_irb_number' }
         IRB Number
         %span{ class: 'required' }
           *
@@ -37,19 +39,19 @@
       - if validation_errors?(@disburser_request, :irb_number)
         %p.error= format_validation_errors(@disburser_request, :irb_number)
 .row
-  .title{class: 'small-12 columns' }
-    %fieldset.large-12.columns
-      = f.check_box :specimens
-      %label{for: 'disburser_request_specimens'} Specimens?
-      = f.check_box :feasibility
-      %label{for: 'disburser_request_feasibility'} Feasibility?
-  .methods_justifications{class: 'small-12 columns' }
-    %div{class: 'small-8 large-12 columns' }
-      %label{for: 'request_methods_justifications' }
+  %fieldset{class: 'small-offset-5 small-19 columns' }
+    = f.check_box :specimens
+    %label{for: 'disburser_request_specimens'} Specimens?
+    = f.check_box :feasibility
+    %label{for: 'disburser_request_feasibility'} Feasibility?
+.row
+  .methods_justifications{class: 'small-24 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'disburser_request_methods_justifications' }
         Methods/Justifications
         %span{ class: 'required' }
           *
-    %div{class: 'small-16 large-12 columns' }
+    %div{class: 'small-12 large-19 columns' }
       %div
         - if @disburser_request.methods_justifications? && !@disburser_request.new_record?
           = link_to download_file_repository_disburser_request_url(@disburser_request, file_type: 'methods_justifications'), 'data-turbolinks' => false, class: 'methods_justifications_url' do
@@ -58,13 +60,16 @@
         - if @disburser_request.methods_justifications? && @disburser_request.new_record?
           = link_to @disburser_request.methods_justifications.identifier, "#{@disburser_request.methods_justifications.url}",  class: 'methods_justifications_url'
         = f.file_field :methods_justifications, class: "#{@disburser_request.methods_justifications? ? 'hide' : '' }"
-        = f.hidden_field :methods_justifications_cache, value: @disburser_request.methods_justifications
+        - if @disburser_request.methods_justifications_cache
+          = f.hidden_field :methods_justifications_cache, value: @disburser_request.methods_justifications_cache
+        - else
+          = f.hidden_field :methods_justifications_cache, value: @disburser_request.methods_justifications
         = link_to 'Remove', '', 'data-turbolinks' => false,  class: "alert button tiny remove_methods_justifications_link #{@disburser_request.methods_justifications? ? '' : 'hide' }"
         - if validation_errors?(@disburser_request, :methods_justifications)
           %p.error= format_validation_errors(@disburser_request, :methods_justifications)
 .row
   .cohort_criteria{class: 'small-24 columns' }
-    %label{for: 'request_cohort_criteria' }
+    %label{for: 'disburser_request_cohort_criteria' }
       Cohort Criteria
       %span{ class: 'required' }
         *
@@ -73,7 +78,7 @@
       %p.error= format_validation_errors(@disburser_request, :cohort_criteria)
 .row
   .data_for_cohort{class: 'small-24 columns' }
-    %label{for: 'request_data_for_cohort' }
+    %label{for: 'disburser_request_data_for_cohort' }
       Data for cohort
       %span{ class: 'required' }
         *
@@ -85,6 +90,8 @@
     %table{ id: 'disburser_request_details' }
       %thead
         %tr
+          %th.specimen_type{ width: 200 }
+            Type
           %th.quantity{ width: 200 }
             Quantity
           %th.volume{ width: 200 }
@@ -97,3 +104,11 @@
           = render 'disburser_request_details/disburser_request_detail_fields', f: disburser_request_detail
     .links
       = link_to_add_association 'Add', f, :disburser_request_details, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#disburser_request_details tbody', partial: 'disburser_request_details/disburser_request_detail_fields', class: 'button tiny primary'
+.row
+  .status{ class: 'small-offset-8 small-16 large-offset-19 large-5 columns' }
+    = field_set_tag 'Status' do
+      - if @disburser_request.draft?
+        = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, true)
+        = f.label :status, 'Draft', value: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
+      = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, true)
+      = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED

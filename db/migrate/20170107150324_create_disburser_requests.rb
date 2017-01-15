@@ -11,8 +11,6 @@ class CreateDisburserRequests < ActiveRecord::Migration[5.0]
       t.text      :methods_justifications,          null: false
       t.text      :cohort_criteria,                 null: false
       t.text      :data_for_cohort,                 null: false
-      t.string    :data_status,                     null: false
-      t.string    :specimens_status,                null: true
       t.string    :status,                          null: false
       t.timestamps                                  null: false
     end

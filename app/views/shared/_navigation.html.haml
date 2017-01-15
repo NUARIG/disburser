@@ -7,22 +7,26 @@
       %ul.dropdown.menu{"data-dropdown-menu" => ""}
         %li.disburser.menu-text
           = link_to 'Disburser', root_url
-        %li.home.menu-text{ class: active?('active', controller: 'home', action: ['index']) }
+        %li.home.menu-text
           = link_to 'Home', root_url
-        - if user_signed_in? && policy(Repository).index?
-          %li.my_repositories.menu-text{ class: active?('active', controller: 'repositories', action: ['index']) }
-            = link_to "My Repositories", repositories_url
         - if user_signed_in?
-          %li.my_requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: ['index']) }
-            = link_to "My Requests", disburser_requests_url
-
+          - if policy(Repository).index?
+            %li.repositories.menu-text{ class: active?('active', controller: 'repositories', action: 'index') }
+              = link_to "Repositories", repositories_url
+          - if policy(DisburserRequest).index?
+            %li.requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'index') }
+              = link_to "Requests", disburser_requests_url
+          - if policy(DisburserRequest).admin?
+            %li.admin_requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'admin') }
+              = link_to "Requests Admin", admin_disburser_requests_url
     .top-bar-right
       %ul.menu
         - if user_signed_in?
-          %li.profile.menu-text{ class: active?('active', controller: 'users', action: ['show']) }
+          %li.profile.menu-text{ class: active?('active', controller: 'users', action: 'show', id: current_user.id) }
             = link_to "Profile (#{current_user.username})", user_url(current_user)
         - else
-          %li.login.menu-text{ class: active?('active', controller: 'sessions', action: ['new']) }
+          %li.login.menu-text
+          %li.login.menu-text{ class: active?('active', controller: 'devise/sessions', action: 'new') }
             = link_to 'Login', new_user_session_url
         %li.log_out.menu-text
           - if user_signed_in?
