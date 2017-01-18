@@ -29,10 +29,10 @@
           = sortable 'repository_users.administrator', 'Administrator?'
         %th.committee{ width: 200 }
           = sortable 'repository_users.committee', 'Committee?'
-        %th.specimen_resource{ width: 200 }
-          = sortable 'repository_users.specimen_resource', 'Specimen?'
-        %th.data_resource{ width: 200 }
-          = sortable 'repository_users.data_resource', 'Data?'
+        %th.specimen_coordinator{ width: 200 }
+          = sortable 'repository_users.specimen_coordinator', 'Specimen Coordinator?'
+        %th.data_coordinator{ width: 200 }
+          = sortable 'repository_users.data_coordinator', 'Data Coordinator?'
         %th.edit
         - @repository_users.each do |respository_user|
           = content_tag_for(:tr, respository_user) do
@@ -48,10 +48,10 @@
               = respository_user.administrator
             %td.committee
               = respository_user.committee
-            %td.specimen_resource
-              = respository_user.specimen_resource
-            %td.data_resource
-              = respository_user.data_resource
+            %td.specimen_coordinator
+              = respository_user.specimen_coordinator
+            %td.data_coordinator
+              = respository_user.data_coordinator
             %td.edit
               = link_to 'Edit', edit_repository_repository_user_url(@repository, respository_user), { class: 'repository_user_link' }
     = will_paginate @repository_users, renderer: FoundationPagination::Rails

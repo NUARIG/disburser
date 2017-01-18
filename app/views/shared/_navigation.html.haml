@@ -17,8 +17,11 @@
             %li.requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'index') }
               = link_to "Requests", disburser_requests_url
           - if policy(DisburserRequest).admin?
-            %li.admin_requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'admin') }
-              = link_to "Requests Admin", admin_disburser_requests_url
+            %li.admin.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'admin') }
+              = link_to 'Admin', admin_disburser_requests_url
+          - if policy(DisburserRequest).coordinator?
+            %li.coordinator.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'coordinator') }
+              = link_to 'Coordinator', coordinator_disburser_requests_url
     .top-bar-right
       %ul.menu
         - if user_signed_in?

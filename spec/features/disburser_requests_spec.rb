@@ -7,7 +7,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     @moomin_repository.specimen_types.build(name: @specimen_type_blood, volume: true)
     @moomin_repository.specimen_types.build(name: @specimen_type_tissue, volume: false)
     @moomin_repository.save!
-    @repository_white_sox = FactoryGirl.create(:repository, name: 'Peanuts', data: false, specimens: true)
+    @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox', data: false, specimens: true)
     @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
     @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
   end
@@ -15,8 +15,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
   describe 'Seeing a list of disburser reqeusts' do
     before(:each) do
       @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Groke research', investigator: 'Groke', irb_number: '123', cohort_criteria: 'Groke cohort criteria', data_for_cohort: 'Groke data for cohort', specimens: false)
-      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort', specimens: true)
-      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @repository_white_sox, submitter: @paul_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '789', cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort', specimens: true)
+      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort', specimens: false)
+      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'Sox baseball research', investigator: 'Nellie Fox', irb_number: '789', cohort_criteria: 'Sox cohort criteria', data_for_cohort: 'Sox data for cohort', specimens: true)
+      @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort', specimens: true)
     end
 
     scenario 'As a regular user and sorting', js: true, focus: false do
@@ -28,50 +29,72 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       visit disburser_requests_path
 
-      expect(all('.disburser_request').size).to eq(2)
+      expect(all('.disburser_request').size).to eq(3)
       not_match_disburser_request(@disburser_request_3)
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_4, 2)
 
       click_link('Title')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 1)
-      match_disburser_request_row(@disburser_request_2, 0)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_1, 2)
+
 
       click_link('Title')
       sleep(1)
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_4, 2)
 
       click_link('Investigator')
       sleep(1)
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_4, 2)
 
       click_link('Investigator')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 1)
-      match_disburser_request_row(@disburser_request_2, 0)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_1, 2)
 
       click_link('IRB Number')
       sleep(1)
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_4, 2)
 
       click_link('IRB Number')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 1)
-      match_disburser_request_row(@disburser_request_2, 0)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_1, 2)
 
       click_link('Specimens')
       sleep(1)
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_4, 2)
 
       click_link('Specimens')
       sleep(1)
+      match_disburser_request_row(@disburser_request_4, 0)
       match_disburser_request_row(@disburser_request_1, 1)
-      match_disburser_request_row(@disburser_request_2, 0)
+      match_disburser_request_row(@disburser_request_2, 2)
+
+      click_link('Repository')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_4, 2)
+
+      click_link('Repository')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_1, 1)
+      match_disburser_request_row(@disburser_request_2, 2)
     end
 
     scenario 'As a system administrator and sorting', js: true, focus: false do
@@ -80,38 +103,43 @@ RSpec.feature 'Disburser Requests', type: :feature do
       login_as(@moomintroll_user, scope: :user)
       visit root_path
       expect(page).to_not have_selector('.menu li.requests', visible: true)
-      expect(page).to have_selector('.menu li.admin_requests', visible: true)
+      expect(page).to have_selector('.menu li.admin', visible: true)
       visit admin_disburser_requests_path
 
-      expect(all('.disburser_request').size).to eq(3)
+      expect(all('.disburser_request').size).to eq(4)
 
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
       match_disburser_request_row(@disburser_request_3, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
 
       click_link('Title')
       sleep(1)
-      match_disburser_request_row(@disburser_request_3, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_1, 2)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+      match_disburser_request_row(@disburser_request_2, 2)
+      match_disburser_request_row(@disburser_request_1, 3)
 
       click_link('Title')
       sleep(1)
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
       match_disburser_request_row(@disburser_request_3, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
 
       click_link('Investigator')
       sleep(1)
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
       match_disburser_request_row(@disburser_request_3, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
 
       click_link('Investigator')
       sleep(1)
-      match_disburser_request_row(@disburser_request_3, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_1, 2)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+      match_disburser_request_row(@disburser_request_2, 2)
+      match_disburser_request_row(@disburser_request_1, 3)
 
 
       click_link('IRB Number')
@@ -119,44 +147,48 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
       match_disburser_request_row(@disburser_request_3, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
 
       click_link('IRB Number')
       sleep(1)
-      match_disburser_request_row(@disburser_request_3, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_1, 2)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+      match_disburser_request_row(@disburser_request_2, 2)
+      match_disburser_request_row(@disburser_request_1, 3)
 
-      # click_link('Specimens')
-      # sleep(1)
-      # match_disburser_request_row(@disburser_request_1, 0)
-      # match_disburser_request_row(@disburser_request_2, 1)
-      # match_disburser_request_row(@disburser_request_3, 2)
-      #
-      #
-      # click_link('Specimens')
-      # sleep(1)
-      # match_disburser_request_row(@disburser_request_2, 0)
-      # match_disburser_request_row(@disburser_request_3, 1)
-      # match_disburser_request_row(@disburser_request_1, 2)
+      click_link('Specimens')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_3, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
+
+      click_link('Specimens')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_3, 0)
+      match_disburser_request_row(@disburser_request_4, 1)
+      match_disburser_request_row(@disburser_request_1, 2)
+      match_disburser_request_row(@disburser_request_2, 3)
     end
 
     scenario 'As a repository administrator and sorting', js: true, focus: false do
-      @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @repository_white_sox, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Wood z', irb_number: '999', cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort', specimens: true)
-      @harold= { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Wood z', irb_number: '999', cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort', specimens: true)
+      @harold= { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
-      @repository_white_sox.repository_users.build(username: 'hbaines', administrator: true)
-      @repository_white_sox.save!
+      @white_sox_repository.repository_users.build(username: 'hbaines', administrator: true)
+      @white_sox_repository.save!
       @harold_user = User.where(username: 'hbaines').first
 
       login_as(@harold_user, scope: :user)
       visit root_path
       expect(page).to_not have_selector('.menu li.requests', visible: true)
-      expect(page).to have_selector('.menu li.admin_requests', visible: true)
+      expect(page).to have_selector('.menu li.admin', visible: true)
       visit admin_disburser_requests_path
-      expect(all('.disburser_request').size).to eq(2)
+      expect(all('.disburser_request').size).to eq(3)
 
       match_disburser_request_row(@disburser_request_3, 0)
       match_disburser_request_row(@disburser_request_4, 1)
+      match_disburser_request_row(@disburser_request_5, 2)
     end
   end
 

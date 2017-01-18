@@ -4,7 +4,7 @@ RSpec.feature 'Repositories', type: :feature do
     @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
     @peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts', data: false, specimens: true)
     @repository_bossy_bear = FactoryGirl.create(:repository, name: 'Bossy Bear', data: false, specimens: true)
-    @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+    @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
     @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
     @moomin_repository.save!
@@ -16,7 +16,7 @@ RSpec.feature 'Repositories', type: :feature do
   end
 
   scenario 'Not seeing a list of Repositories', js: true, focus: false do
-    @paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com', administator: false,  committee: false, specimen_resource: false, data_resource: false }
+    @paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com', administator: false,  committee: false, specimen_coordinator: false, data_coordinator: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@paul)
     @moomin_repository.repository_users.build(username: 'hbaines', administrator: false, committee: true)
     @moomin_repository.save!
@@ -203,8 +203,8 @@ RSpec.feature 'Repositories', type: :feature do
     expect(find(".select2-selection__rendered", text: 'Moominmamma Moomin')).to be_truthy
     check('Administrator?')
     check('Committee Member?')
-    check('Specimen Resource?')
-    check('Data Resource?')
+    check('Specimen Coordinator?')
+    check('Data Coordinator?')
     moominmama = { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(moominmama)
     click_button('Save')
@@ -212,8 +212,8 @@ RSpec.feature 'Repositories', type: :feature do
     repository_user = moominmama
     repository_user[:administrator] = true
     repository_user[:committee] = true
-    repository_user[:specimen_resource] = true
-    repository_user[:data_resource] = true
+    repository_user[:specimen_coordinator] = true
+    repository_user[:data_coordinator] = true
     match_repository_user_row(@harold_user, 0)
     match_repository_user_row(repository_user, 1)
 
@@ -228,16 +228,16 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page).to have_css('.email', text: repository_user[:email])
     expect(page.has_checked_field?('Administrator?')).to be_truthy
     expect(page.has_checked_field?('Committee Member?')).to be_truthy
-    expect(page.has_checked_field?('Specimen Resource?')).to be_truthy
-    expect(page.has_checked_field?('Data Resource?')).to be_truthy
+    expect(page.has_checked_field?('Specimen Coordinator?')).to be_truthy
+    expect(page.has_checked_field?('Data Coordinator?')).to be_truthy
     uncheck('Administrator?')
     uncheck('Committee Member?')
-    uncheck('Specimen Resource?')
-    uncheck('Data Resource?')
+    uncheck('Specimen Coordinator?')
+    uncheck('Data Coordinator?')
     repository_user[:administrator] = false
     repository_user[:committee] = false
-    repository_user[:specimen_resource] = false
-    repository_user[:data_resource] = false
+    repository_user[:specimen_coordinator] = false
+    repository_user[:data_coordinator] = false
     click_button('Save')
     sleep(1)
     match_repository_user_row(repository_user, 1)
@@ -370,8 +370,8 @@ def match_repository_user_row(repository_user, index)
   expect(all('.repository_user')[index].find('.email')).to have_content(repository_user[:email])
   expect(all('.repository_user')[index].find('.administrator')).to have_content(repository_user[:administrator])
   expect(all('.repository_user')[index].find('.committee')).to have_content(repository_user[:committee])
-  expect(all('.repository_user')[index].find('.specimen_resource')).to have_content(repository_user[:specimen_resource])
-  expect(all('.repository_user')[index].find('.data_resource')).to have_content(repository_user[:data_resource])
+  expect(all('.repository_user')[index].find('.specimen_coordinator')).to have_content(repository_user[:specimen_coordinator])
+  expect(all('.repository_user')[index].find('.data_coordinator')).to have_content(repository_user[:data_coordinator])
 end
 
 def fill_in_ckeditor(locator, opts)

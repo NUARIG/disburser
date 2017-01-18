@@ -107,8 +107,8 @@
 .row
   .status{ class: 'small-offset-8 small-16 large-offset-19 large-5 columns' }
     = field_set_tag 'Status' do
-      - if @disburser_request.draft?
+      - if @disburser_request.new_record? && @disburser_request.draft?
         = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, true)
         = f.label :status, 'Draft', value: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
-      = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, true)
-      = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+        = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, true)
+        = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED

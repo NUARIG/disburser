@@ -1,17 +1,19 @@
 - content_for(:title) do
-  Admin
+  Coordinator
 
 #disburser_requests
   .disburser_requests_header
     %h2
-      Admin
-    = form_tag admin_disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
-      .search_box{ class: 'large-offset-12 large-8 columns' }
+      Coordinator
+    = form_tag coordinator_disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
+      .status{ class: 'large-offset-8 large-4 columns' }
+        = select_tag :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES.map { |status| [status, status] }, (params[:status].blank? ? '' : params[:status])), { include_blank: 'all', class: 'status'}
+      .search_box{ class: 'large-8 columns' }
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
       .search_buttons{ class: 'large-4 columns' }
         %button{ type: 'submit', id: 'search_disburser_requests_button', class: 'tiny button' }
           Search
-        = link_to 'Clear', admin_disburser_requests_url
+        = link_to 'Clear', coordinator_disburser_requests_url
   .disburser_requests_list
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails
     %table
@@ -50,5 +52,5 @@
             %td.status
               = disburser_request.status
             %td.edit
-              = link_to 'Edit', edit_repository_disburser_request_url(disburser_request.repository,  disburser_request), { class: 'edit_repository_link' }
+              = link_to 'View', repository_disburser_request_url(disburser_request.repository,  disburser_request), { class: 'show_repository_link' }
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails

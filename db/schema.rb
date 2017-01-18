@@ -62,14 +62,14 @@ ActiveRecord::Schema.define(version: 20170110214353) do
   end
 
   create_table "repository_users", force: :cascade do |t|
-    t.integer  "repository_id",     null: false
-    t.integer  "user_id",           null: false
+    t.integer  "repository_id",        null: false
+    t.integer  "user_id",              null: false
     t.boolean  "administrator"
     t.boolean  "committee"
-    t.boolean  "specimen_resource"
-    t.boolean  "data_resource"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.boolean  "specimen_coordinator"
+    t.boolean  "data_coordinator"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   create_table "specimen_types", force: :cascade do |t|

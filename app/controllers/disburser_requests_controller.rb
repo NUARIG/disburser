@@ -2,7 +2,7 @@ class DisburserRequestsController < ApplicationController
   before_action :authenticate_user!
   helper_method :sort_column, :sort_direction
   before_action :load_repository, only: [:new, :create, :edit, :update]
-  before_action :load_disburser_request, only: [:edit, :update, :download_file]
+  before_action :load_disburser_request, only: [:edit, :update, :show, :download_file, :status]
   before_action :load_specimen_types, only: [:new, :create, :edit, :update]
 
   def index
@@ -23,6 +23,17 @@ class DisburserRequestsController < ApplicationController
     options[:sort_direction] = sort_direction
 
     @disburser_requests = current_user.admin_disbursr_requests.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+  end
+
+  def coordinator
+    authorize DisburserRequest
+    params[:page]||= 1
+    params[:status]||= DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+    options = {}
+    options[:sort_column] = sort_column
+    options[:sort_direction] = sort_direction
+
+    @disburser_requests = current_user.coordinator_disbursr_requests(params[:status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def new
@@ -55,6 +66,9 @@ class DisburserRequestsController < ApplicationController
       flash.now[:alert] = 'Failed to create repository request.'
       render action: 'new'
     end
+  end
+
+  def show
   end
 
   def edit
@@ -92,6 +106,19 @@ class DisburserRequestsController < ApplicationController
     return send_file file, disposition: 'attachment', x_sendfile: true unless file.blank?
   end
 
+  def status
+    authorize @disburser_request
+    @disburser_request.assign_attributes(disburser_request_params)
+    @disburser_request.status_user = current_user
+    if @disburser_request.save
+      flash[:success] = 'You have successfully updated a repository request.'
+      redirect_to coordinator_disburser_requests_url
+    else
+      flash.now[:alert] = 'Failed to update repository request.'
+      render action: 'show'
+    end
+  end
+
   private
     def load_specimen_types
       @specimen_types = @repository.specimen_types.order('name ASC').map { |specimen_type| [specimen_type.name, specimen_type.id] }
@@ -110,7 +137,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def sort_column
-      ['title', 'investigator', 'irb_number', 'specimens', 'status', 'users.last_name'].include?(params[:sort]) ? params[:sort] : 'title'
+      ['title', 'investigator', 'irb_number', 'specimens', 'status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
     end
 
     def sort_direction

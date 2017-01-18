@@ -55,7 +55,7 @@ class RepositoryUsersController < ApplicationController
 
   private
     def repository_user_params
-      params.require(:repository_user).permit(:repository_id, :username, :administrator, :committee, :specimen_resource, :data_resource)
+      params.require(:repository_user).permit(:repository_id, :username, :administrator, :committee, :specimen_coordinator, :data_coordinator)
     end
 
     def load_repository
@@ -67,7 +67,7 @@ class RepositoryUsersController < ApplicationController
     end
 
     def sort_column
-      ['users.username', 'users.email', 'users.first_name', 'users.last_name', 'repository_users.administrator', 'repository_users.committee', 'repository_users.specimen_resource', 'repository_users.data_resource'].include?(params[:sort]) ? params[:sort] : 'users.username'
+      ['users.username', 'users.email', 'users.first_name', 'users.last_name', 'repository_users.administrator', 'repository_users.committee', 'repository_users.specimen_coordinator', 'repository_users.data_coordinator'].include?(params[:sort]) ? params[:sort] : 'users.username'
     end
 
     def sort_direction

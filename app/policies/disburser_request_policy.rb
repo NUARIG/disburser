@@ -1,10 +1,14 @@
 class DisburserRequestPolicy < ApplicationPolicy
+  def coordinator?
+    user.repository_coordinator?
+  end
+
   def admin?
     user.system_administrator || user.repository_administrator?
   end
 
   def index?
-    !user.system_administrator && !user.repository_administrator?
+    !user.system_administrator && !user.repository_administrator? && !user.repository_coordinator?
   end
 
   def edit?
@@ -16,6 +20,10 @@ class DisburserRequestPolicy < ApplicationPolicy
   end
 
   def download_file?
-    user.system_administrator || record.repository.repository_administrator?(user) || record.mine?(user)
+    user.system_administrator || record.repository.repository_administrator?(user) || record.mine?(user) || record.repository.repository_coordinator?(user)
+  end
+
+  def status?
+    record.repository.repository_coordinator?(user)
   end
 end

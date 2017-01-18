@@ -4,7 +4,12 @@ Rails.application.routes.draw do
   resources :disburser_requests, only: :index, path: 'requests' do
     collection do
       get :admin
+      get :coordinator
       get :committee
+    end
+
+    member do
+      patch :status
     end
   end
 
@@ -17,7 +22,7 @@ Rails.application.routes.draw do
     end
     resources :specimen_types, only: :index do
       collection do
-        patch 'bulk_update'
+        patch :bulk_update
       end
     end
     member do

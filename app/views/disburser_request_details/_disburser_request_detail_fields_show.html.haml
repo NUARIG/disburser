@@ -1,0 +1,9 @@
+%tr{ class: 'nested-fields disburser_request_detail' }
+  %td.field.specimen_type
+    = disburser_request_detail.specimen_type.name
+  %td.field.quantity
+    = disburser_request_detail.quantity
+  %td.field.volume
+    = disburser_request_detail.volume
+  %td.field.comments
+    = text_area_tag :comments, disburser_request_detail.comments, rows: 2, disabled: true

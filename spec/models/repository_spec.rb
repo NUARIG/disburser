@@ -34,7 +34,7 @@ RSpec.describe Repository, type: :model do
   end
 
   it 'knows if a user is a repository administrator', focus: false do
-    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', administrator: true)
@@ -48,5 +48,22 @@ RSpec.describe Repository, type: :model do
     moomintroll_user = User.where(username: 'moomintroll').first
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     expect(repository.repository_administrator?(moomintroll_user)).to be_falsy
+  end
+
+  it 'knows if a user is a repository coordinator', focus: false do
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+    repository = FactoryGirl.create(:repository, name: 'Moomins')
+    repository.repository_users.build(username: 'hbaines', data_coordinator: true)
+    repository.save!
+    harold_user = User.where(username: 'hbaines').first
+    expect(repository.repository_coordinator?(harold_user)).to be_truthy
+  end
+
+  it 'knows if a user is not a repository coordinator', focus: false do
+    moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
+    moomintroll_user = User.where(username: 'moomintroll').first
+    repository = FactoryGirl.create(:repository, name: 'Moomins')
+    expect(repository.repository_coordinator?(moomintroll_user)).to be_falsy
   end
 end

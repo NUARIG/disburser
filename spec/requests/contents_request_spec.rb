@@ -44,7 +44,7 @@ describe ContentsController, type: :request do
 
   describe 'repository administrator user' do
     before(:each) do
-      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
       @repository_moomin.repository_users.build(username: @harold[:username], administrator: true)
       @repository_moomin.save!

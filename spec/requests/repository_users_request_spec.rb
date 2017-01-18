@@ -23,7 +23,7 @@ describe RepositoryUsersController, type: :request do
     end
 
     it 'should deny access to create a repository user', focus: false do
-      post repository_repository_users_url(@repository_moomin), params: { format: :js, repository_user: { username: 'moomin', administrator: true, committee: true, specimen_resource: true, data_resource: true } }
+      post repository_repository_users_url(@repository_moomin), params: { format: :js, repository_user: { username: 'moomin', administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -41,7 +41,7 @@ describe RepositoryUsersController, type: :request do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
       allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
-      put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_resource: true, data_resource: true } }
+      put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -68,7 +68,7 @@ describe RepositoryUsersController, type: :request do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
       allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
-      post repository_repository_users_url(@repository_moomin), params: { format: :js, repository_user: { username: moominpapa[:username], administrator: true, committee: true, specimen_resource: true, data_resource: true } }
+      post repository_repository_users_url(@repository_moomin), params: { format: :js, repository_user: { username: moominpapa[:username], administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to have_http_status(:no_content)
     end
 
@@ -84,14 +84,14 @@ describe RepositoryUsersController, type: :request do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
       allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
-      put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_resource: true, data_resource: true } }
+      put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to have_http_status(:no_content)
     end
   end
 
   describe 'repository administrator user' do
     before(:each) do
-      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
       @repository_moomin.repository_users.build(username: @harold[:username], administrator: true)
       @repository_moomin.save!
@@ -113,7 +113,7 @@ describe RepositoryUsersController, type: :request do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
       allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
-      post repository_repository_users_url(@repository_moomin), params: { format: :js, repository_user: { username: moominpapa[:username], administrator: true, committee: true, specimen_resource: true, data_resource: true } }
+      post repository_repository_users_url(@repository_moomin), params: { format: :js, repository_user: { username: moominpapa[:username], administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to have_http_status(:no_content)
     end
 
@@ -129,7 +129,7 @@ describe RepositoryUsersController, type: :request do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
       allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
-      put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_resource: true, data_resource: true } }
+      put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to have_http_status(:no_content)
     end
   end

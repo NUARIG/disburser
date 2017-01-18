@@ -15,7 +15,13 @@ class DisburserRequest < ApplicationRecord
 
   DISBURSER_REQUEST_STAUTS_DRAFT = 'draft'
   DISBURSER_REQUEST_STATUS_SUBMITTED = 'submitted'
-  DISBURSER_REQUEST_STATUSES = [DISBURSER_REQUEST_STAUTS_DRAFT, DISBURSER_REQUEST_STATUS_SUBMITTED]
+  DISBURSER_REQUEST_STAUTS_INSUFFICIENT_DATA = 'insufficient data'
+  DISBURSER_REQUEST_STAUTS_INSUFFICIENT_INVENTORY = 'insufficient inventory'
+  DISBURSER_REQUEST_STAUTS_QUERIED = 'queried'
+  DISBURSER_REQUEST_STAUTS_INVENTORIED = 'inventoried'
+  DISBURSER_REQUEST_STATUS_SUBMITTED = 'submitted'
+
+  DISBURSER_REQUEST_STATUSES = [DISBURSER_REQUEST_STAUTS_DRAFT, DISBURSER_REQUEST_STATUS_SUBMITTED, DISBURSER_REQUEST_STAUTS_INSUFFICIENT_DATA, DISBURSER_REQUEST_STAUTS_INSUFFICIENT_INVENTORY, DISBURSER_REQUEST_STAUTS_QUERIED, DISBURSER_REQUEST_STAUTS_INVENTORIED]
 
   scope :search_across_fields, ->(search_token, options={}) do
     if search_token
@@ -23,7 +29,7 @@ class DisburserRequest < ApplicationRecord
     end
     options = { sort_column: 'title', sort_direction: 'asc' }.merge(options)
     s = DisburserRequest
-    s = s.joins(:submitter)
+    s = s.joins(:submitter).joins(:repository)
     if search_token
       s = where(["lower(title) like ? OR lower(investigator) like ? OR lower(irb_number) like ?", "%#{search_token}%", "%#{search_token}%", "%#{search_token}%"])
     end
@@ -40,6 +46,14 @@ class DisburserRequest < ApplicationRecord
 
   def draft?
     self.status == DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
+  end
+
+  def submitted?
+    self.status == DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+  end
+
+  def queried?
+    self.status == DisburserRequest::DISBURSER_REQUEST_STAUTS_QUERIED
   end
 
   def build_disburser_request_status

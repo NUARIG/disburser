@@ -5,18 +5,20 @@
   .disburser_requests_header
     %h2
       Requests
-    = form_tag admin_disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
-      .search_box
+    = form_tag disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
+      .search_box{ class: 'large-offset-12 large-8 columns' }
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
-      .search_buttons
+      .search_buttons{ class: 'large-4 columns' }
         %button{ type: 'submit', id: 'search_disburser_requests_button', class: 'tiny button' }
           Search
-        = link_to 'Clear', admin_disburser_requests_url
+        = link_to 'Clear', disburser_requests_url
   .disburser_requests_list
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails
     %table
       %thead
         %tr
+          %th.repository{ width: 200 }
+            = sortable 'repositories.name', 'Repository'
           %th.title{ width: 200 }
             = sortable 'title'
           %th.investigator{ width: 200 }
@@ -31,6 +33,8 @@
       %tbody
         - @disburser_requests.each do |disburser_request|
           = content_tag_for(:tr, disburser_request) do
+            %td.repository
+              = disburser_request.repository.name
             %td.title
               = disburser_request.title
             %td.investigator

@@ -2,7 +2,7 @@ require 'rails_helper'
 RSpec.feature 'Users', type: :feature do
   before(:each) do
     @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
-    @harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+    @harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
     @repository_moomin.repository_users.build(username: 'hbaines', administrator: true)
     @repository_moomin.save!

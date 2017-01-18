@@ -98,6 +98,26 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request_1.draft?).to be_falsy
   end
 
+  it 'knows if a request is a submitted', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+    expect(disburser_request_1.submitted?).to be_truthy
+  end
+
+  it 'knows if a request is not a submitted', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, status_user: @moomintroll_user)
+    expect(disburser_request_1.submitted?).to be_falsy
+  end
+
+  it 'knows if a request is a queried', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STAUTS_QUERIED, status_user: @moomintroll_user)
+    expect(disburser_request_1.queried?).to be_truthy
+  end
+
+  it 'knows if a request is not a queried', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, status_user: @moomintroll_user)
+    expect(disburser_request_1.queried?).to be_falsy
+  end
+
   it "saves a disburser request status once the status reaches 'submitted'", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)

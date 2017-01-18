@@ -64,12 +64,24 @@ class User < ActiveRecord::Base
     repository_users.any? { |repository_user| repository_user.administrator }
   end
 
+  def repository_coordinator?
+    repository_users.any? { |repository_user| repository_user.specimen_coordinator ||  repository_user.data_coordinator }
+  end
+
   def full_name
     [first_name.titleize, last_name.titleize].reject { |n| n.nil? or n.blank? }.join(' ')
   end
 
   def after_ldap_authentication
     hydrate_from_ldap
+  end
+
+  def coordinator_disbursr_requests(status = nil)
+    cdr = DisburserRequest.where(repository_id: repository_users.where('(data_coordinator = ? OR specimen_coordinator = ?)', true, true).map(&:repository_id))
+    if status.present?
+      cdr = cdr.where(status: status)
+    end
+    cdr
   end
 
   def admin_disbursr_requests

@@ -1,3 +1,13 @@
+# @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
+# @specimen_type_blood = 'Blood'
+# @specimen_type_tissue = 'Tissue'
+# @moomin_repository.specimen_types.build(name: @specimen_type_blood, volume: true)
+# @moomin_repository.specimen_types.build(name: @specimen_type_tissue, volume: false)
+# @moomin_repository.save!
+# @repository_white_sox = FactoryGirl.create(:repository, name: 'White Sox', data: false, specimens: true)
+# @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
+# @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
+
 require 'rails_helper'
 require 'active_support'
 
@@ -6,7 +16,10 @@ RSpec.describe User, type: :model do
   it { should have_many :repositories }
 
   before(:each) do
-    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
+    @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox', data: false, specimens: true)
+    @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
+    @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
   end
 
   it 'can search ldap by a token', focus: false do
@@ -51,25 +64,88 @@ RSpec.describe User, type: :model do
   end
 
   it 'know if it is a repository administrator', focus: false do
-    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
-    @repository_moomin.repository_users.build(username: 'hbaines', administrator: true)
-    @repository_moomin.save!
+    @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
+    @moomin_repository.save!
     harold_user = User.where(username: 'hbaines').first
     expect(harold_user.repository_administrator?).to be_truthy
   end
 
   it 'know if it is not a repository administrator', focus: false do
-    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_resource: false, data_resource: false }
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
-    @repository_moomin.repository_users.build(username: 'hbaines', administrator: false, committee: true)
-    @repository_moomin.save!
+    @moomin_repository.repository_users.build(username: 'hbaines', administrator: false, committee: true)
+    @moomin_repository.save!
     harold_user = User.where(username: 'hbaines').first
     expect(harold_user.repository_administrator?).to be_falsy
   end
 
   it "can present a user's full name", focus: false do
-    user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
-    expect(user.full_name).to eq('Moomintroll Moomin')
+    expect(@moomintroll_user.full_name).to eq('Moomintroll Moomin')
+  end
+
+  it 'know if it is a repository coordinator', focus: false do
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+    @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
+    @moomin_repository.save!
+    harold_user = User.where(username: 'hbaines').first
+    expect(harold_user.repository_coordinator?).to be_truthy
+  end
+
+  it 'know if it is not a repository coordinator', focus: false do
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+    @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: false, specimen_coordinator: false)
+    @moomin_repository.save!
+    harold_user = User.where(username: 'hbaines').first
+    expect(harold_user.repository_coordinator?).to be_falsy
+  end
+
+  describe 'listing disburser requests' do
+    before(:each) do
+      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Groke research', investigator: 'Groke', irb_number: '123', cohort_criteria: 'Groke cohort criteria', data_for_cohort: 'Groke data for cohort', specimens: false)
+      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort', specimens: false)
+      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'Sox baseball research', investigator: 'Nellie Fox', irb_number: '789', cohort_criteria: 'Sox cohort criteria', data_for_cohort: 'Sox data for cohort', specimens: true)
+      @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort', specimens: true)
+    end
+
+    it 'lists admin disburser requests for a system administrator', focus: false do
+      @paul_user.system_administrator = true
+      @paul_user.save!
+
+      expect(@paul_user.admin_disbursr_requests.all).to match_array([@disburser_request_1, @disburser_request_2, @disburser_request_3, @disburser_request_4])
+    end
+
+    it 'lists admin disburser requests for a repository administrator', focus: false do
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
+      @moomin_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      expect(harold_user.admin_disbursr_requests.all).to match_array([@disburser_request_1, @disburser_request_2])
+    end
+
+    it 'lists coordinator disburser requests for a repository coordinator', focus: false do
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
+      @moomin_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      expect(harold_user.coordinator_disbursr_requests.all).to match_array([@disburser_request_1, @disburser_request_2])
+    end
+
+    it 'lists coordinator disburser requests for a repository coordinator by status', focus: false do
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
+      @moomin_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      @disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_1.status_user = harold_user
+      @disburser_request_1.save!
+      expect(harold_user.coordinator_disbursr_requests(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED).all).to match_array([@disburser_request_1])
+    end
   end
 end

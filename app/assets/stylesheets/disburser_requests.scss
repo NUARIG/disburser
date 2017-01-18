@@ -12,24 +12,7 @@
        $columns: 24
       );
 
-      .search_box{
-        @include grid-column-offset(12);
-
-        @include grid-column(
-          $columns: 8
-        );
-
-        #search_disburser_requests_button {
-          margin-bottom: 0;
-        }
-        @include grid-column-collapse();
-      }
-
       .search_buttons{
-        @include grid-column(
-          $columns: 4
-        );
-
         #search_disburser_requests_button {
           margin-bottom: 0;
         }
@@ -74,11 +57,23 @@
     margin-bottom: 1rem;
   }
 
-  .current_status {
+  .status {
     label {
-      font-weight: bold;
       display: inline;
     }
+    margin-bottom: 1rem;
+  }
+}
+
+#disburser_request_show {
+  @include grid-row();
+
+  .submitter {
+    margin-bottom: 1rem;
+  }
+
+  textarea {
+    background-color: white !important;
   }
 
   .status {
@@ -87,4 +82,8 @@
     }
     margin-bottom: 1rem;
   }
+
+//  input[type='submit'] {
+//    display: inline;
+//  }
 }

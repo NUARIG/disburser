@@ -13,6 +13,6 @@ class Disburser.DisburserRequests
 
 
 $(document).on 'turbolinks:load', ->
-  return unless ($('.disburser_requests.index').length > 0 || $('.disburser_requests.admin').length > 0)
+  return unless ($('.disburser_requests.index').length > 0)
   ui = new Disburser.DisburserRequests
   ui.render()
