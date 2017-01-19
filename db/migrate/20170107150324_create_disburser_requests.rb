@@ -6,7 +6,6 @@ class CreateDisburserRequests < ActiveRecord::Migration[5.0]
       t.string    :title,                           null: false
       t.string    :investigator,                    null: false
       t.string    :irb_number,                      null: false
-      t.boolean   :specimens,                       null: true
       t.boolean   :feasibility,                     null: true
       t.text      :methods_justifications,          null: false
       t.text      :cohort_criteria,                 null: false

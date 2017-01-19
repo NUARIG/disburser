@@ -1,13 +1,3 @@
-# @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
-# @specimen_type_blood = 'Blood'
-# @specimen_type_tissue = 'Tissue'
-# @moomin_repository.specimen_types.build(name: @specimen_type_blood, volume: true)
-# @moomin_repository.specimen_types.build(name: @specimen_type_tissue, volume: false)
-# @moomin_repository.save!
-# @repository_white_sox = FactoryGirl.create(:repository, name: 'White Sox', data: false, specimens: true)
-# @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
-# @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
-
 require 'rails_helper'
 require 'active_support'
 
@@ -16,8 +6,8 @@ RSpec.describe User, type: :model do
   it { should have_many :repositories }
 
   before(:each) do
-    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
-    @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox', data: false, specimens: true)
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins')
+    @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox')
     @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
     @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
   end
@@ -105,10 +95,10 @@ RSpec.describe User, type: :model do
 
   describe 'listing disburser requests' do
     before(:each) do
-      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Groke research', investigator: 'Groke', irb_number: '123', cohort_criteria: 'Groke cohort criteria', data_for_cohort: 'Groke data for cohort', specimens: false)
-      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort', specimens: false)
-      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'Sox baseball research', investigator: 'Nellie Fox', irb_number: '789', cohort_criteria: 'Sox cohort criteria', data_for_cohort: 'Sox data for cohort', specimens: true)
-      @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort', specimens: true)
+      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Groke research', investigator: 'Groke', irb_number: '123', cohort_criteria: 'Groke cohort criteria', data_for_cohort: 'Groke data for cohort')
+      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort')
+      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'Sox baseball research', investigator: 'Nellie Fox', irb_number: '789', cohort_criteria: 'Sox cohort criteria', data_for_cohort: 'Sox data for cohort')
+      @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort')
     end
 
     it 'lists admin disburser requests for a system administrator', focus: false do

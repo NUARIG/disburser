@@ -1,8 +1,8 @@
 require 'rails_helper'
 describe DisburserRequestsController, type: :request do
   before(:each) do
-    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
-    @peanuts_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins')
+    @peanuts_repository = FactoryGirl.create(:repository, name: 'Moomins')
     @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
     @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
   end
@@ -35,7 +35,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to create a disburser request', focus: false do
-      post repository_disburser_requests_url(@moomin_repository), params: { disburser_request: { title: 'Moomin request', investigator: 'Moomin investigator', irb_number: '123', specimens: true,  feasibility: false, cohort_criteria: 'Moomin cohort criteria', data_for_cohort: 'Moomin data for cohort', methods_justifications: 'Moomin methods justifications' } }
+      post repository_disburser_requests_url(@moomin_repository), params: { disburser_request: { title: 'Moomin request', investigator: 'Moomin investigator', irb_number: '123',  feasibility: false, cohort_criteria: 'Moomin cohort criteria', data_for_cohort: 'Moomin data for cohort', methods_justifications: 'Moomin methods justifications' } }
       expect(response).to have_http_status(:success)
     end
 

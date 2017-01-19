@@ -125,7 +125,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def disburser_request_params
-      params.require(:disburser_request).permit(:status, :title, :investigator, :irb_number, :specimens, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
+      params.require(:disburser_request).permit(:status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
     end
 
     def load_repository
@@ -137,7 +137,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def sort_column
-      ['title', 'investigator', 'irb_number', 'specimens', 'status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
+      ['title', 'investigator', 'irb_number', 'status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
     end
 
     def sort_direction

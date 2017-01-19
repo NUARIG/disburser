@@ -19,20 +19,16 @@
         %tr
           %th.name{ width: 200 }
             = sortable 'name'
-          %th.data{ width: 200 }
-            = sortable 'data'
-          %th.specimens{ width: 200 }
-            = sortable 'specimens'
+          %th.online_voting{ width: 200 }
+            = sortable 'online voting'
           %th.edit{ width: 100 }
       %tbody
         - @repositories.each do |respository|
           = content_tag_for(:tr, respository) do
             %td.name
               = respository.name
-            %td.data
-              = respository.data
-            %td.specimens
-              = respository.specimens
+            %td.online_voting
+              = respository.online_voting
             %td.edit
               = link_to 'Edit', edit_repository_url(respository), { class: 'edit_repository_link' }
     = will_paginate @repositories, renderer: FoundationPagination::Rails

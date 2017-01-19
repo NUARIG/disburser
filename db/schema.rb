@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(version: 20170110214353) do
     t.string   "title",                  null: false
     t.string   "investigator",           null: false
     t.string   "irb_number",             null: false
-    t.boolean  "specimens"
     t.boolean  "feasibility"
     t.text     "methods_justifications", null: false
     t.text     "cohort_criteria",        null: false
@@ -51,8 +50,7 @@ ActiveRecord::Schema.define(version: 20170110214353) do
 
   create_table "repositories", force: :cascade do |t|
     t.string   "name",             null: false
-    t.boolean  "data"
-    t.boolean  "specimens"
+    t.boolean  "online_voting"
     t.string   "irb_template"
     t.string   "data_dictionary"
     t.text     "data_content"
@@ -75,7 +73,6 @@ ActiveRecord::Schema.define(version: 20170110214353) do
   create_table "specimen_types", force: :cascade do |t|
     t.integer  "repository_id", null: false
     t.string   "name",          null: false
-    t.boolean  "volume"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
   end

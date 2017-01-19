@@ -1,9 +1,9 @@
 require 'rails_helper'
 RSpec.feature 'Repositories', type: :feature do
   before(:each) do
-    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
-    @peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts', data: false, specimens: true)
-    @repository_bossy_bear = FactoryGirl.create(:repository, name: 'Bossy Bear', data: false, specimens: true)
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins')
+    @peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts')
+    @repository_bossy_bear = FactoryGirl.create(:repository, name: 'Bossy Bear')
     @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
     @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
@@ -24,6 +24,7 @@ RSpec.feature 'Repositories', type: :feature do
     click_link('Log out')
     login_as(@paul_user, scope: :user)
     visit root_path
+    sleep(1)
     expect(page).to_not have_css('.menu li.repositories')
   end
 
@@ -42,26 +43,6 @@ RSpec.feature 'Repositories', type: :feature do
     sleep(1)
     match_repository_row(@moomin_repository, 0)
     match_repository_row(@peanuts_repository, 1)
-
-    click_link('Data')
-    sleep(1)
-    match_repository_row(@peanuts_repository, 0)
-    match_repository_row(@moomin_repository, 1)
-
-    click_link('Data')
-    sleep(1)
-    match_repository_row(@moomin_repository, 0)
-    match_repository_row(@peanuts_repository, 1)
-
-    click_link('Specimens')
-    sleep(1)
-    match_repository_row(@moomin_repository, 0)
-    match_repository_row(@peanuts_repository, 1)
-
-    click_link('Specimens')
-    sleep(1)
-    match_repository_row(@peanuts_repository, 0)
-    match_repository_row(@moomin_repository, 1)
   end
 
   scenario 'Creating a repository', js: true, focus: false  do
@@ -74,17 +55,14 @@ RSpec.feature 'Repositories', type: :feature do
     repository_rorty_institute[:data] = true
     repository_rorty_institute[:specimens] = true
     fill_in 'Name', with: repository_rorty_institute[:name]
-    check('Data?')
-    check('Specimens?')
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
     click_button('Next')
+    sleep(1)
     repository = Repository.where(name: repository_rorty_institute[:name]).first
     expect(current_path).to eq(edit_repository_path(repository))
     expect(page).to have_css('.menu li.repository.active')
     expect(page.has_field?('Name', with: repository_rorty_institute[:name])).to be_truthy
-    expect(page.has_checked_field?('Data?')).to be_truthy
-    expect(page.has_checked_field?('Specimens?')).to be_truthy
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
     click_link('Users')
@@ -135,17 +113,10 @@ RSpec.feature 'Repositories', type: :feature do
 
     expect(page).to have_css('.menu li.repository.active')
     expect(page.has_field?('Name', with: @moomin_repository.name)).to be_truthy
-    expect(page.has_checked_field?('Data?')).to be_truthy
-    expect(page.has_unchecked_field?('Specimens?')).to be_truthy
 
     repository_moomin = {}
     repository_moomin[:name] = 'Moominss'
-    repository_moomin[:data] = false
-    repository_moomin[:specimens] = true
-
     fill_in 'Name', with: repository_moomin[:name]
-    uncheck('Data')
-    check('Specimens')
 
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
@@ -154,8 +125,6 @@ RSpec.feature 'Repositories', type: :feature do
 
     expect(page).to have_css('.menu li.repository.active')
     expect(page.has_field?('Name', with: repository_moomin[:name])).to be_truthy
-    expect(page.has_unchecked_field?('Data?')).to be_truthy
-    expect(page.has_checked_field?('Specimens?')).to be_truthy
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
@@ -250,18 +219,10 @@ RSpec.feature 'Repositories', type: :feature do
       find('input').set 'Moomin'
     end
 
-    within(".specimen_type:nth-of-type(1) .volume") do
-      find("input[type='checkbox']").set(true)
-    end
-
     click_link('Add')
 
     within(".specimen_type:nth-of-type(2) .name") do
       find('input').set 'Little My'
-    end
-
-    within(".specimen_type:nth-of-type(2) .volume") do
-      find("input[type='checkbox']").set(false)
     end
 
     click_button('Save')
@@ -270,16 +231,8 @@ RSpec.feature 'Repositories', type: :feature do
       expect(find('input').value).to eq('Little My')
     end
 
-    within(".specimen_type:nth-of-type(1) .volume") do
-      expect(find("input[type='checkbox']").checked?).to be_falsy
-    end
-
     within(".specimen_type:nth-of-type(2) .name") do
       expect(find('input').value).to eq('Moomin')
-    end
-
-    within(".specimen_type:nth-of-type(2) .volume") do
-      expect(find("input[type='checkbox']").checked?).to be_truthy
     end
   end
 
@@ -355,8 +308,6 @@ end
 
 def match_repository_row(repository, index)
   expect(all('.repository')[index].find('.name')).to have_content(repository[:name])
-  expect(all('.repository')[index].find('.data')).to have_content(repository[:data])
-  expect(all('.repository')[index].find('.specimens')).to have_content(repository[:specimens])
 end
 
 def not_match_repository(repository)

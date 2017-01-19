@@ -3,7 +3,6 @@ class CreateSpecimenTypes < ActiveRecord::Migration[5.0]
     create_table :specimen_types do |t|
       t.integer   :repository_id,       null: false
       t.string    :name,                null: false
-      t.boolean   :volume,              null: true
       t.timestamps                      null: false
     end
   end

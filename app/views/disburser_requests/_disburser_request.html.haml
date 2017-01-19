@@ -40,8 +40,6 @@
         %p.error= format_validation_errors(@disburser_request, :irb_number)
 .row
   %fieldset{class: 'small-offset-5 small-19 columns' }
-    = f.check_box :specimens
-    %label{for: 'disburser_request_specimens'} Specimens?
     = f.check_box :feasibility
     %label{for: 'disburser_request_feasibility'} Feasibility?
 .row

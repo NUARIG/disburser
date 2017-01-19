@@ -3,8 +3,8 @@ RSpec.feature 'Repositories', type: :feature do
   before(:each) do
     @repository_moomin_specimen_content = '<b>Moomins collect specimens</b>'
     @repository_moomin_data_content = '<b>Moomins collect data</b>'
-    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false, data_content: @repository_moomin_data_content, specimen_content: @repository_moomin_specimen_content)
-    @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', data: false, specimens: true, data_content: '<b>Peanuts collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
+    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data_content: @repository_moomin_data_content, specimen_content: @repository_moomin_specimen_content)
+    @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', data_content: '<b>Peanuts collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
     visit root_path
   end
 
@@ -21,26 +21,6 @@ RSpec.feature 'Repositories', type: :feature do
     sleep(1)
     match_repository_row(@repository_moomin, 0)
     match_repository_row(@repository_peanuts, 1)
-
-    click_link('Data')
-    sleep(1)
-    match_repository_row(@repository_peanuts, 0)
-    match_repository_row(@repository_moomin, 1)
-
-    click_link('Data')
-    sleep(1)
-    match_repository_row(@repository_moomin, 0)
-    match_repository_row(@repository_peanuts, 1)
-
-    click_link('Specimens')
-    sleep(1)
-    match_repository_row(@repository_moomin, 0)
-    match_repository_row(@repository_peanuts, 1)
-
-    click_link('Specimens')
-    sleep(1)
-    match_repository_row(@repository_peanuts, 0)
-    match_repository_row(@repository_moomin, 1)
   end
 
   scenario 'Visting a repository ', js: true, focus: false do

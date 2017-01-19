@@ -1,7 +1,7 @@
 require 'rails_helper'
 describe RepositoriesController, type: :request do
   before(:each) do
-    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
+    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins')
     @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
   end
 

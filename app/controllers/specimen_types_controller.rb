@@ -19,7 +19,7 @@ class SpecimenTypesController < ApplicationController
 
   private
     def repository_params
-      params.require(:repository).permit(:name, :data, :specimens, specimen_types_attributes: [:id, :name, :volume, :_destroy])
+      params.require(:repository).permit(:name, :data, :specimens, specimen_types_attributes: [:id, :name, :_destroy])
     end
 
     def load_repository

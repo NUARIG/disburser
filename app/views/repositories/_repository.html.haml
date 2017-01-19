@@ -10,20 +10,6 @@
       - if validation_errors?(repository, :name)
         %p.error= format_validation_errors(repository, :name)
 .row
-  .data
-    %div{class: 'small-14 large-4 columns' }
-      %label{for: 'repository_data' }
-        Data?
-    %div{class: 'small-10 large-20 columns' }
-      = f.check_box :data
-.row
-  .specimens
-    %div{class: 'small-14 large-4 columns' }
-      %label{for: 'repository_specimens' }
-        Specimens?
-    %div{class: 'small-10 large-20 columns' }
-      = f.check_box :specimens
-.row
   .irb_template
     %div{class: 'small-14 large-4 columns' }
       %label{for: 'repository_irb_template' }

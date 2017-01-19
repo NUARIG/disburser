@@ -1,7 +1,7 @@
 require 'rails_helper'
 describe SpecimenTypesController, type: :request do
   before(:each) do
-    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data: true, specimens: false)
+    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins')
     @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
   end
 
@@ -17,7 +17,7 @@ describe SpecimenTypesController, type: :request do
     end
 
     it 'should deny access to update specimen types', focus: false do
-      patch bulk_update_repository_specimen_types_url(@repository_moomin), params: { format: :js, repository: { specimen_types_attributes: { "1483750066749"=>{ name: 'Moomin', volume: false, id: nil , _destroy: false } } } }
+      patch bulk_update_repository_specimen_types_url(@repository_moomin), params: { format: :js, repository: { specimen_types_attributes: { "1483750066749"=>{ name: 'Moomin', id: nil , _destroy: false } } } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -36,7 +36,7 @@ describe SpecimenTypesController, type: :request do
     end
 
     it 'should allow access to update a repository user', focus: false do
-      patch bulk_update_repository_specimen_types_url(@repository_moomin), params: { format: :js, repository: { specimen_types_attributes: { "1483750066749"=>{ name: 'Moomin', volume: false, id: nil , _destroy: false } } } }
+      patch bulk_update_repository_specimen_types_url(@repository_moomin), params: { format: :js, repository: { specimen_types_attributes: { "1483750066749"=>{ name: 'Moomin', id: nil , _destroy: false } } } }
       expect(response).to redirect_to(repository_specimen_types_url(@repository_moomin))
       expect(flash[:success]).to eq('You have successfully updated specimen types.')
     end
@@ -58,7 +58,7 @@ describe SpecimenTypesController, type: :request do
     end
 
     it 'should allow access to update a repository user', focus: false do
-      patch bulk_update_repository_specimen_types_url(@repository_moomin), params: { format: :js, repository: { specimen_types_attributes: { "1483750066749"=>{ name: 'Moomin', volume: false, id: nil , _destroy: false } } } }
+      patch bulk_update_repository_specimen_types_url(@repository_moomin), params: { format: :js, repository: { specimen_types_attributes: { "1483750066749"=>{ name: 'Moomin', id: nil , _destroy: false } } } }
       expect(response).to redirect_to(repository_specimen_types_url(@repository_moomin))
       expect(flash[:success]).to eq('You have successfully updated specimen types.')
     end
