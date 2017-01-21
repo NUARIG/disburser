@@ -23,7 +23,7 @@ describe RepositoriesController, type: :request do
     end
 
     it 'should deny access to create a repository', focus: false do
-      post repositories_url, params: { repository: { name: 'White Sox', data: true, specimens: true } }
+      post repositories_url, params: { repository: { name: 'White Sox' } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -40,7 +40,7 @@ describe RepositoriesController, type: :request do
     end
 
     it 'should deny access to update a repository', focus: false do
-      put repository_url(@repository_moomin), params: { repository: { name: 'White Sox', data: true, specimens: true } }
+      put repository_url(@repository_moomin), params: { repository: { name: 'White Sox' } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -64,7 +64,7 @@ describe RepositoriesController, type: :request do
     end
 
     it 'should allow to create a repository', focus: false do
-      post repositories_url, params: { repository: { name: 'White Sox', data: true, specimens: true } }
+      post repositories_url, params: { repository: { name: 'White Sox' } }
       expect(response).to have_http_status(:found)
       expect(flash[:success]).to eq('You have successfully created a repository.')
     end
@@ -80,7 +80,7 @@ describe RepositoriesController, type: :request do
     end
 
     it 'should allow access to update a repository', focus: false do
-      put repository_url(@repository_moomin), params: { repository: { name: 'White Sox', data: true, specimens: true } }
+      put repository_url(@repository_moomin), params: { repository: { name: 'White Sox' } }
       expect(response).to have_http_status(:found)
       expect(flash[:success]).to eq('You have successfully updated a repository.')
     end
@@ -108,7 +108,7 @@ describe RepositoriesController, type: :request do
     end
 
     it 'should deny access to create a repository', focus: false do
-      post repositories_url, params: { repository: { name: 'White Sox', data: true, specimens: true } }
+      post repositories_url, params: { repository: { name: 'White Sox' } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -124,7 +124,7 @@ describe RepositoriesController, type: :request do
     end
 
     it 'should allow access to update a repository', focus: false do
-      put repository_url(@repository_moomin), params: { repository: { name: 'White Sox', data: true, specimens: true } }
+      put repository_url(@repository_moomin), params: { repository: { name: 'White Sox' } }
       expect(response).to have_http_status(:found)
       expect(flash[:success]).to eq('You have successfully updated a repository.')
     end

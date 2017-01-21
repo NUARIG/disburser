@@ -12,29 +12,15 @@
        $columns: 24
       );
 
-      .search_box{
-        @include grid-column-offset(12);
-
-        @include grid-column(
-          $columns: 8
-        );
-
-				#search_repositories_button {
-					margin-bottom: 0;
-				}
-        @include grid-column-collapse();
-      }
-
       .search_buttons{
-        @include grid-column(
-          $columns: 4
-        );
+        margin-top: 1.5rem;
 
-				#search_repositories_button {
-					margin-bottom: 0;
-				}
+        #search_repositories_button {
+          margin-top: .50rem;
+        }
       }
     }
+
   }
 
   .repositories_list {

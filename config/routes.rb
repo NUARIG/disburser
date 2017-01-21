@@ -4,12 +4,16 @@ Rails.application.routes.draw do
   resources :disburser_requests, only: :index, path: 'requests' do
     collection do
       get :admin
-      get :coordinator
+      get :data_coordinator
+      get :specimen_coordinator
       get :committee
     end
 
     member do
-      patch :status
+      get :edit_data_status
+      get :edit_specimen_status
+      patch :data_status
+      patch :specimen_status
     end
   end
 

@@ -64,6 +64,14 @@ class User < ActiveRecord::Base
     repository_users.any? { |repository_user| repository_user.administrator }
   end
 
+  def data_coordinator?
+    repository_users.any? { |repository_user| repository_user.data_coordinator }
+  end
+
+  def specimen_coordinator?
+    repository_users.any? { |repository_user| repository_user.specimen_coordinator }
+  end
+
   def repository_coordinator?
     repository_users.any? { |repository_user| repository_user.specimen_coordinator ||  repository_user.data_coordinator }
   end
@@ -76,12 +84,32 @@ class User < ActiveRecord::Base
     hydrate_from_ldap
   end
 
-  def coordinator_disbursr_requests(status = nil)
-    cdr = DisburserRequest.where(repository_id: repository_users.where('(data_coordinator = ? OR specimen_coordinator = ?)', true, true).map(&:repository_id))
-    if status.present?
-      cdr = cdr.where(status: status)
+  def data_coordinator_disbursr_requests(options = {})
+    cdr = DisburserRequest.joins(:submitter).joins(:repository).where(repository_id: repository_users.where('data_coordinator = ?', true).map(&:repository_id))
+
+    if options[:status].present?
+      cdr = cdr.where(status: options[:status])
     end
-    cdr
+
+    if options[:fulfillment_status].present?
+      cdr = cdr.where(fulfillment_status: options[:fulfillment_status])
+    end
+
+    cdr.not_draft
+  end
+
+  def specimen_coordinator_disbursr_requests(options = {})
+    cdr = DisburserRequest.joins(:submitter).joins(:repository).where(repository_id: repository_users.where('specimen_coordinator = ?', true).map(&:repository_id))
+
+    if options[:status].present?
+      cdr = cdr.where(status: options[:status])
+    end
+
+    if options[:fulfillment_status].present?
+      cdr = cdr.where(fulfillment_status: options[:fulfillment_status])
+    end
+
+    cdr.not_draft
   end
 
   def admin_disbursr_requests

@@ -18,7 +18,7 @@ RSpec.feature 'Repositories', type: :feature do
   scenario 'Not seeing a list of Repositories', js: true, focus: false do
     @paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com', administator: false,  committee: false, specimen_coordinator: false, data_coordinator: false }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@paul)
-    @moomin_repository.repository_users.build(username: 'hbaines', administrator: false, committee: true)
+    @moomin_repository.repository_users.build(username: 'pkonerko', administrator: false, committee: true)
     @moomin_repository.save!
     @paul_user = User.where(username: 'pkonerko').first
     click_link('Log out')
@@ -52,8 +52,6 @@ RSpec.feature 'Repositories', type: :feature do
     click_link('New Repository')
     repository_rorty_institute = {}
     repository_rorty_institute[:name] = 'Rorty Institute'
-    repository_rorty_institute[:data] = true
-    repository_rorty_institute[:specimens] = true
     fill_in 'Name', with: repository_rorty_institute[:name]
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
@@ -155,6 +153,7 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in_ckeditor 'repository_data_content', :with => 'Be a good moomin!'
     fill_in_ckeditor 'repository_specimen_content', :with => 'Be a really good moomin!'
     click_button('Save')
+    sleep(1)
     expect(page).to have_css('.menu li.repository_content.active')
     expect(read_ckeditor('repository_data_content')).to eq("<p>Be a good moomin!</p>\n")
     expect(read_ckeditor('repository_specimen_content')).to eq("<p>Be a really good moomin!</p>\n")

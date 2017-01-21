@@ -1,0 +1,74 @@
+.row
+  .submitter{class: 'small-24 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'disburser_request_submitter' }
+        Submitter
+    %div{class: 'small-12 large-19 columns' }
+      = disburser_request.submitter.full_name
+.row
+  .investigator{class: 'small-24 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'disburser_request_investigator' }
+        Investigator
+    %div{class: 'small-12 large-19 columns' }
+      = disburser_request.investigator
+.row
+  .title{class: 'small-24 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'disburser_request_title' }
+        Title
+    %div{class: 'small-12 large-19 columns' }
+      = disburser_request.title
+.row
+  .irb_number{class: 'small-24 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'disburser_request_irb_number' }
+        IRB Number
+    %div{class: 'small-12 large-19 columns' }
+      = disburser_request.irb_number
+.row
+  .feasibility
+    %fieldset{class: 'small-offset-5 small-19 columns' }
+      = check_box_tag 'feasibility', disburser_request.feasibility, checked?(disburser_request.feasibility, true, true),  disabled: true
+      %label{for: 'feasibility'} Feasibility?
+.row
+  .methods_justifications{class: 'small-24 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'disburser_request_methods_justifications' }
+        Methods/Justifications
+    %div{class: 'small-12 large-19 columns' }
+      %div
+        - if disburser_request.methods_justifications?
+          = link_to download_file_repository_disburser_request_url(disburser_request, file_type: 'methods_justifications'), 'data-turbolinks' => false, class: 'methods_justifications_url' do
+            %i
+            = disburser_request.methods_justifications.file.filename
+.row
+  .cohort_criteria{class: 'small-24 columns' }
+    %label{for: 'cohort_criteria' }
+      Cohort Criteria
+    = text_area_tag :cohort_criteria, disburser_request.cohort_criteria, rows: 2, disabled: true
+
+.row
+  .data_for_cohort{class: 'small-24 columns' }
+    %label{for: 'data_for_cohort' }
+      Data for cohort
+    = text_area_tag :data_for_cohort, disburser_request.data_for_cohort, rows: 2, disabled: true
+.row
+  .disburser_request_details{class: 'small-24 columns' }
+    - if disburser_request.disburser_request_details.any?
+      %table{ id: 'disburser_request_details' }
+        %caption
+          Specimens
+        %thead
+          %tr
+            %th.specimen_type{ width: 200 }
+              Type
+            %th.quantity{ width: 200 }
+              Quantity
+            %th.volume{ width: 200 }
+              Volume
+            %th.comments{ width: 200 }
+              Comments
+        %tbody
+          - disburser_request.disburser_request_details.each do |disburser_request_detail|
+            = render 'disburser_request_details/disburser_request_detail_fields_show', disburser_request_detail: disburser_request_detail

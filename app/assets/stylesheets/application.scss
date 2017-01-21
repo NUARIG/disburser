@@ -23,3 +23,32 @@
 @import "repositories";
 @import "repository_users";
 @import "users";
+
+//See https://github.com/zurb/foundation-sites/issues/8512
+@mixin hack-stack {
+  thead {
+    th {
+      display: block;
+    }
+  }
+
+  tfoot {
+    display: none;
+  }
+
+  tr,
+  th,
+  td {
+    display: block;
+  }
+
+  td {
+    border-top: 0;
+  }
+}
+
+table.hack_stack {
+   @include breakpoint(medium down) {
+      @include hack_stack;
+   }
+}

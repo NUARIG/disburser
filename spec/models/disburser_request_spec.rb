@@ -108,33 +108,111 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request_1.submitted?).to be_falsy
   end
 
-  it 'knows if a request is a queried', focus: false do
-    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STAUTS_QUERIED, status_user: @moomintroll_user)
-    expect(disburser_request_1.queried?).to be_truthy
+  it 'knows if a request is query fulfilled', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, status_user: @moomintroll_user)
+    expect(disburser_request_1.query_fulfilled?).to be_truthy
   end
 
-  it 'knows if a request is not a queried', focus: false do
-    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, status_user: @moomintroll_user)
-    expect(disburser_request_1.queried?).to be_falsy
+  it 'knows if a request is not query fulfilled', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED, status_user: @moomintroll_user)
+    expect(disburser_request_1.query_fulfilled?).to be_falsy
+  end
+
+  it 'knows if a request is query not started', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(disburser_request_1.not_started?).to be_truthy
+  end
+
+  it 'knows if a request is not not started', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, status_user: @moomintroll_user)
+    expect(disburser_request_1.not_started?).to be_falsy
   end
 
   it "saves a disburser request status once the status reaches 'submitted'", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
     expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
-    expect(disburser_request_1.disburser_request_statuses.first.username).to eq(@moomintroll_user.username)
+    expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@moomintroll_user.username)
   end
 
   it "saves a disburser request status once the status reaches 'submitted' (but only once)", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
     expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
-    expect(disburser_request_1.disburser_request_statuses.first.username).to eq(@moomintroll_user.username)
+    expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@moomintroll_user.username)
     disburser_request_1.title = 'moomin research'
     disburser_request_1.save!
     disburser_request_1.reload
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
     expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
-    expect(disburser_request_1.disburser_request_statuses.first.username).to eq(@moomintroll_user.username)
+    expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@moomintroll_user.username)
+  end
+
+  it "saves a disburser request status once the fulfillment status reaches 'query fulfilled'", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(0)
+    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+    disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+    disburser_request_1.status_user = @little_my_user
+    status_comments = 'Moomin fulfilled'
+    disburser_request_1.status_comments = status_comments
+    disburser_request_1.save!
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
+    expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
+    expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@little_my_user.username)
+    expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(status_comments)
+  end
+
+  it "saves a disburser request status once the fulfillment status reaches 'query fulfilled'", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(0)
+    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+    disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+    disburser_request_1.status_user = @little_my_user
+    status_comments = 'Moomin fulfilled'
+    disburser_request_1.status_comments = status_comments
+    disburser_request_1.save!
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
+    expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
+    expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@little_my_user.username)
+    expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(status_comments)
+  end
+
+  it "saves a disburser request status once the fulfillment status reaches 'query fulfilled' (more than once)", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(0)
+    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+    disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+    disburser_request_1.status_user = @little_my_user
+    status_comments = 'Moomin fulfilled'
+    disburser_request_1.status_comments = status_comments
+    disburser_request_1.save!
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
+    expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
+    expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@little_my_user.username)
+    expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(status_comments)
+    disburser_request_1.reload
+    disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+    disburser_request_1.status_user = @little_my_user
+    status_comments = 'Moomin fulfilled again'
+    disburser_request_1.status_comments = status_comments
+    disburser_request_1.save!
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(2)
+
+    expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
+    expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@little_my_user.username)
+    expect(disburser_request_1.disburser_request_statuses.last.status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
+    expect(disburser_request_1.disburser_request_statuses.last.user.username).to eq(@little_my_user.username)
+    expect(disburser_request_1.disburser_request_statuses.last.comments).to eq(status_comments)
+  end
+
+  it "can return disburder requests that do not have a status of 'draft'", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Cure cancer', investigator: 'placehoder', irb_number: 'placehoder', cohort_criteria: 'placehoder', data_for_cohort: 'placehoder')
+    disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Cure heart disease',  investigator: 'placehoder', irb_number: 'placehoder', cohort_criteria: 'placehoder', data_for_cohort: 'placehoder')
+    disburser_request_2.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+    disburser_request_2.status_user = @little_my_user
+    disburser_request_2.save!
+
+    expect(DisburserRequest.not_draft).to match_array([disburser_request_2])
   end
 end

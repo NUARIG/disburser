@@ -11,7 +11,7 @@ class HomeController < ApplicationController
 
   private
     def sort_column
-      ['name', 'data', 'specimens'].include?(params[:sort]) ? params[:sort] : 'name'
+      ['name'].include?(params[:sort]) ? params[:sort] : 'name'
     end
 
     def sort_direction

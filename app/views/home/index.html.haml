@@ -6,9 +6,11 @@
     %h2
       Repositories
     = form_tag repositories_url, method: 'get', id: 'search_repositories_form'  do
-      .search_box
+      .search_box{ class: 'large-offset-12 large-8 columns' }
+        %label{for: 'search' }
+          Search
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
-      .search_buttons
+      .search_buttons{ class: 'large-4 columns' }
         %button{ type: 'submit', id: 'search_repositories_button', class: 'tiny button' }
           Search
         = link_to 'Clear', repositories_url(mine: params[:mine])

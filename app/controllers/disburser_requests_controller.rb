@@ -2,7 +2,7 @@ class DisburserRequestsController < ApplicationController
   before_action :authenticate_user!
   helper_method :sort_column, :sort_direction
   before_action :load_repository, only: [:new, :create, :edit, :update]
-  before_action :load_disburser_request, only: [:edit, :update, :show, :download_file, :status]
+  before_action :load_disburser_request, only: [:edit, :update, :edit_data_status, :edit_specimen_status, :download_file, :data_status, :specimen_status]
   before_action :load_specimen_types, only: [:new, :create, :edit, :update]
 
   def index
@@ -25,20 +25,35 @@ class DisburserRequestsController < ApplicationController
     @disburser_requests = current_user.admin_disbursr_requests.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
-  def coordinator
+  def data_coordinator
     authorize DisburserRequest
     params[:page]||= 1
-    params[:status]||= DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+    params[:fulfillment_status]||= DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED
     options = {}
     options[:sort_column] = sort_column
     options[:sort_direction] = sort_direction
 
-    @disburser_requests = current_user.coordinator_disbursr_requests(params[:status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+    @disburser_requests = current_user.data_coordinator_disbursr_requests(status: params[:status], fulfillment_status: params[:fulfillment_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+  end
+
+  def specimen_coordinator
+    authorize DisburserRequest
+    params[:page]||= 1
+    params[:fulfillment_status]||= DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+    options = {}
+    options[:sort_column] = sort_column
+    options[:sort_direction] = sort_direction
+
+    @disburser_requests = current_user.specimen_coordinator_disbursr_requests(status: params[:status], fulfillment_status: params[:fulfillment_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def new
     @disburser_request = @repository.disburser_requests.new(submitter: current_user)
     @specimen_types = @repository.specimen_types.map { |specimen_type| [specimen_type.name, specimen_type.id] }
+  end
+
+  def edit
+    authorize @disburser_request
   end
 
   def create
@@ -66,13 +81,6 @@ class DisburserRequestsController < ApplicationController
       flash.now[:alert] = 'Failed to create repository request.'
       render action: 'new'
     end
-  end
-
-  def show
-  end
-
-  def edit
-    authorize @disburser_request
   end
 
   def update
@@ -106,16 +114,36 @@ class DisburserRequestsController < ApplicationController
     return send_file file, disposition: 'attachment', x_sendfile: true unless file.blank?
   end
 
-  def status
+  def edit_data_status
+  end
+
+  def edit_specimen_status
+  end
+
+  def data_status
     authorize @disburser_request
     @disburser_request.assign_attributes(disburser_request_params)
     @disburser_request.status_user = current_user
     if @disburser_request.save
-      flash[:success] = 'You have successfully updated a repository request.'
-      redirect_to coordinator_disburser_requests_url
+      flash[:success] = 'You have successfully updated the status of a repository request.'
+      redirect_to data_coordinator_disburser_requests_url
     else
-      flash.now[:alert] = 'Failed to update repository request.'
-      render action: 'show'
+      flash.now[:alert] = 'Failed to update the status of a repository request.'
+      render action: 'edit_data_status'
+    end
+  end
+
+  def specimen_status
+    authorize @disburser_request
+    @disburser_request.assign_attributes(disburser_request_params)
+    @disburser_request.status_user = current_user
+    @disburser_request.status_comments = params[:comments]
+    if @disburser_request.save
+      flash[:success] = 'You have successfully updated the status of a repository request.'
+      redirect_to specimen_coordinator_disburser_requests_url
+    else
+      flash.now[:alert] = 'Failed to update the status of a repository request.'
+      render action: 'edit_specimen_status'
     end
   end
 
@@ -125,7 +153,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def disburser_request_params
-      params.require(:disburser_request).permit(:status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
+      params.require(:disburser_request).permit(:status_comments, :status, :fulfillment_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
     end
 
     def load_repository
@@ -137,7 +165,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def sort_column
-      ['title', 'investigator', 'irb_number', 'status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
+      ['title', 'investigator', 'irb_number', 'status', 'fulfillment_status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
     end
 
     def sort_direction

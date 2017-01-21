@@ -27,8 +27,10 @@ ActiveRecord::Schema.define(version: 20170110214353) do
 
   create_table "disburser_request_statuses", force: :cascade do |t|
     t.integer  "disburser_request_id", null: false
+    t.string   "status_type",          null: false
     t.string   "status",               null: false
-    t.string   "username",             null: false
+    t.integer  "user_id",              null: false
+    t.text     "comments"
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
@@ -44,13 +46,13 @@ ActiveRecord::Schema.define(version: 20170110214353) do
     t.text     "cohort_criteria",        null: false
     t.text     "data_for_cohort",        null: false
     t.string   "status",                 null: false
+    t.string   "fulfillment_status",     null: false
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
 
   create_table "repositories", force: :cascade do |t|
     t.string   "name",             null: false
-    t.boolean  "online_voting"
     t.string   "irb_template"
     t.string   "data_dictionary"
     t.text     "data_content"

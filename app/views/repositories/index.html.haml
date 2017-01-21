@@ -6,9 +6,11 @@
     %h2
       Repositories
     = form_tag repositories_url, method: 'get', id: 'search_repositories_form'  do
-      .search_box
+      .search_box{ class: 'large-offset-12 large-8 columns' }
+        %label{for: 'search' }
+          Search
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
-      .search_buttons
+      .search_buttons{ class: 'large-4 columns' }
         %button{ type: 'submit', id: 'search_repositories_button', class: 'tiny button' }
           Search
         = link_to 'Clear', repositories_url(mine: params[:mine])
@@ -19,16 +21,12 @@
         %tr
           %th.name{ width: 200 }
             = sortable 'name'
-          %th.online_voting{ width: 200 }
-            = sortable 'online voting'
           %th.edit{ width: 100 }
       %tbody
         - @repositories.each do |respository|
           = content_tag_for(:tr, respository) do
             %td.name
               = respository.name
-            %td.online_voting
-              = respository.online_voting
             %td.edit
               = link_to 'Edit', edit_repository_url(respository), { class: 'edit_repository_link' }
     = will_paginate @repositories, renderer: FoundationPagination::Rails

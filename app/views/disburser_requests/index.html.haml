@@ -7,6 +7,8 @@
       Requests
     = form_tag disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
       .search_box{ class: 'large-offset-12 large-8 columns' }
+        %label{for: 'search' }
+          Search
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
       .search_buttons{ class: 'large-4 columns' }
         %button{ type: 'submit', id: 'search_disburser_requests_button', class: 'tiny button' }
@@ -14,20 +16,22 @@
         = link_to 'Clear', disburser_requests_url
   .disburser_requests_list
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails
-    %table
+    %table.hack_stack
       %thead
         %tr
-          %th.repository{ width: 200 }
+          %th.repository
             = sortable 'repositories.name', 'Repository'
-          %th.title{ width: 200 }
+          %th.title
             = sortable 'title'
-          %th.investigator{ width: 200 }
+          %th.investigator
             = sortable 'investigator'
-          %th.irb_number{ width: 200 }
+          %th.irb_number
             = sortable 'irb_number', 'IRB Number'
-          %th.status{ width: 200 }
+          %th.status
             = sortable 'status'
-          %th.edit{ width: 100 }
+          %th.fulfillment_status
+            = sortable 'fulfillment_status', 'Fulfillment Status'
+          %th.edit
       %tbody
         - @disburser_requests.each do |disburser_request|
           = content_tag_for(:tr, disburser_request) do
@@ -41,6 +45,8 @@
               = disburser_request.irb_number
             %td.status
               = disburser_request.status
+            %td.fulfillment_status
+              = disburser_request.fulfillment_status
             %td.edit
               = link_to 'Edit', edit_repository_disburser_request_url(disburser_request.repository,  disburser_request), { class: 'edit_disburser_request_link' }
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails

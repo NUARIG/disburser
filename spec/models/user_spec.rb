@@ -93,6 +93,42 @@ RSpec.describe User, type: :model do
     expect(harold_user.repository_coordinator?).to be_falsy
   end
 
+  it 'know if it is a data coordinator', focus: false do
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+    @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
+    @moomin_repository.save!
+    harold_user = User.where(username: 'hbaines').first
+    expect(harold_user.data_coordinator?).to be_truthy
+  end
+
+  it 'know if it is not a repository coordinator', focus: false do
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+    @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: false, specimen_coordinator: false)
+    @moomin_repository.save!
+    harold_user = User.where(username: 'hbaines').first
+    expect(harold_user.data_coordinator?).to be_falsy
+  end
+
+  it 'know if it is a specimen coordinator', focus: false do
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+    @moomin_repository.repository_users.build(username: 'hbaines', specimen_coordinator: true)
+    @moomin_repository.save!
+    harold_user = User.where(username: 'hbaines').first
+    expect(harold_user.specimen_coordinator?).to be_truthy
+  end
+
+  it 'know if it is not a repository coordinator', focus: false do
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+    @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: false, specimen_coordinator: false)
+    @moomin_repository.save!
+    harold_user = User.where(username: 'hbaines').first
+    expect(harold_user.specimen_coordinator?).to be_falsy
+  end
+
   describe 'listing disburser requests' do
     before(:each) do
       @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Groke research', investigator: 'Groke', irb_number: '123', cohort_criteria: 'Groke cohort criteria', data_for_cohort: 'Groke data for cohort')
@@ -117,16 +153,25 @@ RSpec.describe User, type: :model do
       expect(harold_user.admin_disbursr_requests.all).to match_array([@disburser_request_1, @disburser_request_2])
     end
 
-    it 'lists coordinator disburser requests for a repository coordinator', focus: false do
+    it 'lists data coordinator disburser requests for a data coordinator (excluding drafts)', focus: false do
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Little My research', investigator: 'Little My', irb_number: '888', cohort_criteria: 'Little My cohort criteria', data_for_cohort: 'Little My data for cohort')
       harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
       @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
       @moomin_repository.save!
       harold_user = User.where(username: 'hbaines').first
-      expect(harold_user.coordinator_disbursr_requests.all).to match_array([@disburser_request_1, @disburser_request_2])
+      @disburser_request_2.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_2.status_user = harold_user
+      @disburser_request_2.save
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_5.status_user = harold_user
+      @disburser_request_5.save
+
+      expect(harold_user.data_coordinator_disbursr_requests.all).to match_array([@disburser_request_2, @disburser_request_5])
     end
 
-    it 'lists coordinator disburser requests for a repository coordinator by status', focus: false do
+    it 'lists data coordinator disburser requests for a data coordinator (excluding drafts) by status', focus: false do
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Little My research', investigator: 'Little My', irb_number: '888', cohort_criteria: 'Little My cohort criteria', data_for_cohort: 'Little My data for cohort')
       harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
       @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
@@ -135,7 +180,85 @@ RSpec.describe User, type: :model do
       @disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_1.status_user = harold_user
       @disburser_request_1.save!
-      expect(harold_user.coordinator_disbursr_requests(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED).all).to match_array([@disburser_request_1])
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED
+      @disburser_request_5.status_user = harold_user
+      @disburser_request_5.save
+
+      expect(harold_user.data_coordinator_disbursr_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED).all).to match_array([@disburser_request_1])
+    end
+
+    it 'lists data coordinator disburser requests for a data coordinator (excluding drafts) by fulfillment status', focus: false do
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Little My research', investigator: 'Little My', irb_number: '888', cohort_criteria: 'Little My cohort criteria', data_for_cohort: 'Little My data for cohort')
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @moomin_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
+      @moomin_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      @disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_1.status_user = @moomintroll_user
+      @disburser_request_1.save!
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_5.status_user = @moomintroll_user
+      @disburser_request_5.save
+      @disburser_request_5.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_5.status_user = harold_user
+      @disburser_request_5.save
+
+      expect(harold_user.data_coordinator_disbursr_requests(fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED).all).to match_array([@disburser_request_5])
+    end
+
+    it 'lists specimen coordinator disburser requests for a s coordinator (excluding drafts)', focus: false do
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Little My research', investigator: 'Little My', irb_number: '888', cohort_criteria: 'Little My cohort criteria', data_for_cohort: 'Little My data for cohort')
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @moomin_repository.repository_users.build(username: 'hbaines', specimen_coordinator: true)
+      @moomin_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      @disburser_request_2.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_2.status_user = harold_user
+      @disburser_request_2.save
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_5.status_user = harold_user
+      @disburser_request_5.save
+
+      expect(harold_user.specimen_coordinator_disbursr_requests.all).to match_array([@disburser_request_2, @disburser_request_5])
+    end
+
+    it 'lists specimen coordinator disburser requests for a specimen coordinator (excluding drafts) by status', focus: false do
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Little My research', investigator: 'Little My', irb_number: '888', cohort_criteria: 'Little My cohort criteria', data_for_cohort: 'Little My data for cohort')
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @moomin_repository.repository_users.build(username: 'hbaines', specimen_coordinator: true)
+      @moomin_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      @disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_1.status_user = harold_user
+      @disburser_request_1.save!
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED
+      @disburser_request_5.status_user = harold_user
+      @disburser_request_5.save
+
+      expect(harold_user.specimen_coordinator_disbursr_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED).all).to match_array([@disburser_request_1])
+    end
+
+    it 'lists specimen coordinator disburser requests for a specimen coordinator (excluding drafts) by fulfillment status', focus: false do
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Little My research', investigator: 'Little My', irb_number: '888', cohort_criteria: 'Little My cohort criteria', data_for_cohort: 'Little My data for cohort')
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @moomin_repository.repository_users.build(username: 'hbaines', specimen_coordinator: true)
+      @moomin_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      @disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_1.status_user = @moomintroll_user
+      @disburser_request_1.save!
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_5.status_user = @moomintroll_user
+      @disburser_request_5.save
+      @disburser_request_5.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_5.status_user = harold_user
+      @disburser_request_5.save
+
+      expect(harold_user.specimen_coordinator_disbursr_requests(fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED).all).to match_array([@disburser_request_5])
     end
   end
 end

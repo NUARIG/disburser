@@ -15,25 +15,27 @@
         = link_to 'Clear', repository_repository_users_url(@repository)
   .repository_users_list
     = will_paginate @repository_users, renderer: FoundationPagination::Rails
-    %table.stack
-      %tr
-        %th.username{ width: 200 }
-          = sortable 'users.username', 'Username'
-        %th.first_name{ width: 200 }
-          = sortable 'users.first_name', 'First'
-        %th.last_name{ width: 200 }
-          = sortable 'users.last_name', 'Last'
-        %th.email{ width: 200 }
-          = sortable 'users.email', 'Email'
-        %th.administrator{ width: 200 }
-          = sortable 'repository_users.administrator', 'Administrator?'
-        %th.committee{ width: 200 }
-          = sortable 'repository_users.committee', 'Committee?'
-        %th.specimen_coordinator{ width: 200 }
-          = sortable 'repository_users.specimen_coordinator', 'Specimen Coordinator?'
-        %th.data_coordinator{ width: 200 }
-          = sortable 'repository_users.data_coordinator', 'Data Coordinator?'
-        %th.edit
+    %table.hack_stack
+      %thead
+        %tr
+          %th.username{ width: 200 }
+            = sortable 'users.username', 'Username'
+          %th.first_name{ width: 200 }
+            = sortable 'users.first_name', 'First'
+          %th.last_name{ width: 200 }
+            = sortable 'users.last_name', 'Last'
+          %th.email{ width: 200 }
+            = sortable 'users.email', 'Email'
+          %th.administrator{ width: 200 }
+            = sortable 'repository_users.administrator', 'Administrator?'
+          %th.committee{ width: 200 }
+            = sortable 'repository_users.committee', 'Committee?'
+          %th.specimen_coordinator{ width: 200 }
+            = sortable 'repository_users.specimen_coordinator', 'Specimen Coordinator?'
+          %th.data_coordinator{ width: 200 }
+            = sortable 'repository_users.data_coordinator', 'Data Coordinator?'
+          %th.edit
+      %tbody
         - @repository_users.each do |respository_user|
           = content_tag_for(:tr, respository_user) do
             %td.username
@@ -56,7 +58,6 @@
               = link_to 'Edit', edit_repository_repository_user_url(@repository, respository_user), { class: 'repository_user_link' }
     = will_paginate @repository_users, renderer: FoundationPagination::Rails
     = link_to 'New User', new_repository_repository_user_url(@repository), { class: 'repository_user_link' }
-
 
 #repository_user_modal.reveal.large{ "data-reveal" => "" }
   #repository_user

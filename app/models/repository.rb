@@ -38,4 +38,12 @@ class Repository < ApplicationRecord
   def repository_coordinator?(user)
     repository_users.where('user_id = ? AND (data_coordinator = ? OR specimen_coordinator = ?)', user.id, true, true).any?
   end
+
+  def data_coordinator?(user)
+    repository_users.where('user_id = ? AND data_coordinator = ?', user.id, true).any?
+  end
+
+  def specimen_coordinator?(user)
+    repository_users.where('user_id = ? AND specimen_coordinator = ?', user.id, true).any?
+  end
 end

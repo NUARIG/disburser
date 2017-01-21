@@ -67,7 +67,7 @@ class RepositoriesController < ApplicationController
 
   private
     def repository_params
-      params.require(:repository).permit(:name, :online_voting, :irb_template, :irb_template_cache, :remove_irb_template, :data_dictionary, :data_dictionary_cache, :remove_data_dictionary, specimen_types_attributes: [:id, :name, :_destroy])
+      params.require(:repository).permit(:name, :irb_template, :irb_template_cache, :remove_irb_template, :data_dictionary, :data_dictionary_cache, :remove_data_dictionary, specimen_types_attributes: [:id, :name, :_destroy])
     end
 
     def load_repository
