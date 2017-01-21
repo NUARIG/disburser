@@ -6,7 +6,6 @@
   = form_for [@repository, @disburser_request], html: { class: 'disburser_request_form', multipart: true  } do |f|
     %p.help-text
       %span{ class: 'required' }
-        *
       Indicates required field
     = render 'disburser_request', repository: @repository, f: f
     .navigation{ class: 'small-offset-8 small-16 large-offset-20 large-4 columns' }

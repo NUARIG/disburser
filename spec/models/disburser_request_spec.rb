@@ -9,10 +9,10 @@ RSpec.describe DisburserRequest, type: :model do
 
   it { should validate_presence_of :investigator }
   it { should validate_presence_of :title }
-  it { should validate_presence_of :irb_number }
   it { should validate_presence_of :methods_justifications }
   it { should validate_presence_of :cohort_criteria }
   it { should validate_presence_of :data_for_cohort }
+
 
   before(:each) do
     @moomin_repository = FactoryGirl.build(:repository, name: 'Moomin Repository')
@@ -20,6 +20,17 @@ RSpec.describe DisburserRequest, type: :model do
     @little_my_user = FactoryGirl.create(:user, email: 'little_my@moomin.com', username: 'little_my', first_name: 'Little My', last_name: 'Moomin')
   end
 
+  it 'should not validate the presence of irb number if feasibility is true', focus: false do
+    disburser_request = FactoryGirl.build(:disburser_request, feasibility: true, irb_number: nil)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:irb_number]).to be_empty
+  end
+
+  it 'should validate the presence of irb number if feasibility is false', focus: false do
+    disburser_request = FactoryGirl.build(:disburser_request, feasibility: false, irb_number: nil)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:irb_number]).to eq(["can't be blank"])
+  end
 
   it "defaults status to 'draft' for a new record that does not provide a status", focus: false do
     disburser_request = DisburserRequest.new

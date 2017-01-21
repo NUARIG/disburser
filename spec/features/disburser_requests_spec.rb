@@ -504,7 +504,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page.has_checked_field?('Feasibility?')).to be_truthy
     expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
     expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_truthy
-    expect(page.has_field?('Data for cohort ', with: disburser_request[:data_for_cohort])).to be_truthy
+    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
 
 
     expect(all('.disburser_request_detail')[0].find('.specimen_type select', text: disburser_request_detail[:specimen_type])).to be_truthy
@@ -579,7 +579,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page.has_checked_field?('Feasibility?')).to be_truthy
     expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
     expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_truthy
-    expect(page.has_field?('Data for cohort ', with: disburser_request[:data_for_cohort])).to be_truthy
+    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
 
     expect(all('.disburser_request_detail')[0].find('.specimen_type select', text: disburser_request_detail[:specimen_type])).to be_truthy
     expect(all('.disburser_request_detail')[0].find_field('Quantity', with: disburser_request_detail[:quantity])).to be_truthy
@@ -649,7 +649,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page.has_unchecked_field?('Feasibility?')).to be_truthy
     expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons2.docx')
     expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_truthy
-    expect(page.has_field?('Data for cohort ', with: disburser_request[:data_for_cohort])).to be_truthy
+    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
     sleep(1)
 
     within(".disburser_request_detail:nth-of-type(1)") do
@@ -668,7 +668,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
  end
 
  scenario 'Editing a disburser request with validation', js: true, focus: false  do
-   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true)
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: false)
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
    disburser_request_detail[:quantity] = '5'
@@ -720,6 +720,10 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.disburser_request_detail:nth-of-type(1) .specimen_type .field_with_errors')
    expect(page).to have_css('.disburser_request_detail:nth-of-type(1) .quantity .field_with_errors')
    sleep(1)
+   check('Feasibility?')
+   click_button('Save')
+   sleep(1)
+   expect(page).to_not have_css('.irb_number .field_with_errors')
  end
 
  scenario 'Updating the status of a disburser request as a data coordinator', js: true, focus: false  do

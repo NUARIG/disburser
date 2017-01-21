@@ -4,7 +4,6 @@
       %label{for: 'repository_name' }
         Name
         %span{ class: 'required' }
-          *
     %div{class: 'small-10 large-20 columns' }
       = f.text_field :name
       - if validation_errors?(repository, :name)

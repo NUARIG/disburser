@@ -10,8 +10,7 @@
     %div{class: 'small-12 large-5 columns' }
       %label{for: 'disburser_request_investigator' }
         Investigator
-        %span{ class: 'required' }
-          *
+        %span{ class: 'validation required' }
     %div{class: 'small-12 large-19 columns' }
       = f.text_field :investigator
       - if validation_errors?(@disburser_request, :investigator)
@@ -21,8 +20,7 @@
     %div{class: 'small-12 large-5 columns' }
       %label{for: 'disburser_request_title' }
         Title
-        %span{ class: 'required' }
-          *
+        %span{ class: 'validation required' }
     %div{class: 'small-12 large-19 columns' }
       = f.text_field :title
       - if validation_errors?(@disburser_request, :title)
@@ -32,8 +30,7 @@
     %div{class: 'small-12 large-5 columns' }
       %label{for: 'disburser_request_irb_number' }
         IRB Number
-        %span{ class: 'required' }
-          *
+        %span{ class: 'validation required' }
     %div{class: 'small-12 large-19 columns' }
       = f.text_field :irb_number
       - if validation_errors?(@disburser_request, :irb_number)
@@ -42,13 +39,14 @@
   %fieldset{class: 'small-offset-5 small-19 columns' }
     = f.check_box :feasibility
     %label{for: 'disburser_request_feasibility'} Feasibility?
+    %span{ id: 'feasibilityHelpText', class: 'help-text' }
+      Only aggregrate numbers will be provided for feasability requests. No approved IRB protocol is required.
 .row
   .methods_justifications{class: 'small-24 columns' }
     %div{class: 'small-12 large-5 columns' }
       %label{for: 'disburser_request_methods_justifications' }
         Methods/Justifications
-        %span{ class: 'required' }
-          *
+        %span{ class: 'validation required' }
     %div{class: 'small-12 large-19 columns' }
       %div
         - if @disburser_request.methods_justifications? && !@disburser_request.new_record?
@@ -69,8 +67,7 @@
   .cohort_criteria{class: 'small-24 columns' }
     %label{for: 'disburser_request_cohort_criteria' }
       Cohort Criteria
-      %span{ class: 'required' }
-        *
+      %span{ class: 'validation required' }
     = f.text_area :cohort_criteria, rows: 2
     - if validation_errors?(@disburser_request, :cohort_criteria)
       %p.error= format_validation_errors(@disburser_request, :cohort_criteria)
@@ -78,8 +75,7 @@
   .data_for_cohort{class: 'small-24 columns' }
     %label{for: 'disburser_request_data_for_cohort' }
       Data for cohort
-      %span{ class: 'required' }
-        *
+      %span{ class: 'validation required' }
     = f.text_area :data_for_cohort, rows: 2
     - if validation_errors?(@disburser_request, :data_for_cohort)
       %p.error= format_validation_errors(@disburser_request, :data_for_cohort)
