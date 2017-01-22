@@ -7,6 +7,11 @@
   = render 'repositories/navigation'
   = form_for @repository, url: repository_content_url(@repository), html: { class: 'repository_form' } do |f|
     .row
+      .general_content
+        %h3
+          General Content
+        = f.cktext_area :general_content
+    .row
       .data_content
         %h3
           Data Content

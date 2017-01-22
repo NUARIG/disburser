@@ -7,6 +7,29 @@
     .new_request{ class: 'small-offset-12 small-12 columns' }
       = link_to 'Make a request!', new_repository_disburser_request_url(@repository), { class: 'new_repository_request_link' }
   .row
+    .files
+      .data_dictionary{ class: 'small-12 large-offset-12 large-6 columns text-right' }
+        %label{for: 'repository_data_dictionary' }
+          Data Dictionary
+        - if @repository.data_dictionary?
+          = link_to download_file_repository_url(@repository, file_type: 'data_dictionary'), 'data-turbolinks' => false, class: 'data_dictionary_url' do
+            %i
+            = @repository.data_dictionary.file.filename
+      .irb_template{ class: 'small-6 large-6 columns text-right' }
+        %label{for: 'repository_irb_template' }
+          IRB Template
+        - if @repository.irb_template?
+          = link_to download_file_repository_url(@repository, file_type: 'irb_template'), 'data-turbolinks' => false, class: 'irb_template_url' do
+            %i
+            = @repository.irb_template.file.filename
+  .row
+    .general_content_header{ class: 'small-24 columns' }
+      %b
+        General
+  .row
+    .general_content{ class: 'small-24 columns' }
+      = raw @repository.general_content
+  .row
     .specimen_content_header{ class: 'small-11 columns' }
       %b
         Specimen

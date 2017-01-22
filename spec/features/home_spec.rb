@@ -1,10 +1,11 @@
 require 'rails_helper'
 RSpec.feature 'Repositories', type: :feature do
   before(:each) do
-    @repository_moomin_specimen_content = '<b>Moomins collect specimens</b>'
-    @repository_moomin_data_content = '<b>Moomins collect data</b>'
-    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', data_content: @repository_moomin_data_content, specimen_content: @repository_moomin_specimen_content)
-    @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', data_content: '<b>Peanuts collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
+    @repository_moomin_general_content = '<b>Some general Moomin information.</b>'
+    @repository_moomin_specimen_content = '<b>Moomins collect specimens.</b>'
+    @repository_moomin_data_content = '<b>Moomins collect data.</b>'
+    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', general_content: @repository_moomin_general_content, data_content: @repository_moomin_data_content, specimen_content: @repository_moomin_specimen_content, data_dictionary: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/data_dictionary.docx'))),irb_template: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/irb_template.docx'))))
+    @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', general_content: '<b>Some general Peanuts information.</b>',data_content: '<b>Peanuts collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
     visit root_path
   end
 
@@ -27,7 +28,10 @@ RSpec.feature 'Repositories', type: :feature do
     within("#repository_#{@repository_moomin.id}") do
       click_link('View')
     end
-    expect(page).to have_css('.data_content b', text: 'Moomins collect data')
-    expect(page).to have_css('.specimen_content b', text: 'Moomins collect specimens')
+    expect(page).to have_css('.general_content b', text: 'Some general Moomin information.')
+    expect(page).to have_css('.data_content b', text: 'Moomins collect data.')
+    expect(page).to have_css('.specimen_content b', text: 'Moomins collect specimens.')
+    expect(page).to have_css('a.irb_template_url', text: 'irb_template.docx')
+    expect(page).to have_css('a.data_dictionary_url', text: 'data_dictionary.docx')
   end
 end

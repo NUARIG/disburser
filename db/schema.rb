@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 20170110214353) do
     t.string   "name",             null: false
     t.string   "irb_template"
     t.string   "data_dictionary"
+    t.text     "general_content"
     t.text     "data_content"
     t.text     "specimen_content"
     t.datetime "created_at",       null: false

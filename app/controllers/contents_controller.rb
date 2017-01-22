@@ -18,7 +18,7 @@ class ContentsController < ApplicationController
 
   private
     def repository_params
-      params.require(:repository).permit(:data_content, :specimen_content)
+      params.require(:repository).permit(:general_content, :data_content, :specimen_content)
     end
 
     def load_repository
