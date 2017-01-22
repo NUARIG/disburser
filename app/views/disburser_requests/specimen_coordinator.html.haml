@@ -37,6 +37,8 @@
             = sortable 'investigator'
           %th.irb_number
             = sortable 'irb_number', 'IRB Number'
+          %th.feasibility
+            = sortable 'feasibility'
           %th.status
             = sortable 'status'
           %th.fulfillment_status
@@ -55,6 +57,8 @@
               = disburser_request.investigator
             %td.irb_number
               = disburser_request.irb_number
+            %td.feasibility
+              = human_boolean(disburser_request.feasibility)
             %td.status
               = disburser_request.status
             %td.fulfillment_status

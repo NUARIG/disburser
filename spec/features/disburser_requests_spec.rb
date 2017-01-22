@@ -14,10 +14,10 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
   describe 'Seeing a list of disburser reqeusts' do
     before(:each) do
-      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Groke research', investigator: 'Groke', irb_number: '123', cohort_criteria: 'Groke cohort criteria', data_for_cohort: 'Groke data for cohort' )
-      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort')
-      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'Sox baseball research', investigator: 'Nellie Fox', irb_number: '789', cohort_criteria: 'Sox cohort criteria', data_for_cohort: 'Sox data for cohort')
-      @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort')
+      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Groke research', investigator: 'Groke', irb_number: '123', feasibility: 0, cohort_criteria: 'Groke cohort criteria', data_for_cohort: 'Groke data for cohort' )
+      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', feasibility: 1, cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort')
+      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'Sox baseball research', investigator: 'Nellie Fox', irb_number: '789', feasibility: 0, cohort_criteria: 'Sox cohort criteria', data_for_cohort: 'Sox data for cohort')
+      @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', feasibility: 1, cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort')
     end
 
     scenario 'As a regular user and sorting', js: true, focus: false do
@@ -73,6 +73,18 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       match_disburser_request_row(@disburser_request_4, 0)
       match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_1, 2)
+
+      click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_4, 2)
+
+      click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_2, 0)
+      match_disburser_request_row(@disburser_request_4, 1)
       match_disburser_request_row(@disburser_request_1, 2)
 
       click_link('Repository')
@@ -165,6 +177,20 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_2, 2)
       match_disburser_request_row(@disburser_request_1, 3)
 
+      click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+      match_disburser_request_row(@disburser_request_2, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
+
+      click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_2, 0)
+      match_disburser_request_row(@disburser_request_4, 1)
+      match_disburser_request_row(@disburser_request_1, 2)
+      match_disburser_request_row(@disburser_request_3, 3)
+
       click_link('Status')
       sleep(1)
       match_disburser_request_row(@disburser_request_1, 0)
@@ -215,7 +241,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
 
     scenario 'As a data coordinator and sorting', js: true, focus: false do
-      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 1, cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
       @white_sox_repository.repository_users.build(username: 'hbaines', administrator: false, data_coordinator: true)
@@ -283,6 +309,16 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_5, 0)
       match_disburser_request_row(@disburser_request_3, 1)
 
+      click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_3, 0)
+      match_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_5, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+
       click_link('Status')
       sleep(1)
       match_disburser_request_row(@disburser_request_5, 0)
@@ -319,7 +355,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
 
     scenario 'As a specimen coordinator and sorting', js: true, focus: false do
-      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 1,  cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
       @white_sox_repository.repository_users.build(username: 'hbaines', administrator: false, specimen_coordinator: true)
@@ -395,6 +431,17 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_5, 0)
       match_disburser_request_row(@disburser_request_3, 1)
 
+      click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_3, 0)
+      match_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_5, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+
+
       @disburser_request_5.status_user = @paul_user
       @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED
       @disburser_request_5.save!
@@ -453,6 +500,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     disburser_request[:investigator] = 'Sniff Moomin'
     disburser_request[:title] = 'Moomin Research'
     disburser_request[:irb_number] = '123'
+    disburser_request[:feasibility] = true
     disburser_request[:cohort_criteria] = 'Moomin cohort criteria.'
     disburser_request[:data_for_cohort] = 'Moomin data for cohort.'
     fill_in('Investigator', with: disburser_request[:investigator])
@@ -893,6 +941,7 @@ def match_disburser_request_row(disburser_request, index)
   expect(all('.disburser_request')[index].find('.title')).to have_content(disburser_request[:title])
   expect(all('.disburser_request')[index].find('.investigator')).to have_content(disburser_request[:investigator])
   expect(all('.disburser_request')[index].find('.irb_number')).to have_content(disburser_request[:irb_number])
+  expect(all('.disburser_request')[index].find('.feasibility')).to have_content(human_boolean(disburser_request[:feasibility]))
   expect(all('.disburser_request')[index].find('.status')).to have_content(disburser_request[:status])
   expect(all('.disburser_request')[index].find('.fulfillment_status')).to have_content(disburser_request[:fulfillment_status])
 end

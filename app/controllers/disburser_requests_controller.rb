@@ -165,7 +165,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def sort_column
-      ['title', 'investigator', 'irb_number', 'status', 'fulfillment_status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
+      ['title', 'investigator', 'irb_number', 'feasibility', 'status', 'fulfillment_status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
     end
 
     def sort_direction

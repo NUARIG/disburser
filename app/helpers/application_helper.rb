@@ -29,4 +29,8 @@ module ApplicationHelper
       param_value == value
     end
   end
+
+  def human_boolean(boolean)
+    boolean ? 'Yes' : 'No'
+  end
 end

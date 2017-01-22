@@ -98,3 +98,7 @@ RSpec.configure do |config|
     end
   end
 end
+
+def human_boolean(boolean)
+  boolean ? 'Yes' : 'No'
+end
