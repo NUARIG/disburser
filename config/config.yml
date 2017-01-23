@@ -1,6 +1,6 @@
 ---
 application: disburser
-repository: ssh://git@github.com:NUBIC/disburser.git
+repository: https://github.com/NUBIC/disburser.git
 deployer: disburser-deployer
 contact_email: m-gurley@northwestern.edu
 development:
