@@ -2,15 +2,15 @@
 application: disburser
 repository: ssh://git@github.com:NUBIC/disburser.git
 deployer: disburser-deployer
-contact_email: p-friedman@northwestern.edu
+contact_email: m-gurley@northwestern.edu
 development:
-  server_name: studystarter.dev
+  server_name: disburser.dev
 test:
-  server_name: studystarter.dev
+  server_name: disburser.dev
 staging:
   app_host: vtfsmnubicapps01.fsm.northwestern.edu
   server_name: disburser-staging.nubic.northwestern.edu
   server_alias: disburser-staging.nubic.northwestern.edu
   cert_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_cert.cer
-  chain_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_interm.ce
+  chain_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_interm.cer
   key_file: /etc/pki/tls/private/disburser-staging_cancer_northwestern_edu.key

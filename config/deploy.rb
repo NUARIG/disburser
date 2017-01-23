@@ -63,7 +63,7 @@ namespace :deploy do
   # end
   #
   # after :finishing, 'deploy:cleanup'
-
+  #
   # namespace :symlink do
   #   task :database_config do
   #     on roles(:web) do
@@ -109,12 +109,6 @@ NameVirtualHost *:443
   DocumentRoot #{ fetch(:deploy_to) }/current/public
   RailsBaseURI /
   PassengerDebugLogFile /var/log/httpd/#{ fetch(:application) }_passenger.log
-
-  <Location /admin >
-    Order deny,allow
-    Deny from all
-    Allow from 129.105.0.0/16 165.124.0.0/16
-  </Location>
 
   <Directory #{ fetch(:deploy_to) }/current/public >
     Allow from all
