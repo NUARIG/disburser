@@ -12,7 +12,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
   end
 
-  describe 'Seeing a list of disburser reqeusts' do
+  describe 'Seeing a list of disburser requests' do
     before(:each) do
       @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Groke research', investigator: 'Groke', irb_number: '123', feasibility: 0, cohort_criteria: 'Groke cohort criteria', data_for_cohort: 'Groke data for cohort' )
       @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', feasibility: 1, cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort')
@@ -116,8 +116,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_4.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_4.status_user = @moomintroll_user
       @disburser_request_4.save!
+
       @disburser_request_4.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
       @disburser_request_4.status_user = @paul_user
+      @disburser_request_4.save!
+      @disburser_request_4.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      @disburser_request_4.status_user = @moomintroll_user
       @disburser_request_4.save!
 
       @moomintroll_user.system_administrator = true
@@ -128,7 +132,16 @@ RSpec.feature 'Disburser Requests', type: :feature do
       expect(page).to have_selector('.menu li.admin', visible: true)
       visit admin_disburser_requests_path
 
-      expect(all('.disburser_request').size).to eq(4)
+      expect(all('.disburser_request').size).to eq(1)
+      match_disburser_request_row(@disburser_request_4, 0)
+
+      [@disburser_request_1, @disburser_request_2, @disburser_request_3].each do |disburser_request|
+        disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+        disburser_request.status_user = @moomintroll_user
+        disburser_request.save!
+      end
+      visit admin_disburser_requests_path
+      sleep(1)
 
       match_disburser_request_row(@disburser_request_1, 0)
       match_disburser_request_row(@disburser_request_2, 1)
@@ -193,17 +206,17 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       click_link('Status')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
-
-      click_link('Status')
-      sleep(1)
       match_disburser_request_row(@disburser_request_4, 0)
       match_disburser_request_row(@disburser_request_1, 1)
       match_disburser_request_row(@disburser_request_2, 2)
       match_disburser_request_row(@disburser_request_3, 3)
+
+      click_link('Status')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_3, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
 
       click_link('Fulfillment Status')
       sleep(1)
@@ -232,6 +245,13 @@ RSpec.feature 'Disburser Requests', type: :feature do
       visit root_path
       expect(page).to_not have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.admin', visible: true)
+      visit admin_disburser_requests_path
+      expect(all('.disburser_request').size).to eq(0)
+      [@disburser_request_3, @disburser_request_4, @disburser_request_5].each do |disburser_request|
+        disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+        disburser_request.status_user = @moomintroll_user
+        disburser_request.save!
+      end
       visit admin_disburser_requests_path
       expect(all('.disburser_request').size).to eq(3)
 
@@ -440,7 +460,6 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       match_disburser_request_row(@disburser_request_5, 0)
       match_disburser_request_row(@disburser_request_3, 1)
-
 
       @disburser_request_5.status_user = @paul_user
       @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED

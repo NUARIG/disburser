@@ -2,7 +2,7 @@ class DisburserRequestsController < ApplicationController
   before_action :authenticate_user!
   helper_method :sort_column, :sort_direction
   before_action :load_repository, only: [:new, :create, :edit, :update]
-  before_action :load_disburser_request, only: [:edit, :update, :edit_data_status, :edit_specimen_status, :download_file, :data_status, :specimen_status]
+  before_action :load_disburser_request, only: [:edit, :update, :edit_admin_status, :edit_data_status, :edit_specimen_status, :download_file, :data_status, :specimen_status, :admin_status]
   before_action :load_specimen_types, only: [:new, :create, :edit, :update]
 
   def index
@@ -49,7 +49,6 @@ class DisburserRequestsController < ApplicationController
 
   def new
     @disburser_request = @repository.disburser_requests.new(submitter: current_user)
-    @specimen_types = @repository.specimen_types.map { |specimen_type| [specimen_type.name, specimen_type.id] }
   end
 
   def edit
@@ -114,10 +113,17 @@ class DisburserRequestsController < ApplicationController
     return send_file file, disposition: 'attachment', x_sendfile: true unless file.blank?
   end
 
+  def edit_admin_status
+    authorize @disburser_request
+    load_specimen_types_from_disburser_request
+  end
+
   def edit_data_status
+    authorize @disburser_request
   end
 
   def edit_specimen_status
+    authorize @disburser_request
   end
 
   def data_status
@@ -137,7 +143,6 @@ class DisburserRequestsController < ApplicationController
     authorize @disburser_request
     @disburser_request.assign_attributes(disburser_request_params)
     @disburser_request.status_user = current_user
-    @disburser_request.status_comments = params[:comments]
     if @disburser_request.save
       flash[:success] = 'You have successfully updated the status of a repository request.'
       redirect_to specimen_coordinator_disburser_requests_url
@@ -147,7 +152,25 @@ class DisburserRequestsController < ApplicationController
     end
   end
 
+  def admin_status
+    authorize @disburser_request
+    load_specimen_types_from_disburser_request
+    @disburser_request.assign_attributes(disburser_request_params)
+    @disburser_request.status_user = current_user
+    if @disburser_request.save
+      flash[:success] = 'You have successfully updated the status of a repository request.'
+      redirect_to admin_disburser_requests_url
+    else
+      flash.now[:alert] = 'Failed to update the status of a repository request.'
+      render action: 'edit_admin_status'
+    end
+  end
+
   private
+    def load_specimen_types_from_disburser_request
+      @specimen_types = @disburser_request.repository.specimen_types.order('name ASC').map { |specimen_type| [specimen_type.name, specimen_type.id] }
+    end
+
     def load_specimen_types
       @specimen_types = @repository.specimen_types.order('name ASC').map { |specimen_type| [specimen_type.name, specimen_type.id] }
     end

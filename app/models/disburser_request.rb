@@ -4,7 +4,7 @@ class DisburserRequest < ApplicationRecord
   has_many :disburser_request_details
   has_many :disburser_request_statuses
   accepts_nested_attributes_for :disburser_request_details, reject_if: :all_blank, allow_destroy: true
-  validates_presence_of :investigator, :title, :methods_justifications, :cohort_criteria, :data_for_cohort, :fulfillment_status
+  validates_presence_of :investigator, :title, :methods_justifications, :cohort_criteria, :data_for_cohort, :fulfillment_status, :status
   validates_presence_of :irb_number, if: Proc.new { |disburser_reqeust| !disburser_reqeust.feasibility }
   validates_associated :disburser_request_details
 
@@ -19,7 +19,8 @@ class DisburserRequest < ApplicationRecord
   DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW = 'committee review'
   DISBURSER_REQUEST_STATUS_APPROVED = 'approved'
   DISBURSER_REQUEST_STATUS_DENIED = 'denied'
-  DISBURSER_REQUEST_STATUSES = [DISBURSER_REQUEST_STAUTS_DRAFT, DISBURSER_REQUEST_STATUS_SUBMITTED, DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED]
+  DISBURSER_REQUEST_STAUTS_CANCEL = 'cancel'
+  DISBURSER_REQUEST_STATUSES = [DISBURSER_REQUEST_STAUTS_DRAFT, DISBURSER_REQUEST_STATUS_SUBMITTED, DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STAUTS_CANCEL]
   DISBURSER_REQUEST_STATUSES_SANS_DRAFT = DISBURSER_REQUEST_STATUSES - [DISBURSER_REQUEST_STAUTS_DRAFT]
 
   DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED = 'not started'

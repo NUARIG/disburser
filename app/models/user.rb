@@ -114,9 +114,10 @@ class User < ActiveRecord::Base
 
   def admin_disbursr_requests
     if self.system_administrator
-      DisburserRequest
+      adr = DisburserRequest
     else
-      DisburserRequest.where(repository_id: repository_users.where('administrator = ?', true).map(&:repository_id))
+      adr = DisburserRequest.where(repository_id: repository_users.where('administrator = ?', true).map(&:repository_id))
     end
+    adr.not_draft
   end
 end

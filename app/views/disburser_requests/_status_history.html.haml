@@ -1,25 +1,26 @@
 .status_history{ class: 'large-18 columns' }
-  %table.hack_stack
-    %thead
-      %caption
-        Status History
-      %tr
-        %th.status{ width: 200 }
-          Status
-        %th.date{ width: 200 }
-          Date
-        %th.user{ width: 200 }
-          User
-        %th.comments{ width: 200 }
-          Comments
-    %tbody
-      - @disburser_request.disburser_request_statuses.order('created_at ASC').each do |disburser_request_status|
-        = content_tag_for(:tr, disburser_request_status) do
-          %td.status
-            = disburser_request_status.status
-          %td.date
-            = disburser_request_status.created_at.to_s(:date)
-          %td.user
-            = disburser_request_status.user.full_name
-          %td.comments
-            = disburser_request_status.comments
+  - if @disburser_request.disburser_request_statuses.any?
+    %b
+      Status History
+    %table.hack_stack
+      %thead
+        %tr
+          %th.status
+            Status
+          %th.date
+            Date
+          %th.user
+            User
+          %th.comments
+            Comments
+      %tbody
+        - @disburser_request.disburser_request_statuses.order('created_at ASC').each do |disburser_request_status|
+          = content_tag_for(:tr, disburser_request_status) do
+            %td.status
+              = disburser_request_status.status
+            %td.date
+              = disburser_request_status.created_at.to_s(:date)
+            %td.user
+              = disburser_request_status.user.full_name
+            %td.comments
+              = disburser_request_status.comments

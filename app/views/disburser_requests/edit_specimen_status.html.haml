@@ -20,6 +20,6 @@
               %label{for: 'disburser_request_status_comments' }
                 Comments
               = f.text_area :status_comments, rows: 3
-          .navigation{ class: 'laft-offset-8 large-16 columns' }
+          .navigation{ class: 'large-offset-8 large-16 columns' }
             = f.submit 'Save', class: 'button'
             = link_to 'Cancel', specimen_coordinator_disburser_requests_url, class: 'cancel-link button warning'

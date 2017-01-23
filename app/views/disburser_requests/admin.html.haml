@@ -56,5 +56,5 @@
             %td.fulfillment_status
               = disburser_request.fulfillment_status
             %td.edit
-              = link_to 'Edit', edit_repository_disburser_request_url(disburser_request.repository,  disburser_request), { class: 'edit_repository_link' }
+              = link_to 'Edit', edit_admin_status_disburser_request_url(disburser_request), { class: 'edit_repository_link' }
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails

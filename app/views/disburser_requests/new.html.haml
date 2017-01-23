@@ -8,9 +8,16 @@
       %span{ class: 'required' }
       Indicates required field
     = render 'disburser_request', repository: @repository, f: f
-    .navigation{ class: 'small-offset-8 small-16 large-offset-20 large-4 columns' }
-      = f.submit 'Save', class: 'button'
-      - if current_user.admin?
-        = link_to 'Cancel', admin_disburser_requests_url, class: 'cancel-link button warning'
-      -else
+    .row
+      .status_update{ class: 'large-offset-18 large-6 columns' }
+        %b
+          Status
+        %br
+        - if @disburser_request.new_record? || @disburser_request.draft?
+          = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, true)
+          = f.label :status, 'Draft', value: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
+          = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, true)
+          = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      .navigation{ class: 'large-offset-18 large-6 columns' }
+        = f.submit 'Save', class: 'button'
         = link_to 'Cancel', disburser_requests_url, class: 'cancel-link button warning'

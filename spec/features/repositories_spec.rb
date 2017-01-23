@@ -30,6 +30,7 @@ RSpec.feature 'Repositories', type: :feature do
 
   scenario 'Visiting repositories and sorting', js: true, focus: false do
     click_link('Repositories')
+    sleep(1)
     not_match_repository(@repository_bossy_bear)
     match_repository_row(@moomin_repository, 0)
     match_repository_row(@peanuts_repository, 1)

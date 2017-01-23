@@ -81,6 +81,8 @@
       %p.error= format_validation_errors(@disburser_request, :data_for_cohort)
 .row
   .disburser_request_details{class: 'small-24 columns' }
+    %b
+      Specimens
     %table{ id: 'disburser_request_details' }
       %thead
         %tr
@@ -98,11 +100,3 @@
           = render 'disburser_request_details/disburser_request_detail_fields', f: disburser_request_detail
     .links
       = link_to_add_association 'Add', f, :disburser_request_details, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#disburser_request_details tbody', partial: 'disburser_request_details/disburser_request_detail_fields', class: 'button tiny primary'
-.row
-  .status{ class: 'small-offset-8 small-16 large-offset-19 large-5 columns' }
-    = field_set_tag 'Status' do
-      - if @disburser_request.new_record? || @disburser_request.draft?
-        = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, true)
-        = f.label :status, 'Draft', value: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
-        = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, true)
-        = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED

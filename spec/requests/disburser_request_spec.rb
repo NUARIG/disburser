@@ -17,19 +17,19 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'should not allow access to admin of disburser requests', focus: false do
+    it 'should deny access to admin of disburser requests', focus: false do
       get admin_disburser_requests_url
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should not allow access to data coordinator of disburser requests', focus: false do
+    it 'should deny access to data coordinator of disburser requests', focus: false do
       get data_coordinator_disburser_requests_url
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should not allow access to specimen coordinator of disburser requests', focus: false do
+    it 'should deny access to specimen coordinator of disburser requests', focus: false do
       get specimen_coordinator_disburser_requests_url
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
@@ -45,6 +45,12 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
+    it 'should allow access to edit a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
+      expect(response).to have_http_status(:success)
+    end
+
     it 'should deny access to edit a disburser request created by another user', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
@@ -52,15 +58,30 @@ describe DisburserRequestsController, type: :request do
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
-      expect(response).to have_http_status(:success)
-    end
-
     it 'should deny access to update a disburser request created by another user', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
       put repository_disburser_request_url(@moomin_repository, disburser_request), params: { disburser_request: { title: 'Moomin request', investigator: 'Moomin investigator', irb_number: '123',  feasibility: false, cohort_criteria: 'Moomin cohort criteria', data_for_cohort: 'Moomin data for cohort', methods_justifications: 'Moomin methods justifications' } }
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to edit a data disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_data_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to edit a specimen disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_specimen_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to edit a admin disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_admin_status_disburser_request_url(disburser_request)
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -84,6 +105,13 @@ describe DisburserRequestsController, type: :request do
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
+
+    it 'should deny access to admin status a disburser request', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
   end
 
   describe 'system administrator user' do
@@ -104,13 +132,13 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'should not allow access to data coordinator of disburser requests', focus: false do
+    it 'should deny access to data coordinator of disburser requests', focus: false do
       get data_coordinator_disburser_requests_url
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should not allow access to specimen coordinator of disburser requests', focus: false do
+    it 'should deny access to specimen coordinator of disburser requests', focus: false do
       get specimen_coordinator_disburser_requests_url
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
@@ -126,15 +154,36 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'should allow access to edit a disburser request created by another user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    it 'should allow access to edit a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
       expect(response).to have_http_status(:success)
     end
 
-    it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+    it 'should deny access to edit a disburser request created by another user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to edit a data disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_data_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to edit a specimen disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_specimen_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to edit a admin disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_admin_status_disburser_request_url(disburser_request)
       expect(response).to have_http_status(:success)
     end
 
@@ -163,6 +212,12 @@ describe DisburserRequestsController, type: :request do
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
+
+    it 'should allow access to admin status a disburser request', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
+      expect(response).to redirect_to(admin_disburser_requests_url)
+    end
   end
 
   describe 'repository administrator user' do
@@ -186,13 +241,13 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'should not allow access to data coordinator of disburser requests', focus: false do
+    it 'should deny access to data coordinator of disburser requests', focus: false do
       get data_coordinator_disburser_requests_url
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should not allow access to specimen coordinator of disburser requests', focus: false do
+    it 'should deny access to specimen coordinator of disburser requests', focus: false do
       get specimen_coordinator_disburser_requests_url
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
@@ -208,10 +263,17 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'should allow access to edit a disburser request created by another user for the repository of which the user is an administator', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    it 'should allow access to edit a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
       expect(response).to have_http_status(:success)
+    end
+
+    it 'should deny access to edit a disburser request created by another user for the repository of which the user is an administator', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
     it 'should deny access to edit a disburser request created by another user for another repository of which the user is not an administator', focus: false do
@@ -221,9 +283,23 @@ describe DisburserRequestsController, type: :request do
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
+    it 'should deny access to edit a data disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      get edit_data_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to edit a specimen disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_specimen_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to edit a admin disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_admin_status_disburser_request_url(disburser_request)
       expect(response).to have_http_status(:success)
     end
 
@@ -258,6 +334,12 @@ describe DisburserRequestsController, type: :request do
       patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to admin status a disburser request', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
+      expect(response).to redirect_to(admin_disburser_requests_url)
     end
   end
 
@@ -304,7 +386,13 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'should not allow access to edit a disburser request created by another user for the repository of which the user is an coordinator', focus: false do
+    it 'should allow access to edit a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'should deny access to edit a disburser request created by another user for the repository of which the user is an coordinator', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
       expect(response).to redirect_to(root_path)
@@ -318,13 +406,27 @@ describe DisburserRequestsController, type: :request do
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
-      get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
+    it 'should allow access to edit a data disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_data_status_disburser_request_url(disburser_request)
       expect(response).to have_http_status(:success)
     end
 
-    it 'should not allow access to update a disburser request created by another user for the repository of which the user is an coordinator', focus: false do
+    it 'should deny access to edit a admin disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_admin_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to edit a specimen disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_specimen_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to update a disburser request created by another user for the repository of which the user is an coordinator', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
       put repository_disburser_request_url(@moomin_repository, disburser_request), params: { disburser_request: { title: 'Moomin request', investigator: 'Moomin investigator', irb_number: '123', feasibility: false, cohort_criteria: 'Moomin cohort criteria', data_for_cohort: 'Moomin data for cohort', methods_justifications: 'Moomin methods justifications' } }
       expect(response).to redirect_to(root_path)
@@ -353,6 +455,13 @@ describe DisburserRequestsController, type: :request do
     it 'should deny access to specimen status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to admin status a disburser request', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -401,7 +510,13 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'should not allow access to edit a disburser request created by another user for the repository of which the user is an coordinator', focus: false do
+    it 'should allow access to edit a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'should deny access to edit a disburser request created by another user for the repository of which the user is an coordinator', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
       expect(response).to redirect_to(root_path)
@@ -415,13 +530,27 @@ describe DisburserRequestsController, type: :request do
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
-      get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
+    it 'should deny access to edit a data disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_data_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to edit a specimen disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_specimen_status_disburser_request_url(disburser_request)
       expect(response).to have_http_status(:success)
     end
 
-    it 'should not allow access to update a disburser request created by another user for the repository of which the user is an coordinator', focus: false do
+    it 'should deny access to edit a admin disburser request status', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      get edit_admin_status_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to update a disburser request created by another user for the repository of which the user is an coordinator', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
       put repository_disburser_request_url(@moomin_repository, disburser_request), params: { disburser_request: { title: 'Moomin request', investigator: 'Moomin investigator', irb_number: '123', feasibility: false, cohort_criteria: 'Moomin cohort criteria', data_for_cohort: 'Moomin data for cohort', methods_justifications: 'Moomin methods justifications' } }
       expect(response).to redirect_to(root_path)
@@ -452,6 +581,13 @@ describe DisburserRequestsController, type: :request do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
       expect(response).to redirect_to(specimen_coordinator_disburser_requests_url)
+    end
+
+    it 'should deny access to admin status a disburser request', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
   end
 end

@@ -16,7 +16,7 @@ class DisburserRequestPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.system_administrator || record.repository.repository_administrator?(user) || record.mine?(user)
+    record.mine?(user)
   end
 
   def update?
@@ -27,12 +27,20 @@ class DisburserRequestPolicy < ApplicationPolicy
     user.system_administrator || record.repository.repository_administrator?(user) || record.mine?(user) || record.repository.repository_coordinator?(user)
   end
 
+  def edit_admin_status?
+    user.system_administrator || record.repository.repository_administrator?(user)
+  end
+
   def edit_data_status?
     record.repository.data_coordinator?(user)
   end
 
   def edit_specimen_status?
     record.repository.specimen_coordinator?(user)
+  end
+
+  def admin_status?
+    user.system_administrator || record.repository.repository_administrator?(user)
   end
 
   def data_status?

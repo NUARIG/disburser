@@ -12,7 +12,8 @@ RSpec.describe DisburserRequest, type: :model do
   it { should validate_presence_of :methods_justifications }
   it { should validate_presence_of :cohort_criteria }
   it { should validate_presence_of :data_for_cohort }
-
+  it { should validate_presence_of :status }
+  it { should validate_presence_of :fulfillment_status }
 
   before(:each) do
     @moomin_repository = FactoryGirl.build(:repository, name: 'Moomin Repository')

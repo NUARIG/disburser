@@ -10,8 +10,10 @@ Rails.application.routes.draw do
     end
 
     member do
+      get :edit_admin_status
       get :edit_data_status
       get :edit_specimen_status
+      patch :admin_status
       patch :data_status
       patch :specimen_status
     end

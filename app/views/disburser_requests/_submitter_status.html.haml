@@ -1,0 +1,17 @@
+.status_update{ class: 'large-6 columns' }
+  %b
+    Status
+  %br
+  - if disburser_request.new_record? || disburser_request.draft?
+    = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, checked: checked?(disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, true)
+    = f.label :status, 'Draft', value: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
+    = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, true)
+    = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+  - else
+    %b
+      Approval:
+    = disburser_request.status
+    %br
+    %b
+      Fulfillment:
+    = disburser_request.fulfillment_status
