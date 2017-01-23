@@ -9,8 +9,8 @@ test:
   server_name: disburser.dev
 staging:
   app_host: vtfsmnubicapps01.fsm.northwestern.edu
-  server_name: disburser-staging.nubic.northwestern.edu
-  server_alias: disburser-staging.nubic.northwestern.edu
+  server_name: disburser-staging.cancer.northwestern.edu
+  server_alias: disburser-staging.cancer.northwestern.edu
   cert_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_cert.cer
   chain_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_interm.cer
   key_file: /etc/pki/tls/private/disburser-staging_cancer_northwestern_edu.key
