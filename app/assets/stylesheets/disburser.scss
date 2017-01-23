@@ -1,3 +1,14 @@
+#disburser_navigation {
+  .disburser_branding {
+    .disburser_title {
+      color: $primary-color;
+    }
+    h6 {
+      color: $dark-gray;
+    }
+  }
+}
+
 .field_with_errors {
   border-style: solid;
   border-color: $alert-color;

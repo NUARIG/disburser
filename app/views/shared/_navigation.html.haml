@@ -1,12 +1,20 @@
 #disburser_navigation
+  .disburser_branding
+    .row.expanded
+      .disburser_title{ class: 'large-18 columns' }
+        %h5
+          Clinical Research Repository Disburser
+        %h6
+          Robert H. Lurie Comprehensive Cancer Center of Northwestern University
+      .disburser_title{ class: 'large-6 columns text-right' }
+        %a{ :href => 'http://cancer.northwestern.edu/home/index.cfm' }
+          = image_tag('rhlccc_small_2.png', alt: 'Robert H. Lurie Comprehensive Cancer Center of Northwestern University')
   .title-bar{"data-hide-for" => "medium", "data-responsive-toggle" => "disburser-menu"}
     %button.menu-icon{"data-toggle" => "disburser-menu", type: "button"}
     .title-bar-title Menu
   #disburser-menu.top-bar
     .top-bar-left
       %ul.dropdown.menu{"data-dropdown-menu" => ""}
-        %li.disburser.menu-text
-          = link_to 'Disburser', root_url
         %li.home.menu-text
           = link_to 'Home', root_url
         - if user_signed_in?
