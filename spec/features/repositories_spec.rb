@@ -151,11 +151,13 @@ RSpec.feature 'Repositories', type: :feature do
 
     click_link('Content')
     expect(page).to have_css('.menu li.repository_content.active')
+    fill_in_ckeditor 'repository_general_content', :with => 'Be a a good person!'
     fill_in_ckeditor 'repository_data_content', :with => 'Be a good moomin!'
     fill_in_ckeditor 'repository_specimen_content', :with => 'Be a really good moomin!'
     click_button('Save')
-    sleep(1)
+    sleep(2)
     expect(page).to have_css('.menu li.repository_content.active')
+    expect(read_ckeditor('repository_general_content')).to eq("<p>Be a a good person!</p>\n")
     expect(read_ckeditor('repository_data_content')).to eq("<p>Be a good moomin!</p>\n")
     expect(read_ckeditor('repository_specimen_content')).to eq("<p>Be a really good moomin!</p>\n")
 

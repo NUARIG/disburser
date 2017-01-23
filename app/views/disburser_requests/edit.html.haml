@@ -20,13 +20,14 @@
           = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, true)
           = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
         - else
-          %b
-            Approval:
-          = @disburser_request.status
-          %br
-          %b
-            Fulfillment:
-          = @disburser_request.fulfillment_status
+          .approval_status
+            %b
+              Approval:
+            = @disburser_request.status
+          .fulfillment_status
+            %b
+              Fulfillment:
+            = @disburser_request.fulfillment_status
     .row
       .navigation{ class: 'large-offset-18 large-6 columns' }
         = f.submit 'Save', class: 'button'

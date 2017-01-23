@@ -10,16 +10,16 @@
       - if policy(@disburser_request).edit_specimen_status?
         = form_for @disburser_request, url: specimen_status_disburser_request_url(@disburser_request), html: { class: 'status_disburser_request_form', id: "status_disburser_request_#{@disburser_request.id}"  } do |f|
           .status{ class: 'large-24 columns' }
-            = field_set_tag 'Update Status' do
-              %label{for: 'disburser_request_fulfillment_status' }
-                Status
-              = f.select :fulfillment_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_FULFILLMENT_STATUSES), { include_blank: 'Select a fulfillment status' }
-              - if validation_errors?(@disburser_request, :fulfillment_status)
-                %p.error=format_validation_errors(@disburser_request, :fulfillment_status)
-                %br
-              %label{for: 'disburser_request_status_comments' }
-                Comments
-              = f.text_area :status_comments, rows: 3
+            %label{for: 'disburser_request_fulfillment_status' }
+              %b
+                Fulfillment Status
+            = f.select :fulfillment_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUSES, selected: f.object.fulfillment_status), { include_blank: 'Select a fulfillment status' }
+            - if validation_errors?(@disburser_request, :fulfillment_status)
+              %p.error=format_validation_errors(@disburser_request, :fulfillment_status)
+              %br
+            %label{for: 'disburser_request_status_comments' }
+              Status Comments
+            = f.text_area :status_comments, rows: 3
           .navigation{ class: 'large-offset-8 large-16 columns' }
             = f.submit 'Save', class: 'button'
             = link_to 'Cancel', specimen_coordinator_disburser_requests_url, class: 'cancel-link button warning'

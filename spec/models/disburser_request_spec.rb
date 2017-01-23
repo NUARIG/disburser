@@ -190,7 +190,7 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(status_comments)
   end
 
-  it "saves a disburser request status once the fulfillment status reaches 'query fulfilled' (more than once)", focus: false do
+  it "saves a disburser request status once the fulfillment status reaches 'query fulfilled' (only once)", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(disburser_request_1.disburser_request_statuses.size).to eq(0)
     expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
@@ -209,13 +209,7 @@ RSpec.describe DisburserRequest, type: :model do
     status_comments = 'Moomin fulfilled again'
     disburser_request_1.status_comments = status_comments
     disburser_request_1.save!
-    expect(disburser_request_1.disburser_request_statuses.size).to eq(2)
-
-    expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
-    expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@little_my_user.username)
-    expect(disburser_request_1.disburser_request_statuses.last.status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
-    expect(disburser_request_1.disburser_request_statuses.last.user.username).to eq(@little_my_user.username)
-    expect(disburser_request_1.disburser_request_statuses.last.comments).to eq(status_comments)
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
   end
 
   it "can return disburder requests that do not have a status of 'draft'", focus: false do

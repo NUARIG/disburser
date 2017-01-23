@@ -75,12 +75,12 @@ class DisburserRequest < ApplicationRecord
   end
 
   def build_disburser_request_status
-    if disburser_request_statuses.none? { |disburser_request_status| disburser_request_status.status == self.status && disburser_request_status.status_type = 'status' } && !self.draft?
-      disburser_request_statuses.build(status_type: 'status', status: self.status, user_id: self.status_user.id, comments: self.status_comments)
+    if  !self.draft? && self.status_changed?
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status: self.status, user_id: self.status_user.id, comments: self.status_comments)
     end
 
-    if !self.not_started?
-      disburser_request_statuses.build(status_type: 'fulfillment_status', status: self.fulfillment_status, user_id: self.status_user.id, comments: self.status_comments)
+    if !self.not_started? && self.fulfillment_status_changed?
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_FULLMILLMENT_STATUS, status: self.fulfillment_status, user_id: self.status_user.id, comments: self.status_comments)
     end
   end
 

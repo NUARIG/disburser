@@ -11,19 +11,17 @@
     .row
       = render 'status_history', disburser_request: @disburser_request
       .status_update{ class: 'large-6 columns' }
-        - if policy(@disburser_request).edit_admin_status?
-          = form_for @disburser_request, url: admin_status_disburser_request_url(@disburser_request), html: { class: 'status_disburser_request_form', id: "status_disburser_request_#{@disburser_request.id}"  } do |f|
-            .status{ class: 'large-24 columns' }
-              %label{for: 'disburser_request_status' }
-                %b
-                  Update Approval Status
-              = f.select :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT), { include_blank: 'Select a status' }
-              - if validation_errors?(@disburser_request, :status)
-                %p.error=format_validation_errors(@disburser_request, :status)
-                %br
-              %label{for: 'disburser_request_status_comments' }
-                Comments
-              = f.text_area :status_comments, rows: 3
-            .navigation{ class: 'laft-offset-8 large-16 columns' }
-              = f.submit 'Save', class: 'button'
-              = link_to 'Cancel', admin_disburser_requests_url, class: 'cancel-link button warning'
+        .status{ class: 'large-24 columns' }
+          %label{for: 'disburser_request_status' }
+            %b
+              Approval Status
+          = f.select :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT, selected: f.object.status), { include_blank: 'Select an approval status' }
+          - if validation_errors?(@disburser_request, :status)
+            %p.error=format_validation_errors(@disburser_request, :status)
+            %br
+          %label{for: 'disburser_request_status_comments' }
+            Status Comments
+          = f.text_area :status_comments, rows: 3
+        .navigation{ class: 'laft-offset-8 large-16 columns' }
+          = f.submit 'Save', class: 'button'
+          = link_to 'Cancel', admin_disburser_requests_url, class: 'cancel-link button warning'
