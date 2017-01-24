@@ -1,7 +1,7 @@
 - content_for(:title) do
   Request
 #disburser_request
-  %h2
+  %h4
     = "Request for: #{@disburser_request.repository.name}"
   = form_for @disburser_request, url: admin_status_disburser_request_url(@disburser_request), html: { class: 'disburser_request_form', multipart: true  } do |f|
     %p.help-text

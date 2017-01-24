@@ -2,7 +2,7 @@
   Edit Repository Content
 
 #edit_repository_content
-  %h2
+  %h4
     = "Repository: #{@repository.name}"
   = render 'repositories/navigation'
   = form_for @repository, url: repository_content_url(@repository), html: { class: 'repository_form' } do |f|

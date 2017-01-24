@@ -1,7 +1,7 @@
 - content_for(:title) do
   New Repository
 #new_repository
-  %h2
+  %h4
     New Repository
   = form_for @repository, html: { class: 'repository_form', multipart: true  } do |f|
     = render 'repository', repository: @repository, f: f

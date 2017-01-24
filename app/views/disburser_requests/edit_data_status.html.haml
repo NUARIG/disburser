@@ -1,7 +1,7 @@
 - content_for(:title) do
   Request
 #disburser_request_show
-  %h2
+  %h4
     = "Request for: #{@disburser_request.repository.name}"
   = render 'edit_status', disburser_request: @disburser_request
   .row
