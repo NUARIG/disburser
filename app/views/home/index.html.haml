@@ -5,7 +5,7 @@
   .repositories_header
     %h4
       Repositories
-    = form_tag repositories_url, method: 'get', id: 'search_repositories_form'  do
+    = form_tag root_url, method: 'get', id: 'search_repositories_form'  do
       .search_box{ class: 'large-offset-12 large-8 columns' }
         %label{for: 'search' }
           Search
@@ -13,7 +13,7 @@
       .search_buttons{ class: 'large-4 columns' }
         %button{ type: 'submit', id: 'search_repositories_button', class: 'tiny button' }
           Search
-        = link_to 'Clear', repositories_url(mine: params[:mine])
+        = link_to 'Clear', root_url(mine: params[:mine])
   .repositories_list
     = will_paginate @repositories, renderer: FoundationPagination::Rails
     %table
