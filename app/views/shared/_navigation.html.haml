@@ -21,9 +21,8 @@
           - if policy(Repository).index?
             %li.repositories.menu-text{ class: active?('active', controller: 'repositories', action: 'index') }
               = link_to "Repositories", repositories_url
-          - if policy(DisburserRequest).index?
-            %li.requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'index') }
-              = link_to "Requests", disburser_requests_url
+          %li.requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'index') }
+            = link_to "Requests", disburser_requests_url
           - if policy(DisburserRequest).admin?
             %li.admin.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'admin') }
               = link_to 'Admin', admin_disburser_requests_url

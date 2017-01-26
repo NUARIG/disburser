@@ -6,7 +6,6 @@ class DisburserRequestsController < ApplicationController
   before_action :load_specimen_types, only: [:new, :create, :edit, :update]
 
   def index
-    authorize DisburserRequest
     params[:page]||= 1
     options = {}
     options[:sort_column] = sort_column
@@ -71,11 +70,7 @@ class DisburserRequestsController < ApplicationController
 
     if @disburser_request.save
       flash[:success] = 'You have successfully created a repository request.'
-      if current_user.admin?
-        redirect_to admin_disburser_requests_url
-      else
-        redirect_to disburser_requests_url
-      end
+      redirect_to disburser_requests_url
     else
       flash.now[:alert] = 'Failed to create repository request.'
       render action: 'new'
@@ -92,11 +87,7 @@ class DisburserRequestsController < ApplicationController
     @disburser_request.status_user = current_user
     if @disburser_request.save
       flash[:success] = 'You have successfully updated a repository request.'
-      if current_user.admin?
-        redirect_to admin_disburser_requests_url
-      else
-        redirect_to disburser_requests_url
-      end
+      redirect_to disburser_requests_url
     else
       flash.now[:alert] = 'Failed to update repository request.'
       render action: 'edit'

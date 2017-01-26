@@ -128,7 +128,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @moomintroll_user
       login_as(@moomintroll_user, scope: :user)
       visit root_path
-      expect(page).to_not have_selector('.menu li.requests', visible: true)
+      expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.admin', visible: true)
       visit admin_disburser_requests_path
 
@@ -243,7 +243,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       login_as(harold_user, scope: :user)
       visit root_path
-      expect(page).to_not have_selector('.menu li.requests', visible: true)
+      expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.admin', visible: true)
       visit admin_disburser_requests_path
       expect(all('.disburser_request').size).to eq(0)
@@ -270,7 +270,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       login_as(harold_user, scope: :user)
       visit root_path
-      expect(page).to_not have_selector('.menu li.requests', visible: true)
+      expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.data_coordinator', visible: true)
       visit data_coordinator_disburser_requests_path
       expect(all('.disburser_request').size).to eq(0)
@@ -384,7 +384,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       login_as(harold_user, scope: :user)
       visit root_path
-      expect(page).to_not have_selector('.menu li.requests', visible: true)
+      expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.specimen_coordinator', visible: true)
       visit specimen_coordinator_disburser_requests_path
       expect(all('.disburser_request').size).to eq(0)

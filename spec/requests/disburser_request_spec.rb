@@ -121,10 +121,9 @@ describe DisburserRequestsController, type: :request do
       sign_in @paul_user
     end
 
-    it 'should deny access to index of disburser requests', focus: false do
+    it 'should allow access to index of disburser requests', focus: false do
       get disburser_requests_url
-      expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+      expect(response).to have_http_status(:success)
     end
 
     it 'should allow access to admin of disburser requests', focus: false do
@@ -230,10 +229,9 @@ describe DisburserRequestsController, type: :request do
       sign_in @harold_user
     end
 
-    it 'should deny access to index of disburser requests', focus: false do
+    it 'should allow access to index of disburser requests', focus: false do
       get disburser_requests_url
-      expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+      expect(response).to have_http_status(:success)
     end
 
     it 'should allow access to admin of disburser requests', focus: false do
@@ -353,10 +351,9 @@ describe DisburserRequestsController, type: :request do
       sign_in @harold_user
     end
 
-    it 'should deny access to index of disburser requests', focus: false do
+    it 'should allow access to index of disburser requests', focus: false do
       get disburser_requests_url
-      expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+      expect(response).to have_http_status(:success)
     end
 
     it 'should deny access to admin of disburser requests', focus: false do
@@ -477,10 +474,9 @@ describe DisburserRequestsController, type: :request do
       sign_in @harold_user
     end
 
-    it 'should deny access to index of disburser requests', focus: false do
+    it 'should allow access to index of disburser requests', focus: false do
       get disburser_requests_url
-      expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+      expect(response).to have_http_status(:success)
     end
 
     it 'should deny access to admin of disburser requests', focus: false do

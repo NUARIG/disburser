@@ -1,8 +1,4 @@
 class DisburserRequestPolicy < ApplicationPolicy
-  def index?
-    !user.system_administrator && !user.repository_administrator? && !user.repository_coordinator?
-  end
-
   def data_coordinator?
     user.data_coordinator?
   end
