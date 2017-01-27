@@ -1,19 +1,27 @@
 - content_for(:title) do
-  Admin
+  Committee
 
 #disburser_requests
   .disburser_requests_header
     %h4
-      Admin
-    = form_tag admin_disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
-      .search_box{ class: 'large-offset-12 large-8 columns' }
+      Committee
+    = form_tag committee_disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
+      .status{ class: 'large-offset-4 large-4 columns' }
+        %label{for: 'status' }
+          Status
+        = select_tag :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES_REVIEWABLE.map { |status| [status, status] }, (params[:status].blank? ? '' : params[:status])), { include_blank: 'all', class: 'status'}
+      .vote_status{ class: 'large-4 columns' }
+        %label{for: 'vote_status' }
+          Vote Status
+        = select_tag :vote_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_VOTE_STATUSES.map { |vote_status| [vote_status, vote_status] }, (params[:vote_status].blank? ? '' : params[:vote_status])), { include_blank: 'all', class: 'vote_status'}
+      .search_box{ class: 'large-8 columns' }
         %label{for: 'search' }
           Search
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
       .search_buttons{ class: 'large-4 columns' }
         %button{ type: 'submit', id: 'search_disburser_requests_button', class: 'tiny button' }
           Search
-        = link_to 'Clear', admin_disburser_requests_url
+        = link_to 'Clear', committee_disburser_requests_url
   .disburser_requests_list
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails
     %table.hack_stack
@@ -29,8 +37,6 @@
             = sortable 'investigator'
           %th.irb_number{ width: 200 }
             = sortable 'irb_number', 'IRB Number'
-          %th.feasibility
-            = sortable 'feasibility'
           %th.status{ width: 200 }
             = sortable 'status'
           %th.fulfillment_status{ width: 200 }
@@ -49,12 +55,10 @@
               = disburser_request.investigator
             %td.irb_number
               = disburser_request.irb_number
-            %td.feasibility
-              = human_boolean(disburser_request.feasibility)
             %td.status
               = disburser_request.status
             %td.fulfillment_status
               = disburser_request.fulfillment_status
             %td.edit
-              = link_to 'Edit', edit_admin_status_disburser_request_url(disburser_request), { class: 'edit_admin_status_disburser_request_link' }
+              = link_to 'Review', edit_committee_review_disburser_request_url(disburser_request), { class: 'edit_committee_review_disburser_request_link' }
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails

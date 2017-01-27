@@ -44,6 +44,23 @@ RSpec.describe Repository, type: :model do
     expect(repository.repository_administrator?(moomintroll_user)).to be_falsy
   end
 
+  it 'knows if a user is a repository committee member', focus: false do
+    harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+    repository = FactoryGirl.create(:repository, name: 'Moomins')
+    repository.repository_users.build(username: 'hbaines', committee: true)
+    repository.save!
+    harold_user = User.where(username: 'hbaines').first
+    expect(repository.committee_member?(harold_user)).to be_truthy
+  end
+
+  it 'knows if a user is not a repository committee member', focus: false do
+    moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
+    moomintroll_user = User.where(username: 'moomintroll').first
+    repository = FactoryGirl.create(:repository, name: 'Moomins')
+    expect(repository.committee_member?(moomintroll_user)).to be_falsy
+  end
+
   it 'knows if a user is a data coordinator', focus: false do
     harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)

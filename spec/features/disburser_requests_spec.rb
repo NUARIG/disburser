@@ -40,7 +40,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_4, 2)
 
       click_link('Title')
-      sleep(1)
+      sleep(2)
       match_disburser_request_row(@disburser_request_4, 0)
       match_disburser_request_row(@disburser_request_2, 1)
       match_disburser_request_row(@disburser_request_1, 2)
@@ -500,6 +500,133 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       match_disburser_request_row(@disburser_request_3, 0)
       match_disburser_request_row(@disburser_request_5, 1)
+    end
+
+    scenario 'As a committee member and sorting', js: true, focus: false do
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 1,  cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
+      harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+      @white_sox_repository.repository_users.build(username: 'hbaines', committee: true)
+      @white_sox_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+
+      login_as(harold_user, scope: :user)
+      visit root_path
+      expect(page).to have_selector('.menu li.requests', visible: true)
+      expect(page).to have_selector('.menu li.committee', visible: true)
+      visit committee_disburser_requests_path
+      expect(all('.disburser_request').size).to eq(0)
+      sleep(1)
+
+      @disburser_request_1.status_user = @moomintroll_user
+      @disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      @disburser_request_1.save!
+
+      @disburser_request_2.status_user = @moomintroll_user
+      @disburser_request_2.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      @disburser_request_2.save!
+
+      @disburser_request_3.status_user = @paul_user
+      @disburser_request_3.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      @disburser_request_3.save!
+
+      @disburser_request_4.status_user = @paul_user
+      @disburser_request_4.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_4.save!
+
+      @disburser_request_5.status_user = @paul_user
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      @disburser_request_5.save!
+
+      visit committee_disburser_requests_path
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Title')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_5, 0)
+      match_committee_disburser_request_row(@disburser_request_3, 1)
+
+      click_link('Title')
+      sleep(2)
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Submitter')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Submitter')
+      sleep(2)
+      match_committee_disburser_request_row(@disburser_request_5, 0)
+      match_committee_disburser_request_row(@disburser_request_3, 1)
+
+      click_link('Investigator')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Investigator')
+      sleep(2)
+      match_committee_disburser_request_row(@disburser_request_5, 0)
+      match_committee_disburser_request_row(@disburser_request_3, 1)
+
+      click_link('IRB Number')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('IRB Number')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_5, 0)
+      match_committee_disburser_request_row(@disburser_request_3, 1)
+
+      @disburser_request_5.status_user = @paul_user
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED
+      @disburser_request_5.save!
+
+      visit committee_disburser_requests_path
+      sleep(1)
+
+      expect(all('.disburser_request').size).to eq(1)
+
+      select('all', from: 'Status')
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      click_link('Status')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_5, 0)
+      match_committee_disburser_request_row(@disburser_request_3, 1)
+
+      click_link('Status')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      @disburser_request_5.status_user = harold_user
+      @disburser_request_5.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED
+      @disburser_request_5.save!
+
+      select('all', from: 'Status')
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      click_link('Fulfillment Status')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_5, 0)
+      match_committee_disburser_request_row(@disburser_request_3, 1)
+
+      click_link('Fulfillment Status')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
     end
   end
 
@@ -1075,6 +1202,78 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(find(".fulfillment_statuses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
  end
+
+ scenario 'Voting on a disburser request as a committee member', js: true, focus: false  do
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+   disburser_request_detail = {}
+   disburser_request_detail[:specimen_type] = @specimen_type_blood
+   disburser_request_detail[:quantity] = '5'
+   disburser_request_detail[:volume] = '10 mg'
+   disburser_request_detail[:comments] = 'Moomin specimen'
+   specimen_type = @moomin_repository.specimen_types.where(name: @specimen_type_blood).first
+   disburser_request.disburser_request_details.build(specimen_type: specimen_type, quantity: disburser_request_detail[:quantity], volume: disburser_request_detail[:volume], comments: disburser_request_detail[:comments])
+   disburser_request.save
+   disburser_request.reload
+   disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+   disburser_request.status_user = @paul_user
+   disburser_request.save!
+   harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+   allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+   @moomin_repository.repository_users.build(username: 'hbaines', committee: true)
+   @moomin_repository.save!
+   harold_user = User.where(username: 'hbaines').first
+   login_as(harold_user, scope: :user)
+   visit committee_disburser_requests_path
+   find("#disburser_request_#{disburser_request.id}").click_link('Review')
+
+   click_button('Save')
+   sleep(1)
+   expect(page).to have_css(".vote .field_with_errors input[name='disburser_request_vote[vote]']")
+   expect(find(".vote .error")).to have_content("can't be blank")
+
+   expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
+   expect(page).to have_css('.investigator', text: disburser_request[:investigator])
+   expect(page).to have_css('.title', text: disburser_request[:title])
+   expect(page).to have_css('.irb_number', text: disburser_request[:irb_number])
+   expect(page.has_checked_field?('Feasibility?', disabled: true)).to be_truthy
+   expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
+   expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria], disabled: true)).to be_truthy
+   expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort], disabled: true)).to be_truthy
+
+   disburser_request.disburser_request_details.each do |disburser_request_detail|
+     expect(find("#disburser_request_detail_#{disburser_request_detail.id} .specimen_type")).to have_content(disburser_request_detail.specimen_type.name)
+     expect(find("#disburser_request_detail_#{disburser_request_detail.id} .quantity")).to have_content(disburser_request_detail.quantity)
+     expect(find("#disburser_request_detail_#{disburser_request_detail.id} .quantity")).to have_content(disburser_request_detail.quantity)
+     expect(find("#disburser_request_detail_#{disburser_request_detail.id} .volume")).to have_content(disburser_request_detail.volume)
+     expect(find("#disburser_request_detail_#{disburser_request_detail.id} .comments")).to have_content(disburser_request_detail.comments)
+   end
+
+   expect(all('.disburser_request_vote_history .disburser_request_vote').size).to eq(0)
+   choose('Approve')
+   comments = 'Help the moomins!'
+   fill_in('Vote Comments', with: comments)
+   click_button('Save')
+   sleep(1)
+   expect(all('.disburser_request').size).to eq(0)
+   select('all', from: 'Vote Status')
+   click_button('Search')
+   sleep(1)
+   expect(all('.disburser_request').size).to eq(1)
+   find("#disburser_request_#{disburser_request.id}").click_link('Review')
+   sleep(1)
+
+   expect(all('.disburser_request_vote_history .disburser_request_vote').size).to eq(1)
+
+   disburser_request.disburser_request_votes.each do |disburser_request_vote|
+     expect(find(".disburser_request_vote_history #disburser_request_vote_#{disburser_request_vote.id} .date")).to have_content(disburser_request_vote.created_at.to_s(:date))
+     expect(find(".disburser_request_vote_history #disburser_request_vote_#{disburser_request_vote.id} .committee_member")).to have_content(disburser_request_vote.committee_member.full_name)
+     expect(find(".disburser_request_vote_history #disburser_request_vote_#{disburser_request_vote.id} .vote")).to have_content(disburser_request_vote.vote)
+     expect(find(".disburser_request_vote_history #disburser_request_vote_#{disburser_request_vote.id} .comments")).to have_content(disburser_request_vote.comments)
+   end
+
+   expect(find_field('Approve', checked: true)).to be_truthy
+   expect(page.has_field?('Vote Comments', with: comments)).to be_truthy
+ end
 end
 
 def match_disburser_request_row(disburser_request, index)
@@ -1082,6 +1281,14 @@ def match_disburser_request_row(disburser_request, index)
   expect(all('.disburser_request')[index].find('.investigator')).to have_content(disburser_request[:investigator])
   expect(all('.disburser_request')[index].find('.irb_number')).to have_content(disburser_request[:irb_number])
   expect(all('.disburser_request')[index].find('.feasibility')).to have_content(human_boolean(disburser_request[:feasibility]))
+  expect(all('.disburser_request')[index].find('.status')).to have_content(disburser_request[:status])
+  expect(all('.disburser_request')[index].find('.fulfillment_status')).to have_content(disburser_request[:fulfillment_status])
+end
+
+def match_committee_disburser_request_row(disburser_request, index)
+  expect(all('.disburser_request')[index].find('.title')).to have_content(disburser_request[:title])
+  expect(all('.disburser_request')[index].find('.investigator')).to have_content(disburser_request[:investigator])
+  expect(all('.disburser_request')[index].find('.irb_number')).to have_content(disburser_request[:irb_number])
   expect(all('.disburser_request')[index].find('.status')).to have_content(disburser_request[:status])
   expect(all('.disburser_request')[index].find('.fulfillment_status')).to have_content(disburser_request[:fulfillment_status])
 end

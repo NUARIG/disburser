@@ -35,6 +35,10 @@ class Repository < ApplicationRecord
     repository_users.where(user_id: user.id, administrator: true).any?
   end
 
+  def committee_member?(user)
+    repository_users.where(user_id: user.id, committee: true).any?
+  end
+
   def repository_coordinator?(user)
     repository_users.where('user_id = ? AND (data_coordinator = ? OR specimen_coordinator = ?)', user.id, true, true).any?
   end

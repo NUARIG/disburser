@@ -1,0 +1,26 @@
+.disburser_request_vote_history{ class: 'large-18 columns' }
+  %b
+    Votes
+  %table.hack_stack
+    %thead
+      %tr
+        %th
+          Date
+        %th.committee_member
+          Committee Member
+        %th.vote
+          Vote
+        %th.comments
+          Comments
+    %tbody
+      - disburser_request.disburser_request_votes.each do |disburser_request_vote|
+        - if !disburser_request_vote.new_record?
+          = content_tag_for(:tr, disburser_request_vote) do
+            %td.date
+              = disburser_request_vote.updated_at.to_s(:date)
+            %td.committee_member
+              = disburser_request_vote.committee_member.full_name
+            %td.vote
+              = disburser_request_vote.vote
+            %td.comments
+              = disburser_request_vote.comments

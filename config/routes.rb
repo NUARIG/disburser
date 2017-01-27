@@ -11,12 +11,14 @@ Rails.application.routes.draw do
 
     member do
       get :edit_admin_status
+      get :edit_committee_review
       get :edit_data_status
       get :edit_specimen_status
       patch :admin_status
       patch :data_status
       patch :specimen_status
     end
+    resources :disburser_request_votes
   end
 
   resources :repositories do

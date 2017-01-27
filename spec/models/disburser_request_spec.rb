@@ -6,6 +6,7 @@ RSpec.describe DisburserRequest, type: :model do
   it { should belong_to :submitter }
   it { should have_many :disburser_request_details }
   it { should have_many :disburser_request_statuses }
+  it { should have_many :disburser_request_votes }
 
   it { should validate_presence_of :investigator }
   it { should validate_presence_of :title }
@@ -19,6 +20,7 @@ RSpec.describe DisburserRequest, type: :model do
     @moomin_repository = FactoryGirl.build(:repository, name: 'Moomin Repository')
     @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
     @little_my_user = FactoryGirl.create(:user, email: 'little_my@moomin.com', username: 'little_my', first_name: 'Little My', last_name: 'Moomin')
+    @the_groker_user = FactoryGirl.create(:user, email: 'the_groke@moomin.com', username: 'the_groke', first_name: 'The', last_name: 'Groke')
   end
 
   it 'should not validate the presence of irb number if feasibility is true', focus: false do
@@ -212,7 +214,7 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
   end
 
-  it "can return disburder requests that do not have a status of 'draft'", focus: false do
+  it "can return disburser requests that do not have a status of 'draft'", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Cure cancer', investigator: 'placehoder', irb_number: 'placehoder', cohort_criteria: 'placehoder', data_for_cohort: 'placehoder')
     disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Cure heart disease',  investigator: 'placehoder', irb_number: 'placehoder', cohort_criteria: 'placehoder', data_for_cohort: 'placehoder')
     disburser_request_2.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
@@ -220,5 +222,69 @@ RSpec.describe DisburserRequest, type: :model do
     disburser_request_2.save!
 
     expect(DisburserRequest.not_draft).to match_array([disburser_request_2])
+  end
+
+  it "can return disburser requests thare are 'reviewable'", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Cure cancer', investigator: 'placehoder', irb_number: 'placehoder', cohort_criteria: 'placehoder', data_for_cohort: 'placehoder')
+
+    DisburserRequest::DISBURSER_REQUEST_STATUSES.each do |disburser_request_status|
+      disburser_request_1.status = disburser_request_status
+      disburser_request_1.status_user = @little_my_user
+      disburser_request_1.save!
+
+      if DisburserRequest::DISBURSER_REQUEST_STATUSES_REVIEWABLE.include?(disburser_request_status)
+        expect(DisburserRequest.reviewable).to match_array([disburser_request_1])
+      else
+        expect(DisburserRequest.reviewable).to be_empty
+      end
+    end
+  end
+
+  it 'can find or initialize a disburser_request_vote (initialize)', focus: false do
+    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    disburser_request_vote = disburser_request.find_or_initialize_disburser_request_vote(@little_my_user)
+    expect(disburser_request_vote.new_record?).to be_truthy
+    expect(disburser_request_vote.committee_member).to eq(@little_my_user)
+  end
+
+  it 'can find or initialize a disburser_request_vote (find)', focus: false do
+    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    disburser_request_vote = FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request,  committee_member: @little_my_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE)
+    disburser_request_vote_found = disburser_request.find_or_initialize_disburser_request_vote(@little_my_user)
+    expect(disburser_request_vote).to eq(disburser_request_vote_found)
+  end
+
+  it "can return disburser requests by vote status 'pending my vote'", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request_1, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, committee_member: @little_my_user)
+    disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(DisburserRequest.by_vote_status(@little_my_user, DisburserRequest::DISBURSER_REQUEST_VOTE_STATUS_PENDING_MY_VOTE)).to match_array([disburser_request_2])
+  end
+
+  it "can return disburser requests by vote status 'approved'", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request_1, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, committee_member: @little_my_user)
+    disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request_2, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, committee_member: @little_my_user)
+    disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(DisburserRequest.by_vote_status(@little_my_user, DisburserRequest::DISBURSER_REQUEST_VOTE_STATUS_APPROVED)).to match_array([disburser_request_1])
+  end
+
+  it "can return disburser requests by vote status 'denied'", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request_1, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, committee_member: @little_my_user)
+    disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request_2, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, committee_member: @little_my_user)
+    disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(DisburserRequest.by_vote_status(@little_my_user, DisburserRequest::DISBURSER_REQUEST_VOTE_STATUS_DENIED)).to match_array([disburser_request_2])
+  end
+
+  it "can return disburser requests by vote status regardless of other committee member votes", focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request_1, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, committee_member: @the_groker_user)
+    disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request_2, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, committee_member: @the_groker_user)
+    disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(DisburserRequest.by_vote_status(@little_my_user, DisburserRequest::DISBURSER_REQUEST_VOTE_STATUS_PENDING_MY_VOTE)).to match_array([disburser_request_1, disburser_request_2, disburser_request_3])
   end
 end

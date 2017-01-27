@@ -86,4 +86,20 @@
     }
     margin-bottom: 1rem;
   }
+
+  .vote {
+    .field_with_errors {
+      display: inline;
+      input {
+        margin-bottom: 0rem;
+      }
+
+      select {
+        margin-bottom: 0rem;
+      }
+      label {
+        display: inline;
+      }
+    }
+  }
 }

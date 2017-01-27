@@ -1,4 +1,12 @@
 class DisburserRequestPolicy < ApplicationPolicy
+  def committee?
+    user.committee?
+  end
+
+  def edit_committee_review?
+    record.repository.committee_member?(user)
+  end
+
   def data_coordinator?
     user.data_coordinator?
   end

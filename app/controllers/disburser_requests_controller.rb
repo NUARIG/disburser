@@ -2,7 +2,7 @@ class DisburserRequestsController < ApplicationController
   before_action :authenticate_user!
   helper_method :sort_column, :sort_direction
   before_action :load_repository, only: [:new, :create, :edit, :update]
-  before_action :load_disburser_request, only: [:edit, :update, :edit_admin_status, :edit_data_status, :edit_specimen_status, :download_file, :data_status, :specimen_status, :admin_status]
+  before_action :load_disburser_request, only: [:edit, :update, :edit_admin_status, :edit_data_status, :edit_specimen_status, :download_file, :data_status, :specimen_status, :admin_status, :edit_committee_review, :committee_review]
   before_action :load_specimen_types, only: [:new, :create, :edit, :update]
 
   def index
@@ -22,6 +22,18 @@ class DisburserRequestsController < ApplicationController
     options[:sort_direction] = sort_direction
 
     @disburser_requests = current_user.admin_disbursr_requests.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+  end
+
+  def committee
+    authorize DisburserRequest
+    params[:page]||= 1
+    params[:status]||= DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+    params[:vote_status]||= DisburserRequest::DISBURSER_REQUEST_VOTE_STATUS_PENDING_MY_VOTE
+    options = {}
+    options[:sort_column] = sort_column
+    options[:sort_direction] = sort_direction
+
+    @disburser_requests = current_user.committee_disburser_requests(status: params[:status]).by_vote_status(current_user, params[:vote_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def data_coordinator
@@ -107,6 +119,11 @@ class DisburserRequestsController < ApplicationController
   def edit_admin_status
     authorize @disburser_request
     load_specimen_types_from_disburser_request
+  end
+
+  def edit_committee_review
+    authorize @disburser_request
+    @disburser_request_vote = @disburser_request.find_or_initialize_disburser_request_vote(current_user)
   end
 
   def edit_data_status

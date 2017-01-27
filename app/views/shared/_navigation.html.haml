@@ -26,6 +26,9 @@
           - if policy(DisburserRequest).admin?
             %li.admin.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'admin') }
               = link_to 'Admin', admin_disburser_requests_url
+          - if policy(DisburserRequest).committee?
+            %li.committee.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'committee') }
+              = link_to 'Committee', committee_disburser_requests_url
           - if policy(DisburserRequest).data_coordinator?
             %li.data_coordinator.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'data_coordinator') }
               = link_to 'Data Coordinator', data_coordinator_disburser_requests_url

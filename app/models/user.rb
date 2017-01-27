@@ -60,6 +60,10 @@ class User < ActiveRecord::Base
     self.system_administrator || repository_administrator?
   end
 
+  def committee?
+    repository_users.any? { |repository_user| repository_user.committee }
+  end
+
   def repository_administrator?
     repository_users.any? { |repository_user| repository_user.administrator }
   end
@@ -99,17 +103,17 @@ class User < ActiveRecord::Base
   end
 
   def specimen_coordinator_disbursr_requests(options = {})
-    cdr = DisburserRequest.joins(:submitter).joins(:repository).where(repository_id: repository_users.where('specimen_coordinator = ?', true).map(&:repository_id))
+    sdr = DisburserRequest.joins(:submitter).joins(:repository).where(repository_id: repository_users.where('specimen_coordinator = ?', true).map(&:repository_id))
 
     if options[:status].present?
-      cdr = cdr.where(status: options[:status])
+      sdr = sdr.where(status: options[:status])
     end
 
     if options[:fulfillment_status].present?
-      cdr = cdr.where(fulfillment_status: options[:fulfillment_status])
+      sdr = sdr.where(fulfillment_status: options[:fulfillment_status])
     end
 
-    cdr.not_draft
+    sdr.not_draft
   end
 
   def admin_disbursr_requests
@@ -119,5 +123,15 @@ class User < ActiveRecord::Base
       adr = DisburserRequest.where(repository_id: repository_users.where('administrator = ?', true).map(&:repository_id))
     end
     adr.not_draft
+  end
+
+  def committee_disburser_requests(options = {})
+    cdr = DisburserRequest.joins(:submitter).joins(:repository).where(repository_id: repository_users.where('committee = ?', true).map(&:repository_id))
+
+    if options[:status].present?
+      cdr = cdr.where(status: options[:status])
+    end
+
+    cdr.reviewable
   end
 end

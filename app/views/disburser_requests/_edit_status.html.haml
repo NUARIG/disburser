@@ -39,7 +39,7 @@
     %div{class: 'small-12 large-19 columns' }
       %div
         - if disburser_request.methods_justifications?
-          = link_to download_file_repository_disburser_request_url(disburser_request, file_type: 'methods_justifications'), 'data-turbolinks' => false, class: 'methods_justifications_url' do
+          = link_to download_file_repository_disburser_request_url(disburser_request.repository, disburser_request, file_type: 'methods_justifications'), 'data-turbolinks' => false, class: 'methods_justifications_url' do
             %i
             = disburser_request.methods_justifications.file.filename
 .row
