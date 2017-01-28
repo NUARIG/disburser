@@ -307,7 +307,21 @@ RSpec.feature 'Repositories', type: :feature do
     end
   end
 
-
+  scenario 'Editing a repository and preventing the deletion of a specimen type with dependent disburser request details', js: true, focus: false do
+    specimen_type = FactoryGirl.create(:specimen_type, repository: @moomin_repository, name: 'Blood')
+    click_link('Repositories')
+    sleep(1)
+    all("#repository_#{@moomin_repository.id}")[0].find_link('Edit').click
+    click_link('Specimen Types')
+    sleep(1)
+    expect(page).to_not have_selector(".specimen_type a.disabled[href='']")
+    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+    disburser_request.disburser_request_details.build(specimen_type: specimen_type, quantity: 1)
+    disburser_request.save
+    click_link('Specimen Types')
+    sleep(1)
+    expect(page).to have_selector(".specimen_type a.disabled[href='']")
+  end
 end
 
 def match_repository_row(repository, index)

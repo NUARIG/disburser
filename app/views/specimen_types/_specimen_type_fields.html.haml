@@ -5,4 +5,9 @@
       %p.error= format_validation_errors(f.object, :name)
     = f.hidden_field :id
   %td.remove
-    = link_to_remove_association 'Remove', f
+    - if f.object.disburser_request_details.empty?
+      = link_to_remove_association 'Remove', f, class: 'button'
+    - else
+      = link_to 'Remove', '', class: 'button disabled'
+      %span.help-text
+        (Removal not allowed)

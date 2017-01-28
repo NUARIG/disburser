@@ -60,6 +60,7 @@ class DisburserRequestsController < ApplicationController
 
   def new
     @disburser_request = @repository.disburser_requests.new(submitter: current_user)
+    @disburser_request.disburser_request_details.new
   end
 
   def edit
