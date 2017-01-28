@@ -707,6 +707,15 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(all('.disburser_request_detail')[0].find_field('Comments', with: disburser_request_detail[:comments])).to be_truthy
   end
 
+  scenario 'Creating a disburser request for a repository without specmen types setup', js: true, focus: false  do
+    login_as(@moomintroll_user, scope: :user)
+    visit disburser_requests_path
+    select(@white_sox_repository.name, from: 'Repository')
+    click_link('Make a request!')
+    sleep(1)
+    expect(page).to_not have_selector('#disburser_request_details')
+  end
+
   scenario 'Creating a disburser request with validation', js: true, focus: false  do
     login_as(@moomintroll_user, scope: :user)
     visit disburser_requests_path

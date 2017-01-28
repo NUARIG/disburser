@@ -81,22 +81,23 @@
       %p.error= format_validation_errors(@disburser_request, :data_for_cohort)
 .row
   .disburser_request_details{class: 'small-24 columns' }
-    %b
-      Specimens
-    %table{ id: 'disburser_request_details' }
-      %thead
-        %tr
-          %th.specimen_type{ width: 200 }
-            Type
-          %th.quantity{ width: 200 }
-            Quantity
-          %th.volume{ width: 200 }
-            Volume
-          %th.comments{ width: 200 }
-            Comments
-          %th.remove{ width: 100 }
-      %tbody
-        = f.fields_for :disburser_request_details do |disburser_request_detail|
-          = render 'disburser_request_details/disburser_request_detail_fields', f: disburser_request_detail
-    .links
-      = link_to_add_association 'Add', f, :disburser_request_details, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#disburser_request_details tbody', partial: 'disburser_request_details/disburser_request_detail_fields', class: 'button tiny primary'
+    - if @disburser_request.repository.specimen_types.any?
+      %b
+        Specimens
+      %table{ id: 'disburser_request_details' }
+        %thead
+          %tr
+            %th.specimen_type{ width: 200 }
+              Type
+            %th.quantity{ width: 200 }
+              Quantity
+            %th.volume{ width: 200 }
+              Volume
+            %th.comments{ width: 200 }
+              Comments
+            %th.remove{ width: 100 }
+        %tbody
+          = f.fields_for :disburser_request_details do |disburser_request_detail|
+            = render 'disburser_request_details/disburser_request_detail_fields', f: disburser_request_detail
+      .links
+        = link_to_add_association 'Add', f, :disburser_request_details, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#disburser_request_details tbody', partial: 'disburser_request_details/disburser_request_detail_fields', class: 'button tiny primary'
