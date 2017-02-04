@@ -1,0 +1,13 @@
+Dear Committee Member,
+
+  You are a member of the <%= @disburser_request.repository.name %> repository Disbursement Committee.
+
+A disbursement request titled "<%= @disburser_request.title %>" has been submitted by <%= @disburser_request.submitter.full_name %> on behalf of the investigator <%= @disburser_request.investigator %> to the <%= @disburser_request.repository.name %> repository.
+
+Please log in to to review the disbursement request and vote on it:
+
+ <%= edit_committee_review_disburser_request_url(@disburser_request) %>
+
+Thank You
+
+Disburser

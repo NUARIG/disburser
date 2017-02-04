@@ -3,8 +3,8 @@ lock '3.6.0'
 
 APP_CONFIG = YAML.load(File.open('config/config.yml'))
 
-set :application,  APP_CONFIG['application']
-set :repo_url,     APP_CONFIG['repository']
+set :application, APP_CONFIG['application']
+set :repo_url, APP_CONFIG['repository']
 
 set :rvm_ruby_version, '2.3.0'
 

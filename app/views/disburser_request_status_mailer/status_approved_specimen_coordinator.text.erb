@@ -1,0 +1,13 @@
+Dear Specimen Coordinator for the <%= @disburser_request.repository.name %> Repository,
+
+  The disbursement request titled "<%= @disburser_request.title %>" submitted by <%= @disburser_request.submitter.full_name %> on behalf of the investigator <%= @disburser_request.investigator %> has been approved by the <%= @disburser_request.repository.name %> Repository Disbursement Committee.  In case you need to contact the submitter, here is their email address:
+
+<%= @disburser_request.submitter.email %>
+
+Please log in to to review the request:
+
+<%= edit_specimen_status_disburser_request_url(@disburser_request) %>
+
+Thank You
+
+Disburser

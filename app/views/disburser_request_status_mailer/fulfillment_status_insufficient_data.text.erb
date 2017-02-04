@@ -1,0 +1,33 @@
+Dear <%= @disburser_request.submitter.full_name  %>,
+
+<%- if @disburser_request.specimens? -%>
+  This message is regarding your disbursement request for data and specimens titled "<%= @disburser_request.title %>" submitted by you on behalf of the investigator <%= @disburser_request.investigator %> to the <%= @disburser_request.repository.name %> repository.
+<%- else  -%>
+  This message is regarding your disbursement request for data titled "<%= @disburser_request.title %>" submitted by you on behalf of the investigator <%= @disburser_request.investigator %> to the <%= @disburser_request.repository.name %> repository.
+<%- end -%>
+
+If you feel that you have received this message in error, please notify <%= Rails.configuration.custom.app_config['support']['sender_address'] %>.
+
+Unfortunately, the data coordinator has determined there is insufficient data to fulfill your disbursement request.
+
+<%- insufficient_data_comments = @disburser_request.fulfillment_status_detail(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_DATA).comments -%>
+<%- if insufficient_data_comments.present? -%>
+The data coordinator provided this comment regarding your disbursement request:
+
+<%= strip_tags(insufficient_data_comments) %>
+<%- end -%>
+
+<%- if @disburser_request.repository.data_coordinators.any? -%>
+You may contact the following data coordinator(s) for further explanation:
+<%- @disburser_request.repository.data_coordinators.each do |data_coordinator| -%>
+
+  <%= data_coordinator.full_name  %>: <%= data_coordinator.email %>
+<%- end -%>
+<%- end -%>
+
+Here is a link to your disbursemnt request:
+<%= edit_repository_disburser_request_url(@disburser_request.repository, @disburser_request) %>
+
+Thank You,
+
+The Disbursement Committee of the <%= @disburser_request.repository.name %> repository

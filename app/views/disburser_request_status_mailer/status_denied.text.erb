@@ -1,0 +1,27 @@
+Dear <%= @disburser_request.submitter.full_name  %>,
+
+<%- if @disburser_request.disburser_request_details.any? -%>
+  After careful review, your request for specimens has been denied by the <%= @disburser_request.repository.name %> Disbursement Committee
+<%- else  -%>
+  After careful review, your request for data has been denied by the <%= @disburser_request.repository.name %> repository Disbursement Committee.
+<%- end -%>
+<%- denial_comments = @disburser_request.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_DENIED).comments -%>
+<%- if denial_comments.present? -%>
+The request was denied for the following reason:
+
+<%= strip_tags(denial_comments) %>
+<%- end -%>
+
+<%- if @disburser_request.repository.repository_administrators.any? -%>
+  If you would like to work with the <%= @disburser_request.repository.name %> repository administrator to develop a new request, please contact:
+<%- @disburser_request.repository.repository_administrators.each do |repository_administrator| -%>
+
+  <%=repository_administrator.full_name  %>: <%= repository_administrator.email %>
+<%- end -%>
+<%- end -%>
+
+We apologize that we are not able to fulfill your request at this time.
+
+Thank You,
+
+The Disbursement Committee of the <%= @disburser_request.repository.name %> Repository

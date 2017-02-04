@@ -300,10 +300,10 @@ RSpec.describe User, type: :model do
       expect(harold_user.committee_disburser_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED).all).to match_array([@disburser_request_4])
       expect(harold_user.committee_disburser_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_DENIED).all).to match_array([@disburser_request_5])
 
-      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCEL
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED
       @disburser_request_5.status_user = @nellie_user
       @disburser_request_5.save
-      expect(harold_user.committee_disburser_requests(status: DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCEL).all).to match_array([@disburser_request_5])
+      expect(harold_user.committee_disburser_requests(status: DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED).all).to match_array([@disburser_request_5])
     end
   end
 end

@@ -18,6 +18,11 @@ RSpec.describe DisburserRequest, type: :model do
 
   before(:each) do
     @moomin_repository = FactoryGirl.build(:repository, name: 'Moomin Repository')
+    @moomin_repository.save!
+    @specimen_type_blood = 'Blood'
+    @specimen_type_tissue = 'Tissue'
+    @moomin_repository.specimen_types.build(name: @specimen_type_blood)
+    @moomin_repository.specimen_types.build(name: @specimen_type_tissue)
     @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
     @little_my_user = FactoryGirl.create(:user, email: 'little_my@moomin.com', username: 'little_my', first_name: 'Little My', last_name: 'Moomin')
     @the_groker_user = FactoryGirl.create(:user, email: 'the_groke@moomin.com', username: 'the_groke', first_name: 'The', last_name: 'Groke')
@@ -286,5 +291,63 @@ RSpec.describe DisburserRequest, type: :model do
     FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request_2, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, committee_member: @the_groker_user)
     disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(DisburserRequest.by_vote_status(@little_my_user, DisburserRequest::DISBURSER_REQUEST_VOTE_STATUS_PENDING_MY_VOTE)).to match_array([disburser_request_1, disburser_request_2, disburser_request_3])
+  end
+
+  it 'knows when a request was submitted at', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+    disburser_request_status_submitted = disburser_request_1.reload.disburser_request_statuses.detect { |disburser_request_status| disburser_request_status.status == DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED }
+    expect(disburser_request_1.submitted_at).to eq(disburser_request_status_submitted.created_at)
+  end
+
+  it 'gets the latest status detail by status', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, status_comments: 'moomintroll comment')
+    disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+    disburser_request_1.status_user = @moomintroll_user
+    disburser_request_1.status_comments = 'moomintroll comment'
+    disburser_request_1.save!
+    disburser_request_detail = disburser_request_1.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+    expect({ status_user_name: disburser_request_detail.user.username, status: disburser_request_detail.status, status_comments: disburser_request_detail.comments}).to eq({ status_user_name: @moomintroll_user.username, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_comments: 'moomintroll comment' })
+    disburser_request_1.reload
+    disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+    disburser_request_1.status_user = @little_my_user
+    disburser_request_1.status_comments = 'little my comment'
+    disburser_request_1.save!
+    disburser_request_detail = disburser_request_1.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+    expect({ status_user_name: disburser_request_detail.user.username, status: disburser_request_detail.status, status_comments: disburser_request_detail.comments}).to eq({ status_user_name: @little_my_user.username, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_comments: 'little my comment' })
+  end
+
+  it 'gets the latest fulfillment status detail by fulfillment status', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, status_user: @moomintroll_user, status_comments: 'moomintroll comment')
+    disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_DATA
+    disburser_request_1.status_user = @moomintroll_user
+    disburser_request_1.status_comments = 'moomintroll comment'
+    disburser_request_1.save!
+    disburser_request_detail = disburser_request_1.fulfillment_status_detail(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
+    expect({ status_user_name: disburser_request_detail.user.username, status: disburser_request_detail.status, status_comments: disburser_request_detail.comments}).to eq({ status_user_name: @moomintroll_user.username, status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, status_comments: 'moomintroll comment' })
+    disburser_request_1.reload
+    disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+    disburser_request_1.status_user = @little_my_user
+    disburser_request_1.status_comments = 'little my comment'
+    disburser_request_1.save!
+    disburser_request_detail = disburser_request_1.fulfillment_status_detail(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
+    expect({ status_user_name: disburser_request_detail.user.username, status: disburser_request_detail.status, status_comments: disburser_request_detail.comments}).to eq({ status_user_name: @little_my_user.username, status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, status_comments: 'little my comment' })
+  end
+
+  it 'knows if it is a request for speciemns', focus: false do
+    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    disburser_request_detail = {}
+    disburser_request_detail[:specimen_type] = @specimen_type_blood
+    disburser_request_detail[:quantity] = '5'
+    disburser_request_detail[:volume] = '10 mg'
+    disburser_request_detail[:comments] = 'Moomin specimen'
+    specimen_type = @moomin_repository.specimen_types.where(name: @specimen_type_blood).first
+    disburser_request.disburser_request_details.build(specimen_type: specimen_type, quantity: disburser_request_detail[:quantity], volume: disburser_request_detail[:volume], comments: disburser_request_detail[:comments])
+    disburser_request.save
+    expect(disburser_request.specimens?).to be_truthy
+  end
+
+  it 'knows if it is not  request for speciemns', focus: false do
+    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    expect(disburser_request.specimens?).to be_falsy
   end
 end

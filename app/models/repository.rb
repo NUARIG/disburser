@@ -50,4 +50,29 @@ class Repository < ApplicationRecord
   def specimen_coordinator?(user)
     repository_users.where('user_id = ? AND specimen_coordinator = ?', user.id, true).any?
   end
+
+  def repository_administrators(options={})
+    options.reverse_merge!(include_system_administrtors: false)
+    administrators = repository_users.where(administrator: true).map(&:user)
+    if options[:include_system_administrtors]
+      administrators.concat(User.where(system_administrator: true))
+    end
+    administrators.uniq!
+    administrators
+  end
+
+  def committee_members
+    cm = repository_users.where(committee: true).map(&:user)
+    cm
+  end
+
+  def specimen_coordinators
+    sc = repository_users.where(specimen_coordinator: true).map(&:user)
+    sc
+  end
+
+  def data_coordinators
+    dc = repository_users.where(data_coordinator: true).map(&:user)
+    dc
+  end
 end

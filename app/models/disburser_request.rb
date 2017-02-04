@@ -20,10 +20,10 @@ class DisburserRequest < ApplicationRecord
   DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW = 'committee review'
   DISBURSER_REQUEST_STATUS_APPROVED = 'approved'
   DISBURSER_REQUEST_STATUS_DENIED = 'denied'
-  DISBURSER_REQUEST_STAUTS_CANCEL = 'cancel'
-  DISBURSER_REQUEST_STATUSES = [DISBURSER_REQUEST_STAUTS_DRAFT, DISBURSER_REQUEST_STATUS_SUBMITTED, DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STAUTS_CANCEL]
+  DISBURSER_REQUEST_STAUTS_CANCELED = 'canceled'
+  DISBURSER_REQUEST_STATUSES = [DISBURSER_REQUEST_STAUTS_DRAFT, DISBURSER_REQUEST_STATUS_SUBMITTED, DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STAUTS_CANCELED]
   DISBURSER_REQUEST_STATUSES_SANS_DRAFT = DISBURSER_REQUEST_STATUSES - [DISBURSER_REQUEST_STAUTS_DRAFT]
-  DISBURSER_REQUEST_STATUSES_REVIEWABLE = [DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STAUTS_CANCEL]
+  DISBURSER_REQUEST_STATUSES_REVIEWABLE = [DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STAUTS_CANCELED]
 
   DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED = 'not started'
   DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED = 'query fulfilled'
@@ -102,6 +102,21 @@ class DisburserRequest < ApplicationRecord
     disburser_request_votes.by_user(user).first || disburser_request_votes.build(committee_member: user)
   end
 
+  def submitted_at
+    disburser_reqeust_status = disburser_request_statuses.select { |disburser_request_status| disburser_request_status.status_type == DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS &&  disburser_request_status.status == DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED }.last
+    if disburser_reqeust_status.present?
+      disburser_reqeust_status.created_at
+    end
+  end
+
+  def status_detail(status)
+    get_status_detail(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status)
+  end
+
+  def fulfillment_status_detail(status)
+    get_status_detail(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_FULLMILLMENT_STATUS, status)
+  end
+
   def build_disburser_request_status
     if  !self.draft? && self.status_changed?
       disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status: self.status, user_id: self.status_user.id, comments: self.status_comments)
@@ -112,6 +127,10 @@ class DisburserRequest < ApplicationRecord
     end
   end
 
+  def specimens?
+    disburser_request_details.any?
+  end
+
   private
     def set_defaults
       if self.new_record?
@@ -120,5 +139,9 @@ class DisburserRequest < ApplicationRecord
         end
         self.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED
       end
+    end
+
+    def get_status_detail(status_type, status)
+      disburser_request_statuses.order('id DESC').detect { |disburser_request_status| disburser_request_status.status_type == status_type && disburser_request_status.status == status }
     end
 end

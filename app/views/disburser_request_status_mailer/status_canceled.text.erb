@@ -1,0 +1,12 @@
+Dear <%= @disburser_request.submitter.full_name  %>,
+
+  A disbursement request titled "<%= @disburser_request.title %>" submitted by you on behalf of the investigator <%= @disburser_request.investigator %> to the <%= @disburser_request.repository.name %> repository has been canceled.
+
+If this is an error, please log into to review your request:
+
+<%= edit_repository_disburser_request_url(@disburser_request.repository, @disburser_request) %>
+
+
+Thank You
+
+Disburser

@@ -1,0 +1,43 @@
+Dear <%= @disburser_request.submitter.full_name  %>,
+
+<%- if @disburser_request.disburser_request_details.any? -%>
+  This message is regarding your request for specimens and data from the <%= @disburser_request.repository.name %> repository.
+<%- else  -%>
+  This message is regarding your request for data from the <%= @disburser_request.repository.name %> repository.
+<%- end -%>
+
+If you feel that you have received this message in error, please notify <%= Rails.configuration.custom.app_config['support']['sender_address'] %>.
+
+Your disbursement request submitted on <%= @disburser_request.submitted_at.to_s(:date) %> has been approved.
+
+Please sign in to to view the status of your request as it is processed:
+
+<%= edit_repository_disburser_request_url(@disburser_request.repository, @disburser_request) %>
+
+<%- if @disburser_request.repository.data_coordinators.any? -%>
+You may be contacted by the following data coordiantors to facilitate the release of clinical data for your request:
+<%- @disburser_request.repository.data_coordinators.each do |data_coordinator| -%>
+
+  <%= data_coordinator.full_name  %>: <%= data_coordinator.email %>
+<%- end -%>
+<%- end -%>
+
+<%- if @disburser_request.disburser_request_details.any? && @disburser_request.repository.specimen_coordinators.any? -%>
+You may be contacted by the following specimen coordinators to facilitate shipping and handling of specimens for your request:
+<%- @disburser_request.repository.specimen_coordinators.each do |specimen_coordinator| -%>
+
+  <%=specimen_coordinator.full_name  %>: <%= specimen_coordinator.email %>
+<%- end -%>
+<%- end -%>
+
+  Thank you for using the <%= @disburser_request.repository.name %> disbursement request system.
+
+We hope that we have met your needs and appreciate any feedback on the process or suggestions for improvement.
+
+You can provide feedback by sending an email to <%= Rails.configuration.custom.app_config['support']['sender_address'] %>.
+
+We look forward to working with you again in the future.
+
+Thank You,
+
+The Disbursement Committee of the <%= @disburser_request.repository.name %> Repository

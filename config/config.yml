@@ -2,7 +2,6 @@
 application: disburser
 repository: https://github.com/NUBIC/disburser.git
 deployer: disburser-deployer
-contact_email: m-gurley@northwestern.edu
 development:
   server_name: disburser.dev
 test:
@@ -14,3 +13,7 @@ staging:
   cert_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_cert.cer
   chain_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_interm.cer
   key_file: /etc/pki/tls/private/disburser-staging_cancer_northwestern_edu.key
+support:
+  recepients:
+    - m-gurley@northwestern.edu
+  sender_address: m-gurley@northwestern.edu
