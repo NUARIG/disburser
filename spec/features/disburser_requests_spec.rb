@@ -392,7 +392,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_5, 1)
     end
 
-    scenario 'As a data coordinator and sorting', js: true, focus: true do
+    scenario 'As a data coordinator and sorting', js: true, focus: false do
       @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 1, cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort', feasibility: 1)
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
@@ -679,6 +679,53 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       match_disburser_request_row(@disburser_request_3, 0)
       match_disburser_request_row(@disburser_request_5, 1)
+
+      @disburser_request_5.status_user = harold_user
+      @disburser_request_5.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_5.save!
+
+      visit specimen_coordinator_disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select(@white_sox_repository.name, from: 'Repository')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      match_disburser_request_row(@disburser_request_3, 0)
+      match_disburser_request_row(@disburser_request_5, 1)
+
+      within('.disburser_requests_header') do
+        select(@moomin_repository.name, from: 'Repository')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(0)
+
+      visit specimen_coordinator_disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select('yes', from: 'Feasibility')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(1)
+
+      match_disburser_request_row(@disburser_request_5, 0)
+
+      within('.disburser_requests_header') do
+        select('no', from: 'Feasibility')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(1)
+
+      match_disburser_request_row(@disburser_request_3, 0)
     end
 
     scenario 'As a committee member and sorting', js: true, focus: false do
