@@ -17,8 +17,8 @@ RSpec.describe DisburserRequest, type: :model do
   it { should validate_presence_of :fulfillment_status }
 
   before(:each) do
-    @moomin_repository = FactoryGirl.build(:repository, name: 'Moomin Repository')
-    @moomin_repository.save!
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomin Repository')
+    @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox Repository')
     @specimen_type_blood = 'Blood'
     @specimen_type_tissue = 'Tissue'
     @moomin_repository.specimen_types.build(name: @specimen_type_blood)
@@ -133,7 +133,7 @@ RSpec.describe DisburserRequest, type: :model do
   end
 
   it 'knows if a request is not query fulfilled', focus: false do
-    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED, status_user: @moomintroll_user)
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED, status_user: @moomintroll_user)
     expect(disburser_request_1.query_fulfilled?).to be_falsy
   end
 
@@ -170,7 +170,7 @@ RSpec.describe DisburserRequest, type: :model do
   it "saves a disburser request status once the fulfillment status reaches 'query fulfilled'", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(disburser_request_1.disburser_request_statuses.size).to eq(0)
-    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED)
     disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
     disburser_request_1.status_user = @little_my_user
     status_comments = 'Moomin fulfilled'
@@ -185,7 +185,7 @@ RSpec.describe DisburserRequest, type: :model do
   it "saves a disburser request status once the fulfillment status reaches 'query fulfilled'", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(disburser_request_1.disburser_request_statuses.size).to eq(0)
-    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED)
     disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
     disburser_request_1.status_user = @little_my_user
     status_comments = 'Moomin fulfilled'
@@ -200,7 +200,7 @@ RSpec.describe DisburserRequest, type: :model do
   it "saves a disburser request status once the fulfillment status reaches 'query fulfilled' (only once)", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(disburser_request_1.disburser_request_statuses.size).to eq(0)
-    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+    expect(disburser_request_1.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED)
     disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
     disburser_request_1.status_user = @little_my_user
     status_comments = 'Moomin fulfilled'
@@ -229,7 +229,7 @@ RSpec.describe DisburserRequest, type: :model do
     expect(DisburserRequest.not_draft).to match_array([disburser_request_2])
   end
 
-  it "can return disburser requests thare are 'reviewable'", focus: false do
+  it "can return disburser requests that are 'reviewable'", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Cure cancer', investigator: 'placehoder', irb_number: 'placehoder', cohort_criteria: 'placehoder', data_for_cohort: 'placehoder')
 
     DisburserRequest::DISBURSER_REQUEST_STATUSES.each do |disburser_request_status|
@@ -349,5 +349,129 @@ RSpec.describe DisburserRequest, type: :model do
   it 'knows if it is not  request for speciemns', focus: false do
     disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(disburser_request.specimens?).to be_falsy
+  end
+
+  describe 'returning disburser requests by feasibility' do
+    before(:each) do
+      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: true)
+      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: true)
+      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: false)
+    end
+
+    it "given a parameter an empty string", focus: false   do
+      expect(DisburserRequest.by_feasibility('')).to match_array([@disburser_request_1, @disburser_request_2, @disburser_request_3])
+    end
+
+    it "given a parameter a nil", focus: false do
+      expect(DisburserRequest.by_feasibility(nil)).to match_array([@disburser_request_1, @disburser_request_2, @disburser_request_3])
+    end
+
+    it "given a parameter of true", focus: false do
+      expect(DisburserRequest.by_feasibility(true)).to match_array([@disburser_request_1, @disburser_request_2])
+    end
+
+    it "given a parameter of true as '1", focus: false do
+      expect(DisburserRequest.by_feasibility('1')).to match_array([@disburser_request_1, @disburser_request_2])
+    end
+
+    it "given a parameter of true as 'true'", focus: false do
+      expect(DisburserRequest.by_feasibility('true')).to match_array([@disburser_request_1, @disburser_request_2])
+    end
+
+    it "given a parameter of true as 'TRUE'", focus: false do
+      expect(DisburserRequest.by_feasibility('TRUE')).to match_array([@disburser_request_1, @disburser_request_2])
+    end
+
+    it "given a parameter of true as 't'", focus: false do
+      expect(DisburserRequest.by_feasibility('t')).to match_array([@disburser_request_1, @disburser_request_2])
+    end
+
+    it "given a parameter of false", focus: false do
+      expect(DisburserRequest.by_feasibility(false)).to match_array([@disburser_request_3])
+    end
+
+    it "given a parameter of true as '0", focus: false do
+      expect(DisburserRequest.by_feasibility('0')).to match_array([@disburser_request_3])
+    end
+
+    it "given a parameter of true as 'false'", focus: false do
+      expect(DisburserRequest.by_feasibility('false')).to match_array([@disburser_request_3])
+    end
+
+    it "given a parameter of true as 'FALSE'", focus: false do
+      expect(DisburserRequest.by_feasibility('FALSE')).to match_array([@disburser_request_3])
+    end
+
+    it "given a parameter of true as 'f'", focus: false do
+      expect(DisburserRequest.by_feasibility('f')).to match_array([@disburser_request_3])
+    end
+  end
+
+  describe 'returning disburser requests by status' do
+    before(:each) do
+      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: true)
+      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: true)
+      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: false)
+    end
+
+    it "given no parameter", focus: false do
+      expect(DisburserRequest.by_status(nil)).to match_array([@disburser_request_1, @disburser_request_2,  @disburser_request_3])
+    end
+
+    it "given a parameter", focus: false do
+      expect(DisburserRequest.by_status(DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT)).to match_array([@disburser_request_1, @disburser_request_2,  @disburser_request_3])
+      DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT.each do |disburser_request_status|
+        @disburser_request_2.status = disburser_request_status
+        @disburser_request_2.status_user = @moomintroll_user
+        @disburser_request_2.save!
+
+        @disburser_request_3.status = disburser_request_status
+        @disburser_request_3.status_user = @moomintroll_user
+        @disburser_request_3.save!
+        expect(DisburserRequest.by_status(disburser_request_status)).to match_array([@disburser_request_2,  @disburser_request_3])
+      end
+    end
+  end
+
+  describe 'returning disburser requests by fulfillment status' do
+    before(:each) do
+      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: true)
+      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: true)
+      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: false)
+    end
+
+    it "given no parameter", focus: false do
+      expect(DisburserRequest.by_fulfillment_status(nil)).to match_array([@disburser_request_1, @disburser_request_2,  @disburser_request_3])
+    end
+
+    it "given a parameter", focus: false do
+      expect(DisburserRequest.by_status(DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT)).to match_array([@disburser_request_1, @disburser_request_2,  @disburser_request_3])
+      DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUSES_SANS_NOT_STARTED.each do |disburser_request_fulfillment_status|
+        @disburser_request_2.fulfillment_status = disburser_request_fulfillment_status
+        @disburser_request_2.status_user = @moomintroll_user
+        @disburser_request_2.save!
+
+        @disburser_request_3.fulfillment_status = disburser_request_fulfillment_status
+        @disburser_request_3.status_user = @moomintroll_user
+        @disburser_request_3.save!
+        expect(DisburserRequest.by_fulfillment_status(disburser_request_fulfillment_status)).to match_array([@disburser_request_2,  @disburser_request_3])
+      end
+    end
+  end
+
+  describe 'returning disburser requests by repository' do
+    before(:each) do
+      @disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: true)
+      @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, feasibility: true)
+      @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, feasibility: false)
+    end
+
+    it "given no parameter", focus: false do
+      expect(DisburserRequest.by_repository(nil)).to match_array([@disburser_request_1, @disburser_request_2,  @disburser_request_3])
+    end
+
+    it "given a parameter", focus: false do
+      expect(DisburserRequest.by_repository(@moomin_repository.id)).to match_array([@disburser_request_1, @disburser_request_2])
+    end
   end
 end

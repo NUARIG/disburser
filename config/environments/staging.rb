@@ -98,3 +98,4 @@ Rails.application.configure do
       exception_recipients: Rails.configuration.custom.app_config['support']['recepients']
     }
 end
+require 'disburser/utility'

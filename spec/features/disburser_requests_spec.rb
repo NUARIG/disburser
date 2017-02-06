@@ -20,7 +20,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', feasibility: 1, cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort')
     end
 
-    scenario 'As a regular user and sorting', js: true, focus: false do
+    scenario 'As a regular user and sorting', js: true, focus: true do
       @disburser_request_4.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_4.status_user = @moomintroll_user
       @disburser_request_4.save!
@@ -110,6 +110,68 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_4, 0)
       match_disburser_request_row(@disburser_request_1, 1)
       match_disburser_request_row(@disburser_request_2, 2)
+
+      within('.disburser_requests_header') do
+        select(@moomin_repository.name, from: 'Repository')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+
+      visit disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, from: 'Status')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(1)
+
+      match_disburser_request_row(@disburser_request_4, 0)
+
+      @disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_1.status_user = @moomintroll_user
+      @disburser_request_1.save!
+
+      visit disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, from: 'Fulfillment Status')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(1)
+
+      match_disburser_request_row(@disburser_request_1, 0)
+
+      visit disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select('yes', from: 'Feasibility')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      match_disburser_request_row(@disburser_request_2, 0)
+      match_disburser_request_row(@disburser_request_4, 1)
+
+      within('.disburser_requests_header') do
+        select('no', from: 'Feasibility')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(1)
+
+      match_disburser_request_row(@disburser_request_1, 0)
     end
 
     scenario 'As a system administrator and sorting', js: true, focus: false do
@@ -633,13 +695,19 @@ RSpec.feature 'Disburser Requests', type: :feature do
   scenario 'Creating a disburser request', js: true, focus: false  do
     login_as(@moomintroll_user, scope: :user)
     visit disburser_requests_path
-
     expect(page).to have_selector('#new_repository_request_link', visible: false)
-    select(@moomin_repository.name, from: 'Repository')
+    within('.make_a_request') do
+      select(@moomin_repository.name, from: 'Repository')
+    end
     expect(page).to have_selector('#new_repository_request_link', visible: true)
-    select('Select a repository', from: 'Repository')
+
+    within('.make_a_request') do
+      select('Select a repository', from: 'Repository')
+    end
     expect(page).to have_selector('#new_repository_request_link', visible: false)
-    select(@moomin_repository.name, from: 'Repository')
+    within('.make_a_request') do
+      select(@moomin_repository.name, from: 'Repository')
+    end
     click_link('Make a request!')
     expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
     disburser_request = {}
@@ -691,6 +759,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     within('.disburser_request:nth-of-type(1)') do
       click_link('Edit')
     end
+    sleep(1)
 
     expect(page.has_field?('Investigator', with: disburser_request[:investigator])).to be_truthy
     expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
@@ -710,16 +779,20 @@ RSpec.feature 'Disburser Requests', type: :feature do
   scenario 'Creating a disburser request for a repository without specmen types setup', js: true, focus: false  do
     login_as(@moomintroll_user, scope: :user)
     visit disburser_requests_path
-    select(@white_sox_repository.name, from: 'Repository')
+    within('.make_a_request') do
+      select(@white_sox_repository.name, from: 'Repository')
+    end
     click_link('Make a request!')
     sleep(1)
     expect(page).to_not have_selector('#disburser_request_details')
   end
 
-  scenario 'Creating a disburser request with validation', js: true, focus: false  do
+  scenario 'Creating a disburser request with validation', js: true, focus: false do
     login_as(@moomintroll_user, scope: :user)
     visit disburser_requests_path
-    select(@moomin_repository.name, from: 'Repository')
+    within('.make_a_request') do
+      select(@moomin_repository.name, from: 'Repository')
+    end
     click_link('Make a request!')
     expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
 
@@ -940,7 +1013,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.disburser_request_details.build(specimen_type: specimen_type, quantity: disburser_request_detail[:quantity], volume: disburser_request_detail[:volume], comments: disburser_request_detail[:comments])
    disburser_request.save
    disburser_request.reload
-   expect(disburser_request.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+   expect(disburser_request.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED)
    harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
    @moomin_repository.repository_users.build(username: 'hbaines', administrator: false, data_coordinator: true)
@@ -949,7 +1022,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    login_as(harold_user, scope: :user)
    visit data_coordinator_disburser_requests_path
 
-   expect(find("#disburser_request_#{disburser_request.id} .fulfillment_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+   expect(find("#disburser_request_#{disburser_request.id} .fulfillment_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED)
 
    find("#disburser_request_#{disburser_request.id}").click_link('Update Status')
 
@@ -1031,7 +1104,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.disburser_request_details.build(specimen_type: specimen_type, quantity: disburser_request_detail[:quantity], volume: disburser_request_detail[:volume], comments: disburser_request_detail[:comments])
    disburser_request.save
    disburser_request.reload
-   expect(disburser_request.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+   expect(disburser_request.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED)
    disburser_request.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
    disburser_request.status_user = @paul_user
    disburser_request.save!
@@ -1131,7 +1204,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.disburser_request_details.build(specimen_type: specimen_type, quantity: disburser_request_detail[:quantity], volume: disburser_request_detail[:volume], comments: disburser_request_detail[:comments])
    disburser_request.save
    disburser_request.reload
-   expect(disburser_request.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED)
+   expect(disburser_request.fulfillment_status).to eq(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED)
    disburser_request.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
    disburser_request.status_user = @paul_user
    disburser_request.save!

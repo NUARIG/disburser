@@ -44,3 +44,4 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = { :address => "localhost", :port => 1025 }
   config.action_mailer.default_url_options = { host: Rails.configuration.custom.app_config['test']['server_name'] }
 end
+require 'disburser/utility'

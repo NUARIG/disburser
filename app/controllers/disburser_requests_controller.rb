@@ -7,11 +7,13 @@ class DisburserRequestsController < ApplicationController
 
   def index
     params[:page]||= 1
+    params[:feasibility]||= ''
     options = {}
     options[:sort_column] = sort_column
     options[:sort_direction] = sort_direction
 
-    @disburser_requests = current_user.disburser_requests.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+    @repositories = Repository.all.order('name ASC')
+    @disburser_requests = current_user.disburser_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_fulfillment_status(params[:fulfillment_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def admin
@@ -39,7 +41,7 @@ class DisburserRequestsController < ApplicationController
   def data_coordinator
     authorize DisburserRequest
     params[:page]||= 1
-    params[:fulfillment_status]||= DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_NOT_STARTED
+    params[:fulfillment_status]||= DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED
     options = {}
     options[:sort_column] = sort_column
     options[:sort_direction] = sort_direction

@@ -94,11 +94,11 @@ class User < ActiveRecord::Base
     cdr = DisburserRequest.joins(:submitter).joins(:repository).where(repository_id: repository_users.where('data_coordinator = ?', true).map(&:repository_id))
 
     if options[:status].present?
-      cdr = cdr.where(status: options[:status])
+      cdr = cdr.by_status(options[:status])
     end
 
     if options[:fulfillment_status].present?
-      cdr = cdr.where(fulfillment_status: options[:fulfillment_status])
+      cdr = cdr.by_fulfillment_status(options[:fulfillment_status])
     end
 
     cdr.not_draft
@@ -108,11 +108,11 @@ class User < ActiveRecord::Base
     sdr = DisburserRequest.joins(:submitter).joins(:repository).where(repository_id: repository_users.where('specimen_coordinator = ?', true).map(&:repository_id))
 
     if options[:status].present?
-      sdr = sdr.where(status: options[:status])
+      sdr = sdr.by_status(options[:status])
     end
 
     if options[:fulfillment_status].present?
-      sdr = sdr.where(fulfillment_status: options[:fulfillment_status])
+      sdr = sdr.by_fulfillment_status(options[:fulfillment_status])
     end
 
     sdr.not_draft
@@ -131,7 +131,7 @@ class User < ActiveRecord::Base
     cdr = DisburserRequest.joins(:submitter).joins(:repository).where(repository_id: repository_users.where('committee = ?', true).map(&:repository_id))
 
     if options[:status].present?
-      cdr = cdr.where(status: options[:status])
+      cdr = cdr.by_status(options[:status])
     end
 
     cdr.reviewable
