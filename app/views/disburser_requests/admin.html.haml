@@ -6,7 +6,23 @@
     %h4
       Admin
     = form_tag admin_disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
-      .search_box{ class: 'large-offset-12 large-8 columns' }
+      .repository{ class: 'large-4 columns' }
+        %label{for: 'repository_id' }
+          Repository
+        = select_tag :repository_id, options_for_select(@repositories.map { |repository| [repository.name, repository.id] }, (params[:repository_id].blank? ? '' : params[:repository_id])), { include_blank: 'all', class: 'repository '}
+      .status{ class: 'large-4 columns' }
+        %label{for: 'status' }
+          Status
+        = select_tag :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT.map { |status| [status, status] }, (params[:status].blank? ? '' : params[:status])), { include_blank: 'all', class: 'status'}
+      .fulfillment_status{ class: 'large-4 columns' }
+        %label{for: 'fulfillment_status' }
+          Fulfillment Status
+        = select_tag :fulfillment_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUSES.map { |status| [status, status] }, (params[:fulfillment_status].blank? ? '' : params[:fulfillment_status])), { include_blank: 'all', class: 'status'}
+      .feasibility{ class: 'large-2 columns' }
+        %label{for: 'feasibility' }
+          Feasibility
+        = select_tag :feasibility, options_for_select([['yes', 'yes'],['no', 'no']], (params[:feasibility].blank? ? '' : params[:feasibility])), { include_blank: 'all', class: 'status'}
+      .search_box{ class: 'large-6 columns' }
         %label{for: 'search' }
           Search
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'

@@ -20,7 +20,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', feasibility: 1, cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort')
     end
 
-    scenario 'As a regular user and sorting', js: true, focus: true do
+    scenario 'As a regular user and sorting', js: true, focus: false do
       @disburser_request_4.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_4.status_user = @moomintroll_user
       @disburser_request_4.save!
@@ -175,6 +175,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
 
     scenario 'As a system administrator and sorting', js: true, focus: false do
+      @disburser_request_2.feasibility = 0
+      @disburser_request_2.save!
+      @disburser_request_4.feasibility = 0
       @disburser_request_4.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_4.status_user = @moomintroll_user
       @disburser_request_4.save!
@@ -255,48 +258,116 @@ RSpec.feature 'Disburser Requests', type: :feature do
       click_link('Feasibility')
       sleep(1)
       match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_3, 1)
-      match_disburser_request_row(@disburser_request_2, 2)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_3, 2)
       match_disburser_request_row(@disburser_request_4, 3)
 
-      click_link('Feasibility')
+      click_link('Status')
       sleep(1)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_1, 1)
+      match_disburser_request_row(@disburser_request_2, 2)
+      match_disburser_request_row(@disburser_request_3, 3)
+
+      click_link('Status')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_3, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
+
+      click_link('Fulfillment Status')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_3, 2)
+      match_disburser_request_row(@disburser_request_4, 3)
+
+      click_link('Fulfillment Status')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_1, 1)
+      match_disburser_request_row(@disburser_request_2, 2)
+      match_disburser_request_row(@disburser_request_3, 3)
+
+      @disburser_request_2.feasibility = 1
+      @disburser_request_2.save!
+      @disburser_request_4.feasibility = 1
+      @disburser_request_4.save!
+
+      visit admin_disburser_requests_path
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+
+      within('.disburser_requests_header') do
+        select(@moomin_repository.name, from: 'Repository')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(1)
+
+      match_disburser_request_row(@disburser_request_1, 0)
+
+      visit admin_disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, from: 'Status')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+
+      @disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_1.status_user = @moomintroll_user
+      @disburser_request_1.save!
+
+      visit admin_disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, from: 'Fulfillment Status')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(1)
+
+      match_disburser_request_row(@disburser_request_1, 0)
+
+      visit admin_disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select('yes', from: 'Feasibility')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
       match_disburser_request_row(@disburser_request_2, 0)
       match_disburser_request_row(@disburser_request_4, 1)
-      match_disburser_request_row(@disburser_request_1, 2)
-      match_disburser_request_row(@disburser_request_3, 3)
 
-      click_link('Status')
-      sleep(1)
-      match_disburser_request_row(@disburser_request_4, 0)
-      match_disburser_request_row(@disburser_request_1, 1)
-      match_disburser_request_row(@disburser_request_2, 2)
-      match_disburser_request_row(@disburser_request_3, 3)
+      within('.disburser_requests_header') do
+        select('no', from: 'Feasibility')
+      end
 
-      click_link('Status')
+      click_button('Search')
       sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
       match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
-
-      click_link('Fulfillment Status')
-      sleep(1)
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
-
-      click_link('Fulfillment Status')
-      sleep(1)
-      match_disburser_request_row(@disburser_request_4, 0)
-      match_disburser_request_row(@disburser_request_1, 1)
-      match_disburser_request_row(@disburser_request_2, 2)
-      match_disburser_request_row(@disburser_request_3, 3)
+      match_disburser_request_row(@disburser_request_3, 1)
     end
 
     scenario 'As a repository administrator and sorting', js: true, focus: false do
-      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort', feasibility: 0)
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
       @white_sox_repository.repository_users.build(username: 'hbaines', administrator: true)
@@ -315,11 +386,10 @@ RSpec.feature 'Disburser Requests', type: :feature do
         disburser_request.save!
       end
       visit admin_disburser_requests_path
-      expect(all('.disburser_request').size).to eq(3)
+      expect(all('.disburser_request').size).to eq(2)
 
       match_disburser_request_row(@disburser_request_3, 0)
-      match_disburser_request_row(@disburser_request_4, 1)
-      match_disburser_request_row(@disburser_request_5, 2)
+      match_disburser_request_row(@disburser_request_5, 1)
     end
 
     scenario 'As a data coordinator and sorting', js: true, focus: false do
@@ -1194,7 +1264,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
  end
 
  scenario 'Updating the status of a disburser request as a repository administrator', js: true, focus: false  do
-   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, feasibility: 0)
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
    disburser_request_detail[:quantity] = '5'
@@ -1228,7 +1298,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page.has_field?('Investigator', with: disburser_request[:investigator])).to be_truthy
    expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
    expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
-   expect(page.has_checked_field?('Feasibility?')).to be_truthy
+   expect(page.has_checked_field?('Feasibility?')).to be_falsy
    expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
    expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_truthy
    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
