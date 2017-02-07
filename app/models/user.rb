@@ -134,6 +134,6 @@ class User < ActiveRecord::Base
       cdr = cdr.by_status(options[:status])
     end
 
-    cdr.reviewable
+    cdr.reviewable.by_feasibility(false)
   end
 end

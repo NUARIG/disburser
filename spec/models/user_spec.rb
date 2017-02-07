@@ -245,7 +245,36 @@ RSpec.describe User, type: :model do
       expect(harold_user.specimen_coordinator_disbursr_requests(fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED).all).to match_array([@disburser_request_3])
     end
 
+    it 'lists committee disburser requests for a committee member (but only non-feasiblity requests)', focus: false do
+      [@disburser_request_1, @disburser_request_2, @disburser_request_3, @disburser_request_4, @disburser_request_5].each do |disburser_request|
+        disburser_request.feasibility = 0
+        disburser_request.save!
+      end
+
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @white_sox_repository.repository_users.build(username: 'hbaines', committee: true)
+      @white_sox_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      [@disburser_request_1, @disburser_request_2, @disburser_request_3, @disburser_request_4, @disburser_request_5].each do |disburser_request|
+        disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+        disburser_request.status_user = @nellie_user
+        disburser_request.save!
+      end
+      expect(harold_user.committee_disburser_requests.all).to match_array([@disburser_request_3, @disburser_request_4, @disburser_request_5])
+      [@disburser_request_1, @disburser_request_2, @disburser_request_3, @disburser_request_4, @disburser_request_5].each do |disburser_request|
+        disburser_request.feasibility = 1
+        disburser_request.save!
+      end
+      expect(harold_user.committee_disburser_requests.all).to be_empty
+    end
+
     it 'lists committee disburser requests for a committee member (only reviewable)', focus: false do
+      [@disburser_request_1, @disburser_request_2, @disburser_request_3, @disburser_request_4, @disburser_request_5].each do |disburser_request|
+        disburser_request.feasibility = 0
+        disburser_request.save!
+      end
+
       harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
       @white_sox_repository.repository_users.build(username: 'hbaines', committee: true)
@@ -277,6 +306,11 @@ RSpec.describe User, type: :model do
     end
 
     it 'lists committee disburser requests for a committee member (only reviewable) by status', focus: false do
+      [@disburser_request_1, @disburser_request_2, @disburser_request_3, @disburser_request_4, @disburser_request_5].each do |disburser_request|
+        disburser_request.feasibility = 0
+        disburser_request.save!
+      end
+
       harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
       @white_sox_repository.repository_users.build(username: 'hbaines', committee: true)

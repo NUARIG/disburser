@@ -36,7 +36,8 @@ class DisburserRequestsController < ApplicationController
     options[:sort_column] = sort_column
     options[:sort_direction] = sort_direction
 
-    @disburser_requests = current_user.committee_disburser_requests(status: params[:status]).by_vote_status(current_user, params[:vote_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+    @repositories = Repository.all.order('name ASC')
+    @disburser_requests = current_user.committee_disburser_requests(status: params[:status]).by_repository(params[:repository_id]).by_vote_status(current_user, params[:vote_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def data_coordinator

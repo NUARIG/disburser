@@ -729,7 +729,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
 
     scenario 'As a committee member and sorting', js: true, focus: false do
-      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 1,  cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
+      [@disburser_request_1, @disburser_request_2, @disburser_request_3, @disburser_request_4].each do |disburser_request|
+        disburser_request.feasibility = 0
+        disburser_request.save!
+      end
+
+      @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 0,  cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
       @white_sox_repository.repository_users.build(username: 'hbaines', committee: true)
@@ -853,6 +858,31 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       match_committee_disburser_request_row(@disburser_request_3, 0)
       match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      @disburser_request_5.status_user = @paul_user
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      @disburser_request_5.save!
+
+      visit committee_disburser_requests_path
+
+      within('.disburser_requests_header') do
+        select(@white_sox_repository.name, from: 'Repository')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(2)
+
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      within('.disburser_requests_header') do
+        select(@moomin_repository.name, from: 'Repository')
+      end
+
+      click_button('Search')
+      sleep(1)
+      expect(all('.disburser_request').size).to eq(0)
     end
   end
 
@@ -1449,8 +1479,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    end
  end
 
- scenario 'Voting on a disburser request as a committee member', js: true, focus: false  do
-   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+ scenario 'Voting on a disburser request as a committee member', js: true, focus: false do
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, feasibility: 0)
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
    disburser_request_detail[:quantity] = '5'
@@ -1481,7 +1511,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.investigator', text: disburser_request[:investigator])
    expect(page).to have_css('.title', text: disburser_request[:title])
    expect(page).to have_css('.irb_number', text: disburser_request[:irb_number])
-   expect(page.has_checked_field?('Feasibility?', disabled: true)).to be_truthy
+   expect(page.has_checked_field?('Feasibility?', disabled: true)).to be_falsy
    expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
    expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria], disabled: true)).to be_truthy
    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort], disabled: true)).to be_truthy
