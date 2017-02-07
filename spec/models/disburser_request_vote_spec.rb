@@ -30,4 +30,11 @@ RSpec.describe DisburserRequestVote, type: :model do
     disburser_request_vote = FactoryGirl.create(:disburser_request_vote, disburser_request: @disburser_request,  committee_member: @little_my_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE)
     expect(disburser_request_vote.mine?(@moomintroll_user)).to be_falsy
   end
+
+  it 'can return disburser request votes by vote', focus: false do
+    disburser_request_vote_1 = FactoryGirl.create(:disburser_request_vote, disburser_request: @disburser_request,  committee_member: @moomintroll_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE)
+    disburser_request_vote_2 = FactoryGirl.create(:disburser_request_vote, disburser_request: @disburser_request,  committee_member: @little_my_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY)
+    expect(DisburserRequestVote.by_vote(DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE)).to match_array([disburser_request_vote_1])
+    expect(DisburserRequestVote.by_vote(DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY)).to match_array([disburser_request_vote_2])
+  end
 end

@@ -51,6 +51,10 @@
             = sortable 'status'
           %th.fulfillment_status{ width: 200 }
             = sortable 'fulfillment_status'
+          %th.approve
+            Approve
+          %th.deny
+            Deny
           %th.edit{ width: 100 }
       %tbody
         - @disburser_requests.each do |disburser_request|
@@ -71,6 +75,10 @@
               = disburser_request.status
             %td.fulfillment_status
               = disburser_request.fulfillment_status
+            %td.approve
+              = disburser_request.disburser_request_votes.by_vote(DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE).count
+            %td.deny
+              = disburser_request.disburser_request_votes.by_vote(DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY).count
             %td.edit
               = link_to 'Edit', edit_admin_status_disburser_request_url(disburser_request), { class: 'edit_admin_status_disburser_request_link' }
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails

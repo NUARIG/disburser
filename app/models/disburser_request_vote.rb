@@ -11,6 +11,10 @@ class DisburserRequestVote < ApplicationRecord
     where(committee_member_user_id: user.id)
   end
 
+  scope :by_vote, ->(vote_type) do
+    where(vote: vote_type)
+  end
+
   def mine?(user)
     committee_member == user
   end

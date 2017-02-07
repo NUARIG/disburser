@@ -10,6 +10,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
     @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox')
     @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
     @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
+    @the_groke_user = FactoryGirl.create(:user, email: 'thegroker@moomin.com', username: 'thegroke', first_name: 'The', last_name: 'Groke')
+    @wilbur_wood_user = FactoryGirl.create(:user, email: 'wilburwood@whitesox.com', username: 'wwood', first_name: 'Wilbur', last_name: 'Wood')
   end
 
   describe 'Seeing a list of disburser requests' do
@@ -18,6 +20,10 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Moominpapa', irb_number: '456', feasibility: 1, cohort_criteria: 'Momomin cohort criteria', data_for_cohort: 'Momomin data for cohort')
       @disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'Sox baseball research', investigator: 'Nellie Fox', irb_number: '789', feasibility: 0, cohort_criteria: 'Sox cohort criteria', data_for_cohort: 'Sox data for cohort')
       @disburser_request_4 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox research', investigator: 'Wilbur Wood', irb_number: '999', feasibility: 1, cohort_criteria: 'White Sox cohort criteria', data_for_cohort: 'White Sox data for cohort')
+      FactoryGirl.create(:disburser_request_vote, disburser_request: @disburser_request_2, committee_member: @the_groke_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE)
+      FactoryGirl.create(:disburser_request_vote, disburser_request: @disburser_request_3, committee_member: @wilbur_wood_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY)
+      FactoryGirl.create(:disburser_request_vote, disburser_request: @disburser_request_4, committee_member: @the_groke_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE)
+      FactoryGirl.create(:disburser_request_vote, disburser_request: @disburser_request_4, committee_member: @wilbur_wood_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY)
     end
 
     scenario 'As a regular user and sorting', js: true, focus: false do
@@ -174,7 +180,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_1, 0)
     end
 
-    scenario 'As a system administrator and sorting', js: true, focus: false do
+    scenario 'As a system administrator and sorting', js: true, focus: true do
       @disburser_request_2.feasibility = 0
       @disburser_request_2.save!
       @disburser_request_4.feasibility = 0
@@ -208,87 +214,90 @@ RSpec.feature 'Disburser Requests', type: :feature do
       visit admin_disburser_requests_path
       sleep(1)
 
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 1, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 2, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_4, 3, 1, 1)
 
       click_link('Title')
       sleep(1)
-      match_disburser_request_row(@disburser_request_4, 0)
-      match_disburser_request_row(@disburser_request_3, 1)
-      match_disburser_request_row(@disburser_request_2, 2)
-      match_disburser_request_row(@disburser_request_1, 3)
+
+      match_administrator_disburser_request_row(@disburser_request_4, 0, 1, 1)
+      match_administrator_disburser_request_row(@disburser_request_3, 1, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_2, 2, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_1, 3, 0, 0)
 
       click_link('Title')
       sleep(2)
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 1, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 2, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_4, 3, 1, 1)
 
       click_link('Investigator')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 1, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 2, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_4, 3, 1, 1)
 
       click_link('Investigator')
       sleep(1)
-      match_disburser_request_row(@disburser_request_4, 0)
-      match_disburser_request_row(@disburser_request_3, 1)
-      match_disburser_request_row(@disburser_request_2, 2)
-      match_disburser_request_row(@disburser_request_1, 3)
+      match_administrator_disburser_request_row(@disburser_request_4, 0, 1, 1)
+      match_administrator_disburser_request_row(@disburser_request_3, 1, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_2, 2, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_1, 3, 0, 0)
 
       click_link('IRB Number')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 1, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 2, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_4, 3, 1, 1)
 
       click_link('IRB Number')
       sleep(1)
-      match_disburser_request_row(@disburser_request_4, 0)
-      match_disburser_request_row(@disburser_request_3, 1)
-      match_disburser_request_row(@disburser_request_2, 2)
-      match_disburser_request_row(@disburser_request_1, 3)
+      match_administrator_disburser_request_row(@disburser_request_4, 0, 1, 1)
+      match_administrator_disburser_request_row(@disburser_request_3, 1, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_2, 2, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_1, 3, 0, 0)
 
       click_link('Feasibility')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 1, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 2, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_4, 3, 1, 1)
 
       click_link('Status')
       sleep(1)
-      match_disburser_request_row(@disburser_request_4, 0)
-      match_disburser_request_row(@disburser_request_1, 1)
-      match_disburser_request_row(@disburser_request_2, 2)
-      match_disburser_request_row(@disburser_request_3, 3)
+
+      match_administrator_disburser_request_row(@disburser_request_4, 0, 1, 1)
+      match_administrator_disburser_request_row(@disburser_request_1, 1, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 2, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 3, 0, 1)
 
       click_link('Status')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 1, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 2, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_4, 3, 1, 1)
 
       click_link('Fulfillment Status')
       sleep(1)
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_2, 1)
-      match_disburser_request_row(@disburser_request_3, 2)
-      match_disburser_request_row(@disburser_request_4, 3)
+
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 1, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 2, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_4, 3, 1, 1)
 
       click_link('Fulfillment Status')
       sleep(1)
-      match_disburser_request_row(@disburser_request_4, 0)
-      match_disburser_request_row(@disburser_request_1, 1)
-      match_disburser_request_row(@disburser_request_2, 2)
-      match_disburser_request_row(@disburser_request_3, 3)
+      match_administrator_disburser_request_row(@disburser_request_4, 0, 1, 1)
+      match_administrator_disburser_request_row(@disburser_request_1, 1, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 2, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 3, 0, 1)
 
       @disburser_request_2.feasibility = 1
       @disburser_request_2.save!
@@ -299,8 +308,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       expect(all('.disburser_request').size).to eq(2)
 
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_3, 1)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 1, 0, 1)
 
       within('.disburser_requests_header') do
         select(@moomin_repository.name, from: 'Repository')
@@ -310,7 +319,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       expect(all('.disburser_request').size).to eq(1)
 
-      match_disburser_request_row(@disburser_request_1, 0)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
 
       visit admin_disburser_requests_path
 
@@ -322,8 +331,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       expect(all('.disburser_request').size).to eq(2)
 
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_3, 1)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 1, 0, 1)
 
       @disburser_request_1.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
       @disburser_request_1.status_user = @moomintroll_user
@@ -339,7 +348,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       expect(all('.disburser_request').size).to eq(1)
 
-      match_disburser_request_row(@disburser_request_1, 0)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
 
       visit admin_disburser_requests_path
 
@@ -351,8 +360,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       expect(all('.disburser_request').size).to eq(2)
 
-      match_disburser_request_row(@disburser_request_2, 0)
-      match_disburser_request_row(@disburser_request_4, 1)
+      match_administrator_disburser_request_row(@disburser_request_2, 0, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_4, 1, 1, 1)
 
       within('.disburser_requests_header') do
         select('no', from: 'Feasibility')
@@ -362,8 +371,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       expect(all('.disburser_request').size).to eq(2)
 
-      match_disburser_request_row(@disburser_request_1, 0)
-      match_disburser_request_row(@disburser_request_3, 1)
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 1, 0, 1)
     end
 
     scenario 'As a repository administrator and sorting', js: true, focus: false do
@@ -1567,6 +1576,17 @@ def match_committee_disburser_request_row(disburser_request, index)
   expect(all('.disburser_request')[index].find('.irb_number')).to have_content(disburser_request[:irb_number])
   expect(all('.disburser_request')[index].find('.status')).to have_content(disburser_request[:status])
   expect(all('.disburser_request')[index].find('.fulfillment_status')).to have_content(disburser_request[:fulfillment_status])
+end
+
+def match_administrator_disburser_request_row(disburser_request, index, approve_count, deny_count)
+  expect(all('.disburser_request')[index].find('.title')).to have_content(disburser_request[:title])
+  expect(all('.disburser_request')[index].find('.investigator')).to have_content(disburser_request[:investigator])
+  expect(all('.disburser_request')[index].find('.irb_number')).to have_content(disburser_request[:irb_number])
+  expect(all('.disburser_request')[index].find('.feasibility')).to have_content(human_boolean(disburser_request[:feasibility]))
+  expect(all('.disburser_request')[index].find('.status')).to have_content(disburser_request[:status])
+  expect(all('.disburser_request')[index].find('.fulfillment_status')).to have_content(disburser_request[:fulfillment_status])
+  expect(all('.disburser_request')[index].find('.approve')).to have_content(approve_count.to_s)
+  expect(all('.disburser_request')[index].find('.deny')).to have_content(deny_count.to_s)
 end
 
 def not_match_disburser_request(disburser_request)
