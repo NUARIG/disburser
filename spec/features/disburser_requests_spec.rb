@@ -180,7 +180,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_1, 0)
     end
 
-    scenario 'As a system administrator and sorting', js: true, focus: true do
+    scenario 'As a system administrator and sorting', js: true, focus: false do
       @disburser_request_2.feasibility = 0
       @disburser_request_2.save!
       @disburser_request_4.feasibility = 0
@@ -1411,6 +1411,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
    disburser_request.status_user = @paul_user
    disburser_request.save!
+   disburser_request_votes = []
+   disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @the_groke_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, comments: 'The groke says sure thing!')
+   disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @wilbur_wood_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, comments: 'Wilbur does not like!')
    harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
    @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
@@ -1485,6 +1488,14 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(find(".fulfillment_statuses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
      expect(find(".fulfillment_statuses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
      expect(find(".fulfillment_statuses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
+   end
+
+   click_link('Vote History')
+   disburser_request_votes.each do |disburser_request_vote|
+     expect(find("#disburser_request_vote_#{disburser_request_vote.id} .date")).to have_content(disburser_request_vote.created_at.to_s(:date))
+     expect(find("#disburser_request_vote_#{disburser_request_vote.id} .committee_member")).to have_content(disburser_request_vote.committee_member.full_name)
+     expect(find("#disburser_request_vote_#{disburser_request_vote.id} .vote")).to have_content(disburser_request_vote.vote)
+     expect(find("#disburser_request_vote_#{disburser_request_vote.id} .comments")).to have_content(disburser_request_vote.comments)
    end
  end
 

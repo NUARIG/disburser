@@ -9,7 +9,16 @@
       Indicates required field
     = render 'disburser_request', repository: @repository, f: f
     .row
-      = render 'status_history', disburser_request: @disburser_request
+      %ul#administration-info.tabs{"data-tabs" => "", class: 'large-collapse large-18 columns'}
+        %li.tabs-title.is-active
+          %a{"aria-selected" => "true", :href => "#status-history"} Status History
+        %li.tabs-title
+          %a{:href => "#vote-history"} Vote History
+      .tabs-content{"data-tabs-content" => "administration-info", class: 'large-18 columns'}
+        #status-history.tabs-panel.is-active
+          = render 'status_history', disburser_request: @disburser_request
+        #vote-history.tabs-panel
+          = render 'vote_history', disburser_request: @disburser_request
       .status_update{ class: 'large-6 columns' }
         .status{ class: 'large-24 columns' }
           %label{for: 'disburser_request_status' }
