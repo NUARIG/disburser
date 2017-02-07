@@ -87,9 +87,6 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = { address: 'smtprelay.northwestern.edu', port: 25, domain: 'northwestern.edu' }
   config.action_mailer.default_url_options = { host: Rails.configuration.custom.app_config['staging']['server_name'] }
 
-  app_host: vtfsmnubicapps01.fsm.northwestern.edu
-
-
   config.middleware.use ExceptionNotification::Rack,
     :email => {
       :deliver_with => :deliver, # Rails >= 4.2.1 do not need this option since it defaults to :deliver_now
