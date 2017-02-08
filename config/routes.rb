@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       patch :admin_status
       patch :data_status
       patch :specimen_status
+      patch :cancel
     end
     resources :disburser_request_votes
   end

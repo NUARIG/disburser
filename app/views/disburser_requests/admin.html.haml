@@ -35,21 +35,21 @@
     %table.hack_stack
       %thead
         %tr
-          %th.repository{ width: 200 }
+          %th.repository
             = sortable 'repositories.name', 'Repository'
-          %th.title{ width: 200 }
+          %th.title
             = sortable 'title'
-          %th.submitter{ width: 200 }
+          %th.submitter
             = sortable 'users.last_name', 'Submitter'
-          %th.investigator{ width: 200 }
+          %th.investigator
             = sortable 'investigator'
-          %th.irb_number{ width: 200 }
+          %th.irb_number
             = sortable 'irb_number', 'IRB Number'
           %th.feasibility
             = sortable 'feasibility'
-          %th.status{ width: 200 }
+          %th.status
             = sortable 'status'
-          %th.fulfillment_status{ width: 200 }
+          %th.fulfillment_status
             = sortable 'fulfillment_status'
           %th.approve
             Approve

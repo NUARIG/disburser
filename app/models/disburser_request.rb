@@ -157,6 +157,10 @@ class DisburserRequest < ApplicationRecord
     disburser_request_details.any?
   end
 
+  def investigator_cancellable?
+    [DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED].include?(self.status)
+  end
+
   private
     def set_defaults
       if self.new_record?

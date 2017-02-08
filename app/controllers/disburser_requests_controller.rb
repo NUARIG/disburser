@@ -2,7 +2,7 @@ class DisburserRequestsController < ApplicationController
   before_action :authenticate_user!
   helper_method :sort_column, :sort_direction
   before_action :load_repository, only: [:new, :create, :edit, :update]
-  before_action :load_disburser_request, only: [:edit, :update, :edit_admin_status, :edit_data_status, :edit_specimen_status, :download_file, :data_status, :specimen_status, :admin_status, :edit_committee_review, :committee_review]
+  before_action :load_disburser_request, only: [:edit, :update, :edit_admin_status, :edit_data_status, :edit_specimen_status, :download_file, :data_status, :specimen_status, :admin_status, :edit_committee_review, :committee_review, :cancel]
   before_action :load_specimen_types, only: [:new, :create, :edit, :update]
 
   def index
@@ -178,6 +178,19 @@ class DisburserRequestsController < ApplicationController
     else
       flash.now[:alert] = 'Failed to update the status of a repository request.'
       render action: 'edit_admin_status'
+    end
+  end
+
+  def cancel
+    authorize @disburser_request
+    @disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED
+    @disburser_request.status_user = current_user
+    if @disburser_request.save
+      flash[:success] = 'You have successfully canceled the repository request.'
+      redirect_to disburser_requests_url
+    else
+      flash.now[:alert] = 'Failed to cancel the repository request.'
+      redirect_to disburser_requests_url
     end
   end
 

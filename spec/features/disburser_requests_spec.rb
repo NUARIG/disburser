@@ -1205,6 +1205,25 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to_not have_css('.irb_number .field_with_errors')
  end
 
+ scenario 'Canceling a disburser request as a regular user', js: true, focus: false  do
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: false)
+   expect(disburser_request.status).to eq(DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT)
+
+   login_as(@moomintroll_user, scope: :user)
+   visit disburser_requests_path
+
+   all('.disburser_request')[0].find('.edit_disburser_request_link').click
+   expect(page).to have_css('form.disburser_request_form_cancel')
+
+   accept_confirm do
+     click_button('Cancel Request')
+   end
+   sleep(1)
+   disburser_request.reload
+   expect(disburser_request.status).to eq(DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED)
+   match_disburser_request_row(disburser_request, 0)
+ end
+
  scenario 'Updating the status of a disburser request as a data coordinator', js: true, focus: false  do
    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
    disburser_request_detail = {}

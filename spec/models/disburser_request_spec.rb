@@ -346,9 +346,29 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request.specimens?).to be_truthy
   end
 
-  it 'knows if it is not  request for speciemns', focus: false do
+  it 'knows if it is not request for speciemns', focus: false do
     disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(disburser_request.specimens?).to be_falsy
+  end
+
+  it 'knows if a request is investigator_cancellable?', focus: false do
+    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    [DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED].each do |disburser_request_status|
+      disburser_request.status = disburser_request_status
+      disburser_request.status_user = @moomintroll_user
+      disburser_request.save!
+      expect(disburser_request.investigator_cancellable?).to be_truthy
+    end
+  end
+
+  it 'knows if a request not investigator_cancellable?', focus: false do
+    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+    [DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED, DisburserRequest::DISBURSER_REQUEST_STATUS_DENIED, DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED].each do |disburser_request_status|
+      disburser_request.status = disburser_request_status
+      disburser_request.status_user = @moomintroll_user
+      disburser_request.save!
+      expect(disburser_request.investigator_cancellable?).to be_falsy
+    end
   end
 
   describe 'returning disburser requests by feasibility' do

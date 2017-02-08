@@ -54,4 +54,8 @@ class DisburserRequestPolicy < ApplicationPolicy
   def specimen_status?
     record.repository.specimen_coordinator?(user)
   end
+
+  def cancel?
+    record.mine?(user) && record.investigator_cancellable?
+  end
 end

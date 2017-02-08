@@ -125,6 +125,23 @@ describe DisburserRequestsController, type: :request do
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
+
+    it 'should allow access to cancel a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(disburser_requests_url)
+      expect(flash[:success]).to eq('You have successfully canceled the repository request.')
+    end
+
+    it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      disburser_request.status_user = @moomintroll_user
+      disburser_request.save!
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
   end
 
   describe 'system administrator user' do
@@ -242,6 +259,30 @@ describe DisburserRequestsController, type: :request do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
       expect(response).to redirect_to(admin_disburser_requests_url)
+    end
+
+    it 'should allow access to cancel a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(disburser_requests_url)
+      expect(flash[:success]).to eq('You have successfully canceled the repository request.')
+    end
+
+    it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
+      disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      disburser_request.status_user = @moomintroll_user
+      disburser_request.save!
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to cancel a disburser request not created by the user', focus: false  do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
   end
 
@@ -378,6 +419,30 @@ describe DisburserRequestsController, type: :request do
       patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
       expect(response).to redirect_to(admin_disburser_requests_url)
     end
+
+    it 'should allow access to cancel a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(disburser_requests_url)
+      expect(flash[:success]).to eq('You have successfully canceled the repository request.')
+    end
+
+    it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      disburser_request.status_user = @moomintroll_user
+      disburser_request.save!
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to cancel a disburser request not created by the user', focus: false  do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
   end
 
   describe 'repository data coordinator user' do
@@ -511,6 +576,30 @@ describe DisburserRequestsController, type: :request do
     it 'should deny access to admin status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to cancel a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(disburser_requests_url)
+      expect(flash[:success]).to eq('You have successfully canceled the repository request.')
+    end
+
+    it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      disburser_request.status_user = @moomintroll_user
+      disburser_request.save!
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to cancel a disburser request not created by the user', focus: false  do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      patch cancel_disburser_request_url(disburser_request)
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -650,6 +739,30 @@ describe DisburserRequestsController, type: :request do
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
+
+    it 'should allow access to cancel a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(disburser_requests_url)
+      expect(flash[:success]).to eq('You have successfully canceled the repository request.')
+    end
+
+    it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      disburser_request.status_user = @moomintroll_user
+      disburser_request.save!
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to cancel a disburser request not created by the user', focus: false  do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
   end
 
   describe 'repository committee member user' do
@@ -770,6 +883,30 @@ describe DisburserRequestsController, type: :request do
     it 'should deny access to admin status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to cancel a disburser request created by the user', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(disburser_requests_url)
+      expect(flash[:success]).to eq('You have successfully canceled the repository request.')
+    end
+
+    it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+      disburser_request.status_user = @moomintroll_user
+      disburser_request.save!
+      patch cancel_disburser_request_url(disburser_request)
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should deny access to cancel a disburser request not created by the user', focus: false  do
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
+      patch cancel_disburser_request_url(disburser_request)
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end

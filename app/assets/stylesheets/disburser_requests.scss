@@ -71,6 +71,14 @@
       margin-bottom: 1rem;
     }
   }
+
+  .disburser_request_form_cancel {
+    display: inline;
+
+    input {
+      display: inline;
+    }
+  }
 }
 
 #disburser_request_show {
