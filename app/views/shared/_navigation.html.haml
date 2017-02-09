@@ -6,44 +6,47 @@
           Clinical Research Repository Disburser
         %h6
           Robert H. Lurie Comprehensive Cancer Center of Northwestern University
-      .disburser_title{ class: 'large-6 columns text-right' }
+      .disburser_logo{ class: 'large-6 columns text-right' }
         %a{ :href => 'http://cancer.northwestern.edu/home/index.cfm' }
           = image_tag('rhlccc_small_2.png', alt: 'Robert H. Lurie Comprehensive Cancer Center of Northwestern University')
-  .title-bar{"data-hide-for" => "medium", "data-responsive-toggle" => "disburser-menu"}
-    %button.menu-icon{"data-toggle" => "disburser-menu", type: "button"}
-    .title-bar-title Menu
-  #disburser-menu.top-bar
-    .top-bar-left
-      %ul.dropdown.menu{"data-dropdown-menu" => ""}
-        %li.home.menu-text
-          = link_to 'Home', root_url
+.off-canvas-wrapper
+  .off-canvas-wrapper-inner{"data-off-canvas-wrapper" => ""}
+    / off-canvas title bar for 'small' screen
+    .title-bar{"data-hide-for" => "medium", "data-responsive-toggle" => "widemenu"}
+      .title-bar-left
+        %button.menu-icon{"data-open" => "offCanvasLeft", :type => "button"}
+        %span.title-bar-title Disburser
+      .title-bar-right
+        %span.title-bar-title
         - if user_signed_in?
-          - if policy(Repository).index?
-            %li.repositories.menu-text{ class: active?('active', controller: 'repositories', action: 'index') }
-              = link_to "Repositories", repositories_url
-          %li.requests.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'index') }
-            = link_to "Requests", disburser_requests_url
-          - if policy(DisburserRequest).admin?
-            %li.admin.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'admin') }
-              = link_to 'Admin', admin_disburser_requests_url
-          - if policy(DisburserRequest).committee?
-            %li.committee.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'committee') }
-              = link_to 'Committee', committee_disburser_requests_url
-          - if policy(DisburserRequest).data_coordinator?
-            %li.data_coordinator.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'data_coordinator') }
-              = link_to 'Data Coordinator', data_coordinator_disburser_requests_url
-          - if policy(DisburserRequest).specimen_coordinator?
-            %li.specimen_coordinator.menu-text{ class: active?('active', controller: 'disburser_requests', action: 'specimen_coordinator') }
-              = link_to 'Specimen Coordinator', specimen_coordinator_disburser_requests_url
-    .top-bar-right
-      %ul.menu
-        - if user_signed_in?
-          %li.profile.menu-text{ class: active?('active', controller: 'users', action: 'show', id: current_user.id) }
-            = link_to "Profile (#{current_user.username})", user_url(current_user)
+          Profile
         - else
-          %li.login.menu-text
-          %li.login.menu-text{ class: active?('active', controller: 'devise/sessions', action: 'new') }
-            = link_to 'Login', new_user_session_url
-        %li.log_out.menu-text
-          - if user_signed_in?
-            = link_to "Log out", destroy_user_session_path, method: :delete
+          Login
+        %button.menu-icon{"data-open" => "offCanvasRight", :type => "button"}
+    / off-canvas left menu
+    #offCanvasLeft.off-canvas.position-left{"data-off-canvas" => ""}
+      %ul.vertical.menu
+        = render 'shared/navigation_left'
+    / off-canvas right menu
+    #offCanvasRight.off-canvas.position-right{"data-off-canvas" => "", "data-position" => "right"}
+      %ul.vertical.menu
+        = render 'shared/navigation_right'
+    / "wider" top-bar menu for 'medium' and up
+    #widemenu.top-bar
+      .top-bar-left
+        %ul.menu
+          = render 'shared/navigation_left'
+      .top-bar-right
+        %ul.menu
+          = render 'shared/navigation_right'
+    / original content goes in this container
+    .off-canvas-content{"data-off-canvas-content" => ""}
+      .flash.small-centered{ 'data-closable' => true }
+        - flash.each do |name, msg|
+          - if msg.is_a?(String)
+            = content_tag :div, class: "callout small #{name}" do
+              %button.close-button{"aria-label" => "dismiss alert", "data-close" => "", :type => "button"}
+                %span{"aria-hidden" => "true"} ×
+              = msg
+      .row.column
+        = yield

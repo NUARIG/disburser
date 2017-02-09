@@ -1,3 +1,7 @@
+#disburser-menu {
+  @include show-for(medium);
+}
+
 #disburser_navigation {
   .disburser_branding {
     .disburser_title {
@@ -6,6 +10,9 @@
     h6 {
       color: $dark-gray;
     }
+  }
+  .disburser_logo {
+    @include hide-for-only(small);
   }
 }
 
@@ -31,7 +38,9 @@
   background-color: #b0a2c5;
 }
 
-.top-bar {
+
+.top-bar, .off-canvas {
+
   .menu-text a {
     color: white !important;
   }
