@@ -17,5 +17,6 @@ module Disburser
     end
     config.custom = ActiveSupport::OrderedOptions.new
     config.custom.app_config = APP_CONFIG
+    config.active_job.queue_adapter = :delayed_job
   end
 end
