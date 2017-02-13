@@ -1,5 +1,6 @@
 #repository_users {
   @include grid-row();
+
   .repository_users_header {
     margin-top: 1.5rem;
 
@@ -57,6 +58,12 @@
     }
     th .desc {
       background-image: asset_url("drop27.png");
+    }
+
+    table {
+      @include grid-column(
+       $columns: 24
+      );
     }
   }
 

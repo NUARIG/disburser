@@ -179,7 +179,6 @@ RSpec.feature 'Repositories', type: :feature do
     moominmama = { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(moominmama)
     click_button('Save')
-    sleep(1)
     repository_user = moominmama
     repository_user[:administrator] = true
     repository_user[:committee] = true
@@ -189,6 +188,7 @@ RSpec.feature 'Repositories', type: :feature do
     match_repository_user_row(repository_user, 1)
 
     repository_user = @moomin_repository.repository_users.joins(:user).where('users.username = ?', repository_user[:username]).first
+    sleep(2)
     within("#repository_user_#{repository_user.id}") do
       click_link('Edit')
     end

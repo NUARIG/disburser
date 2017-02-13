@@ -912,6 +912,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       select(@moomin_repository.name, from: 'Repository')
     end
     click_link('Make a request!')
+    sleep(1)
     expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
     disburser_request = {}
     disburser_request[:investigator] = 'Sniff Moomin'
@@ -1271,13 +1272,13 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(find("#disburser_request_detail_#{disburser_request_detail.id} .comments")).to have_content(disburser_request_detail.comments)
    end
 
-   expect(all('.approval_stauses .disburser_request_status').size).to eq(1)
+   expect(all('.stauses .disburser_request_status').size).to eq(1)
 
    disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS).each do |disburser_request_status|
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
 
    expect(all('.fulfillment_statuses .disburser_request_status').size).to eq(0)
@@ -1296,13 +1297,13 @@ RSpec.feature 'Disburser Requests', type: :feature do
    find("#disburser_request_#{disburser_request.id}").click_link('Update Status')
    sleep(1)
 
-   expect(all('.approval_stauses .disburser_request_status').size).to eq(1)
+   expect(all('.stauses .disburser_request_status').size).to eq(1)
 
    disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS).each do |disburser_request_status|
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
 
    expect(all('.fulfillment_statuses .disburser_request_status').size).to eq(1)
@@ -1364,13 +1365,13 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(find("#disburser_request_detail_#{disburser_request_detail.id} .comments")).to have_content(disburser_request_detail.comments)
    end
 
-   expect(all('.approval_stauses .disburser_request_status').size).to eq(1)
+   expect(all('.stauses .disburser_request_status').size).to eq(1)
 
    disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS).each do |disburser_request_status|
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
 
    expect(all('.fulfillment_statuses .disburser_request_status').size).to eq(1)
@@ -1396,13 +1397,13 @@ RSpec.feature 'Disburser Requests', type: :feature do
    find("#disburser_request_#{disburser_request.id}").click_link('Update Status')
    sleep(1)
 
-   expect(all('.approval_stauses .disburser_request_status').size).to eq(1)
+   expect(all('.stauses .disburser_request_status').size).to eq(1)
 
    disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS).each do |disburser_request_status|
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
 
    expect(all('.fulfillment_statuses .disburser_request_status').size).to eq(2)
@@ -1444,7 +1445,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(find("#disburser_request_#{disburser_request.id} .fulfillment_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED)
 
    find("#disburser_request_#{disburser_request.id}").click_link('Edit')
-   select('Select an approval status', from: 'Approval Status')
+   select('Select a status', from: 'Status')
    click_button('Save')
    sleep(1)
    expect(page).to have_css('.status_update .field_with_errors')
@@ -1465,13 +1466,13 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(all("#disburser_request_detail_#{disburser_request_detail.id}")[0].find_field('Comments', with: disburser_request_detail[:comments])).to be_truthy
    end
 
-   expect(all('.approval_stauses .disburser_request_status').size).to eq(1)
+   expect(all('.stauses .disburser_request_status').size).to eq(1)
 
    disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS).each do |disburser_request_status|
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
 
    expect(all('.fulfillment_statuses .disburser_request_status').size).to eq(1)
@@ -1483,7 +1484,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(find(".fulfillment_statuses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
 
-   select(DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, from: 'Approval Status')
+   select(DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, from: 'Status')
    comments = 'Help the moomins!'
    fill_in('Status Comments', with: comments)
    click_button('Save')
@@ -1491,13 +1492,13 @@ RSpec.feature 'Disburser Requests', type: :feature do
    find("#disburser_request_#{disburser_request.id}").click_link('Edit')
    sleep(1)
 
-   expect(all('.approval_stauses .disburser_request_status').size).to eq(2)
+   expect(all('.stauses .disburser_request_status').size).to eq(2)
 
    disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS).each do |disburser_request_status|
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
-     expect(find(".approval_stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
+     expect(find(".stauses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
 
    expect(all('.fulfillment_statuses .disburser_request_status').size).to eq(1)

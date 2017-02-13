@@ -18,21 +18,21 @@
     %table.hack_stack
       %thead
         %tr
-          %th.username{ width: 200 }
+          %th.username
             = sortable 'users.username', 'Username'
-          %th.first_name{ width: 200 }
+          %th.first_name
             = sortable 'users.first_name', 'First'
-          %th.last_name{ width: 200 }
+          %th.last_name
             = sortable 'users.last_name', 'Last'
-          %th.email{ width: 200 }
+          %th.email
             = sortable 'users.email', 'Email'
-          %th.administrator{ width: 200 }
+          %th.administrator
             = sortable 'repository_users.administrator', 'Administrator?'
-          %th.committee{ width: 200 }
+          %th.committee
             = sortable 'repository_users.committee', 'Committee?'
-          %th.specimen_coordinator{ width: 200 }
+          %th.specimen_coordinator
             = sortable 'repository_users.specimen_coordinator', 'Specimen Coordinator?'
-          %th.data_coordinator{ width: 200 }
+          %th.data_coordinator
             = sortable 'repository_users.data_coordinator', 'Data Coordinator?'
           %th.edit
       %tbody

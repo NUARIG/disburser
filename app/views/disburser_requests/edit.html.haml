@@ -24,9 +24,9 @@
             = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, false)
             = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
           - else
-            .approval_status
+            .status
               %b
-                Approval:
+                Status:
               = @disburser_request.status
             .fulfillment_status
               %b

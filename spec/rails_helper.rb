@@ -90,6 +90,7 @@ RSpec.configure do |config|
 
   config.before(:each, js: true) do
     Warden.test_mode!
+    Capybara.page.current_window.resize_to(1280, 800)
   end
 
   config.after(:all) do

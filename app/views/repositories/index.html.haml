@@ -16,12 +16,12 @@
         = link_to 'Clear', repositories_url(mine: params[:mine])
   .repositories_list
     = will_paginate @repositories, renderer: FoundationPagination::Rails
-    %table
+    %table.hack_stack
       %thead
         %tr
-          %th.name{ width: 200 }
+          %th.name
             = sortable 'name'
-          %th.edit{ width: 100 }
+          %th.edit
       %tbody
         - @repositories.each do |respository|
           = content_tag_for(:tr, respository) do

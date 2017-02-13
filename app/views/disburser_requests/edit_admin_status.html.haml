@@ -23,8 +23,8 @@
         .status{ class: 'large-24 columns' }
           %label{for: 'disburser_request_status' }
             %b
-              Approval Status
-          = f.select :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT, selected: f.object.status), { include_blank: 'Select an approval status' }
+              Status
+          = f.select :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT, selected: f.object.status), { include_blank: 'Select a status' }
           - if validation_errors?(@disburser_request, :status)
             %p.error=format_validation_errors(@disburser_request, :status)
             %br
