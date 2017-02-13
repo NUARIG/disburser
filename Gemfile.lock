@@ -327,6 +327,7 @@ DEPENDENCIES
   ckeditor
   cocoon
   coffee-rails (~> 4.2)
+  daemons
   database_cleaner
   delayed_job_active_record
   devise (~> 4.2)
