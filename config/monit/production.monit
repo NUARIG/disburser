@@ -1,25 +1,5 @@
-set daemon  60
-set logfile syslog facility log_daemon
-set eventqueue basedir /var/monit slots 1000
-set mailserver ns.northwestern.edu
-set mail-format { from: monit@enotis.nubic.northwestern.edu }
-set alert sysadmin@nubic.northwestern.edu
-set alert enotissupport@northwestern.edu
-# Specify the URL for posting events to M/Monit. The authority
-# part of the URL, that is, monit:monit, specify a username and
-# password registered in M/Monit. If you change the password of
-# the Monit user in M/Monit it must be changed here as well.
-set mmonit https://monit:NUBIC2012@mmonit.nubic.northwestern.edu/collector
-# set httpd port 2812 and use address localhost
-set httpd port 2812
-#     SSL ENABLE
-#     PEMFILE  /etc/pki/tls/certs/enotis.nubic.northwestern.edu.cert
-     allow localhost
-#     allow enotis
-     allow mmonit.nubic.northwestern.edu
-#     allow admin:enotis
-
 check process delayed_job
-  with pidfile /var/www/apps/enotis/shared/pids/delayed_job.pid
+  with pidfile /var/www/apps/disburser/shared/pids/delayed_job.pid
   start program = "/bin/sh /etc/delayed_job_start.sh"
   stop program = "/bin/sh /etc/delayed_job_stop.sh"
+  set alert m-gurley@northwestern.edu
