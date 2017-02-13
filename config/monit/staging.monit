@@ -18,6 +18,6 @@ set httpd port 2812 and use address localhost
 #     allow admin:enotis-staging
 
 check process delayed_job
-  with pidfile /var/www/apps/enotis/shared/pids/delayed_job.pid
-  start program = "/bin/sh /etc/delayed_job_start.sh"
-  stop program = "/bin/sh /etc/delayed_job_stop.sh"
+  with pidfile /var/www/apps/disburser/shared/pids/delayed_job.pid
+  start program = "/usr/bin/env RAILS_ENV=staging /var/www/apps/disburser/current/bin/delayed_job --pid-dir=/var/www/apps/disburser/shared/pids/ start"
+  stop program = "/usr/bin/env RAILS_ENV=staging /var/www/apps/disburser/current/bin/delayed_job --pid-dir=/var/www/apps/disburser/shared/pids/ stop"
