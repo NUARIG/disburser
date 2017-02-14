@@ -1,7 +1,7 @@
 require 'rails_helper'
 RSpec.feature 'Repositories', type: :feature do
   before(:each) do
-    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins')
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', public: true)
     @peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts')
     @repository_bossy_bear = FactoryGirl.create(:repository, name: 'Bossy Bear')
     @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
@@ -54,6 +54,7 @@ RSpec.feature 'Repositories', type: :feature do
     repository_rorty_institute = {}
     repository_rorty_institute[:name] = 'Rorty Institute'
     fill_in 'Name', with: repository_rorty_institute[:name]
+    check('Public?')
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
     click_button('Next')
@@ -62,6 +63,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(current_path).to eq(edit_repository_path(repository))
     expect(page).to have_css('.menu li.repository.active')
     expect(page.has_field?('Name', with: repository_rorty_institute[:name])).to be_truthy
+    expect(page.has_checked_field?('Public?')).to be_truthy
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
     click_link('Users')
@@ -116,6 +118,7 @@ RSpec.feature 'Repositories', type: :feature do
     repository_moomin = {}
     repository_moomin[:name] = 'Moominss'
     fill_in 'Name', with: repository_moomin[:name]
+    uncheck('Public?')
 
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
@@ -124,6 +127,7 @@ RSpec.feature 'Repositories', type: :feature do
 
     expect(page).to have_css('.menu li.repository.active')
     expect(page.has_field?('Name', with: repository_moomin[:name])).to be_truthy
+    expect(page.has_checked_field?('Public?')).to be_falsy
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
 

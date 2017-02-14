@@ -4,12 +4,14 @@ RSpec.feature 'Repositories', type: :feature do
     @repository_moomin_general_content = '<b>Some general Moomin information.</b>'
     @repository_moomin_specimen_content = '<b>Moomins collect specimens.</b>'
     @repository_moomin_data_content = '<b>Moomins collect data.</b>'
-    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', general_content: @repository_moomin_general_content, data_content: @repository_moomin_data_content, specimen_content: @repository_moomin_specimen_content, data_dictionary: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/data_dictionary.docx'))),irb_template: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/irb_template.docx'))))
-    @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', general_content: '<b>Some general Peanuts information.</b>',data_content: '<b>Peanuts collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
+    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins', public: true, general_content: @repository_moomin_general_content, data_content: @repository_moomin_data_content, specimen_content: @repository_moomin_specimen_content, data_dictionary: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/data_dictionary.docx'))),irb_template: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/irb_template.docx'))))
+    @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', public: true, general_content: '<b>Some general Peanuts information.</b>', data_content: '<b>Peanuts collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
+    @repository_white_sox = FactoryGirl.create(:repository, name: 'White Sox', public: false, general_content: '<b>Some general White Sox information.</b>', data_content: '<b>White Sox collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
     visit root_path
   end
 
   scenario 'Visiting home repositories and sorting', js: true, focus: false do
+    expect(all('.repository').size).to eq(2)
     match_repository_row(@repository_moomin, 0)
     match_repository_row(@repository_peanuts, 1)
 

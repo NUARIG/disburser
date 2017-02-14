@@ -75,7 +75,7 @@
       %label{for: 'repository_id' }
         Repository
     %div{class: 'small-10 large-10 columns' }
-      = select_tag :repository_id, options_for_select(Repository.order('name ASC').map { |repository| [repository.name, repository.id, { 'new_repository_request_url'=> new_repository_disburser_request_url(repository) }]}), { include_blank: 'Select a repository', class: 'repository_id'}
+      = select_tag :repository_id, options_for_select(@repositories.map { |repository| [repository.name, repository.id, { 'new_repository_request_url'=> new_repository_disburser_request_url(repository) }]}), { include_blank: 'Select a repository', class: 'repository_id'}
     %div{class: 'small-8 large-12 columns' }
       %button{id: 'new_repository_request_link_label', disabled: 'true', class: 'button' }
         Make a request!

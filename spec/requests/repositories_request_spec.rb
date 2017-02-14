@@ -28,7 +28,15 @@ describe RepositoriesController, type: :request do
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should allow access to show a repository', focus: false do
+    it 'should deny access to show a repository if it is not public', focus: false do
+      get repository_url(@repository_moomin.id )
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to show a repository is public', focus: false do
+      @repository_moomin.public = true
+      @repository_moomin.save
       get repository_url(@repository_moomin.id )
       expect(response).to have_http_status(:success)
     end
@@ -69,7 +77,15 @@ describe RepositoriesController, type: :request do
       expect(flash[:success]).to eq('You have successfully created a repository.')
     end
 
-    it 'should allow access to show a repository', focus: false do
+    it 'should deny access to show a repository if it is not public', focus: false do
+      get repository_url(@repository_moomin.id )
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to show a repository is public', focus: false do
+      @repository_moomin.public = true
+      @repository_moomin.save
       get repository_url(@repository_moomin.id )
       expect(response).to have_http_status(:success)
     end
@@ -113,7 +129,15 @@ describe RepositoriesController, type: :request do
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should allow access to show a repository', focus: false do
+    it 'should deny access to show a repository if it is not public', focus: false do
+      get repository_url(@repository_moomin.id )
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+    end
+
+    it 'should allow access to show a repository is public', focus: false do
+      @repository_moomin.public = true
+      @repository_moomin.save
       get repository_url(@repository_moomin.id )
       expect(response).to have_http_status(:success)
     end

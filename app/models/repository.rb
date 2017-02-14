@@ -31,6 +31,10 @@ class Repository < ApplicationRecord
     s
   end
 
+  scope :is_public, -> do
+    where(public: true)
+  end
+
   def repository_administrator?(user)
     repository_users.where(user_id: user.id, administrator: true).any?
   end

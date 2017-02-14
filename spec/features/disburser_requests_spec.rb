@@ -1,13 +1,13 @@
 require 'rails_helper'
 RSpec.feature 'Disburser Requests', type: :feature do
   before(:each) do
-    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins')
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', public: true)
     @specimen_type_blood = 'Blood'
     @specimen_type_tissue = 'Tissue'
     @moomin_repository.specimen_types.build(name: @specimen_type_blood)
     @moomin_repository.specimen_types.build(name: @specimen_type_tissue)
     @moomin_repository.save!
-    @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox')
+    @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox', public: true)
     @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
     @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
     @the_groke_user = FactoryGirl.create(:user, email: 'thegroker@moomin.com', username: 'thegroke', first_name: 'The', last_name: 'Groke')
@@ -896,6 +896,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
   end
 
   scenario 'Creating a disburser request', js: true, focus: false  do
+    peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts', public: false)
     login_as(@moomintroll_user, scope: :user)
     visit disburser_requests_path
     expect(page).to have_selector('#new_repository_request_link', visible: false)
@@ -903,6 +904,10 @@ RSpec.feature 'Disburser Requests', type: :feature do
       select(@moomin_repository.name, from: 'Repository')
     end
     expect(page).to have_selector('#new_repository_request_link', visible: true)
+
+    within('.make_a_request') do
+      expect(page).to have_select('Repository', options: ['Select a repository', @moomin_repository.name, @white_sox_repository.name])
+    end
 
     within('.make_a_request') do
       select('Select a repository', from: 'Repository')

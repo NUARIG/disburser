@@ -18,4 +18,8 @@ class RepositoryPolicy < ApplicationPolicy
   def update?
     user.system_administrator || record.repository_administrator?(user)
   end
+
+  def show?
+    record.public
+  end
 end

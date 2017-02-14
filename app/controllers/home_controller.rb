@@ -6,7 +6,7 @@ class HomeController < ApplicationController
     options[:sort_column] = sort_column
     options[:sort_direction] = sort_direction
 
-    @repositories = Repository.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+    @repositories = Repository.is_public.search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   private
