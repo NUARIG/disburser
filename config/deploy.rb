@@ -33,7 +33,7 @@ set :deploy_to, "/var/www/apps/#{ fetch(:application) }"
 # append :linked_files, 'config/database.yml', 'config/secrets.yml'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'uploads'
 #crr set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system db_backups}
 #ss set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets public/system}
 
@@ -44,7 +44,6 @@ append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/syst
 # set :keep_releases, 5
 
 namespace :deploy do
-
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
@@ -76,6 +75,12 @@ namespace :deploy do
   task :httpd_graceful do
     on roles(:web), in: :sequence, wait: 5 do
       execute :sudo, "service httpd graceful"
+    end
+  end
+
+  task :monit do
+    on roles(:web), in: :sequence, wait: 5 do
+      execute :sudo, "monit restart delayed_job"
     end
   end
 end
@@ -125,3 +130,4 @@ after "deploy:updated", "deploy:cleanup"
 after "deploy:finished", "deploy_prepare:create_vhost"
 after "deploy_prepare:create_vhost", "deploy:httpd_graceful"
 after "deploy:httpd_graceful", "deploy:restart"
+after "deploy:restart", "deploy:monit"
