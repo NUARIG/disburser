@@ -22,6 +22,7 @@
           Specimen Content
         = f.cktext_area :specimen_content
 
-    .navigation{class: 'small-offset-12 small-12 large-offset-20 large-4 columns' }
+    .navigation{class: 'small-offset-12 small-12 large-offset-18 large-6 columns' }
       = f.submit 'Save', class: 'button'
+      = link_to 'View', repository_url(@repository), class: 'button', target: '_blank'
       = link_to 'Cancel', repositories_url, class: 'cancel-link button warning'

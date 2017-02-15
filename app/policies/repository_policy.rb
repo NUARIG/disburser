@@ -20,6 +20,6 @@ class RepositoryPolicy < ApplicationPolicy
   end
 
   def show?
-    record.public
+    record.public || (user && (user.system_administrator || record.repository_administrator?(user)))
   end
 end

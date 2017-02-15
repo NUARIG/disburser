@@ -8,6 +8,12 @@ RSpec.describe Repository, type: :model do
   it { should have_many :disburser_requests }
   it { should validate_presence_of :name }
 
+  it "can return 'public'repositories", focus: false do
+    repository_1 = FactoryGirl.create(:repository, name: 'Moomins', public: true)
+    repository_2 = FactoryGirl.create(:repository, name: 'Peanuts', public: false)
+    expect(Repository.is_public).to match_array([repository_1])
+  end
+
   it 'can search accross fields (by name)', focus: false do
     repository_1 = FactoryGirl.create(:repository, name: 'Moomins')
     repository_2 = FactoryGirl.create(:repository, name: 'Peanuts')

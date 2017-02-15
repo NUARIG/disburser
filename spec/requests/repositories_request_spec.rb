@@ -77,10 +77,9 @@ describe RepositoriesController, type: :request do
       expect(flash[:success]).to eq('You have successfully created a repository.')
     end
 
-    it 'should deny access to show a repository if it is not public', focus: false do
+    it 'should allow access to show a repository even if it is not public', focus: false do
       get repository_url(@repository_moomin.id )
-      expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+      expect(response).to have_http_status(:success)
     end
 
     it 'should allow access to show a repository is public', focus: false do
@@ -129,10 +128,9 @@ describe RepositoriesController, type: :request do
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
-    it 'should deny access to show a repository if it is not public', focus: false do
+    it 'should allow access to show a repository even if it is not public', focus: false do
       get repository_url(@repository_moomin.id )
-      expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
+      expect(response).to have_http_status(:success)
     end
 
     it 'should allow access to show a repository is public', focus: false do
