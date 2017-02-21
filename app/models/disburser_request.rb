@@ -13,7 +13,7 @@ class DisburserRequest < ApplicationRecord
 
   after_initialize :set_defaults
   before_save :build_disburser_request_status
-  attr_accessor :status_user, :status_comments
+  attr_accessor :status_user, :status_comments, :data_status_comments, :specimen_status_comments
 
   DISBURSER_REQUEST_STAUTS_DRAFT = 'draft'
   DISBURSER_REQUEST_STATUS_SUBMITTED = 'submitted'
@@ -162,11 +162,11 @@ class DisburserRequest < ApplicationRecord
     end
 
     if !self.data_status_not_started? && self.data_status_changed?
-      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS, status: self.data_status, user_id: self.status_user.id, comments: self.status_comments)
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS, status: self.data_status, user_id: self.status_user.id, comments: self.data_status_comments)
     end
 
     if !self.specimen_status_not_started? && self.specimen_status_changed?
-      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS, status: self.specimen_status, user_id: self.status_user.id, comments: self.status_comments)
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS, status: self.specimen_status, user_id: self.status_user.id, comments: self.specimen_status_comments)
     end
   end
 

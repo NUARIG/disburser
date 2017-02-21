@@ -1301,7 +1301,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
    select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, from: 'Data Status')
    comments = 'Help the moomins!'
-   fill_in('Status Comments', with: comments)
+   fill_in('Data Status Comments', with: comments)
    click_button('Save')
    sleep(1)
    expect(all('.disburser_request').size).to eq(0)
@@ -1401,7 +1401,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
    select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, from: 'Specimen Status')
    comments = 'Help the moomins!'
-   fill_in('Status Comments', with: comments)
+   fill_in('Specimen Status Comments', with: comments)
    click_button('Save')
    sleep(1)
    expect(all('.disburser_request').size).to eq(0)
@@ -1453,12 +1453,6 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.save
    disburser_request.reload
    expect(disburser_request.data_status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
-   disburser_request.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
-   disburser_request.status_user = @paul_user
-   disburser_request.save!
-   disburser_request.specimen_status = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED
-   disburser_request.status_user = @paul_user
-   disburser_request.save!
    disburser_request_votes = []
    disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @the_groke_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, comments: 'The groke says sure thing!')
    disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @wilbur_wood_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, comments: 'Wilbur does not like!')
@@ -1470,14 +1464,24 @@ RSpec.feature 'Disburser Requests', type: :feature do
    login_as(harold_user, scope: :user)
    visit admin_disburser_requests_path
 
-   expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
+   expect(find("#disburser_request_#{disburser_request.id} .status")).to have_content(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+   expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
+   expect(find("#disburser_request_#{disburser_request.id} .specimen_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED)
 
    find("#disburser_request_#{disburser_request.id}").click_link('Edit')
    select('Select a status', from: 'Status')
+   select('Select a data status', from: 'Data Status')
+   select('Select a specimen status', from: 'Specimen Status')
    click_button('Save')
    sleep(1)
-   expect(page).to have_css('.status_update .field_with_errors')
-   expect(find(".status_update .error")).to have_content("can't be blank")
+   expect(page).to have_css('.status_update .status .field_with_errors')
+   expect(find(".status_update .status .error")).to have_content("can't be blank")
+
+   expect(page).to have_css('.status_update .data_status .field_with_errors')
+   expect(find(".status_update .data_status .error")).to have_content("can't be blank")
+
+   expect(page).to have_css('.status_update .specimen_status .field_with_errors')
+   expect(find(".status_update .specimen_status .error")).to have_content("can't be blank")
 
    expect(page.has_field?('Investigator', with: disburser_request[:investigator])).to be_truthy
    expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
@@ -1503,30 +1507,28 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(find(".statuses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
    end
 
-   expect(all('.data_statuses .disburser_request_status').size).to eq(1)
-
-   disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS).each do |disburser_request_status|
-     expect(find(".data_statuses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
-     expect(find(".data_statuses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
-     expect(find(".data_statuses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
-     expect(find(".data_statuses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
-   end
-
-   expect(all('.specimen_statuses .disburser_request_status').size).to eq(1)
-
-   disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS).each do |disburser_request_status|
-     expect(find(".specimen_statuses #disburser_request_status_#{disburser_request_status.id} .status")).to have_content(disburser_request_status.status)
-     expect(find(".specimen_statuses #disburser_request_status_#{disburser_request_status.id} .date")).to have_content(disburser_request_status.created_at.to_s(:date))
-     expect(find(".specimen_statuses #disburser_request_status_#{disburser_request_status.id} .user")).to have_content(disburser_request_status.user.full_name)
-     expect(find(".specimen_statuses #disburser_request_status_#{disburser_request_status.id} .comments")).to have_content(disburser_request_status.comments)
-   end
+   expect(all('.data_statuses .disburser_request_status').size).to eq(0)
+   expect(all('.specimen_statuses .disburser_request_status').size).to eq(0)
 
    select(DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, from: 'Status')
    comments = 'Help the moomins!'
    fill_in('Status Comments', with: comments)
+
+   select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, from: 'Data Status')
+   data_status_comments = 'Help the moomins with data!'
+   fill_in('Data Status Comments', with: data_status_comments)
+
+   select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, from: 'Specimen Status')
+   specimen_status_comments = 'Help the moomins with specimens!'
+   fill_in('Specimen Status Comments', with: specimen_status_comments)
+
    click_button('Save')
+
    expect(find("#disburser_request_#{disburser_request.id} .status")).to have_content(DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW)
+   expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
+   expect(find("#disburser_request_#{disburser_request.id} .specimen_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED)
    find("#disburser_request_#{disburser_request.id}").click_link('Edit')
+
    sleep(1)
 
    expect(all('.statuses .disburser_request_status').size).to eq(2)

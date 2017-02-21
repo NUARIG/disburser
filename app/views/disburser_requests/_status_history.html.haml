@@ -1,4 +1,4 @@
-.status_history{ class: 'large-18 columns' }
+.status_history{ class: "large-#{width} columns" }
   - disburser_request_statuses = @disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS).order('created_at ASC')
   .statuses
     %b

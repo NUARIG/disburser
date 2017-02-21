@@ -5,7 +5,7 @@
     = "Request for: #{@disburser_request.repository.name}"
   = render 'edit_status', disburser_request: @disburser_request
   .row
-    = render 'status_history', disburser_request: @disburser_request
+    = render 'status_history', disburser_request: @disburser_request, width: 18
     .status_update{ class: 'large-6 columns' }
       - if policy(@disburser_request).edit_specimen_status?
         = form_for @disburser_request, url: specimen_status_disburser_request_url(@disburser_request), html: { class: 'status_disburser_request_form', id: "status_disburser_request_#{@disburser_request.id}"  } do |f|
@@ -17,9 +17,9 @@
             - if validation_errors?(@disburser_request, :specimen_status)
               %p.error=format_validation_errors(@disburser_request, :specimen_status)
               %br
-            %label{for: 'disburser_request_status_comments' }
-              Status Comments
-            = f.text_area :status_comments, rows: 3
+            %label{for: 'disburser_request_specimen_status_comments' }
+              Specimen Status Comments
+            = f.text_area :specimen_status_comments, rows: 3
           .navigation{ class: 'large-offset-8 large-16 columns' }
             = f.submit 'Save', class: 'button'
             = link_to 'Cancel', specimen_coordinator_disburser_requests_url, class: 'cancel-link button warning'

@@ -5,7 +5,7 @@
     = "Request for: #{@disburser_request.repository.name}"
   = render '/disburser_requests/edit_status', disburser_request: @disburser_request
   .row
-    = render '/disburser_requests/vote_history', disburser_request: @disburser_request
+    = render '/disburser_requests/vote_history', disburser_request: @disburser_request, width: 18
     .disburser_request_vote{ class: 'large-6 columns' }
       = form_for [@disburser_request, @disburser_request_vote], html: { class: 'disburser_request_vote_form' } do |f|
         .vote{ class: 'large-24 columns' }

@@ -164,14 +164,14 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request_1.data_status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
     disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
     disburser_request_1.status_user = @little_my_user
-    status_comments = 'Moomin fulfilled'
-    disburser_request_1.status_comments = status_comments
+    data_status_comments = 'Moomin fulfilled'
+    disburser_request_1.data_status_comments = data_status_comments
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
     expect(disburser_request_1.disburser_request_statuses.first.status_type).to eq(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS)
     expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
     expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@little_my_user.username)
-    expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(status_comments)
+    expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(data_status_comments)
   end
 
   it "saves a disburser request status once the data status reaches anything but 'not started' (but only once)", focus: false do
@@ -180,19 +180,19 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request_1.data_status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
     disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
     disburser_request_1.status_user = @little_my_user
-    status_comments = 'Moomin fulfilled'
-    disburser_request_1.status_comments = status_comments
+    data_status_comments = 'Moomin fulfilled'
+    disburser_request_1.data_status_comments = data_status_comments
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
     expect(disburser_request_1.disburser_request_statuses.first.status_type).to eq(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS)
     expect(disburser_request_1.disburser_request_statuses.first.status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
     expect(disburser_request_1.disburser_request_statuses.first.user.username).to eq(@little_my_user.username)
-    expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(status_comments)
+    expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(data_status_comments)
     disburser_request_1.reload
     disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
     disburser_request_1.status_user = @little_my_user
-    status_comments = 'Moomin fulfilled again'
-    disburser_request_1.status_comments = status_comments
+    data_status_comments = 'Moomin fulfilled again'
+    disburser_request_1.data_status_comments = data_status_comments
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
   end
@@ -295,34 +295,34 @@ RSpec.describe DisburserRequest, type: :model do
   end
 
   it 'gets the latest data status detail by data status', focus: false do
-    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, status_user: @moomintroll_user, status_comments: 'moomintroll comment')
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, status_user: @moomintroll_user, data_status_comments: 'moomintroll comment')
     disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_INSUFFICIENT_DATA
     disburser_request_1.status_user = @moomintroll_user
-    disburser_request_1.status_comments = 'moomintroll comment'
+    disburser_request_1.data_status_comments = 'moomintroll comment'
     disburser_request_1.save!
     disburser_request_detail = disburser_request_1.data_status_detail(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
     expect({ status_user_name: disburser_request_detail.user.username, status: disburser_request_detail.status, status_comments: disburser_request_detail.comments}).to eq({ status_user_name: @moomintroll_user.username, status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, status_comments: 'moomintroll comment' })
     disburser_request_1.reload
     disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
     disburser_request_1.status_user = @little_my_user
-    disburser_request_1.status_comments = 'little my comment'
+    disburser_request_1.data_status_comments = 'little my comment'
     disburser_request_1.save!
     disburser_request_detail = disburser_request_1.data_status_detail(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
     expect({ status_user_name: disburser_request_detail.user.username, status: disburser_request_detail.status, status_comments: disburser_request_detail.comments}).to eq({ status_user_name: @little_my_user.username, status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, status_comments: 'little my comment' })
   end
 
   it 'gets the latest specimen status detail by data status', focus: false do
-    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, status_user: @moomintroll_user, status_comments: 'moomintroll comment')
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, status_user: @moomintroll_user, specimen_status_comments: 'moomintroll comment')
     disburser_request_1.specimen_status = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INSUFFICIENT_SPECIMENS
     disburser_request_1.status_user = @moomintroll_user
-    disburser_request_1.status_comments = 'moomintroll comment'
+    disburser_request_1.specimen_status_comments = 'moomintroll comment'
     disburser_request_1.save!
     disburser_request_detail = disburser_request_1.specimen_status_detail(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED)
     expect({ status_user_name: disburser_request_detail.user.username, status: disburser_request_detail.status, status_comments: disburser_request_detail.comments}).to eq({ status_user_name: @moomintroll_user.username, status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, status_comments: 'moomintroll comment' })
     disburser_request_1.reload
     disburser_request_1.specimen_status = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED
     disburser_request_1.status_user = @little_my_user
-    disburser_request_1.status_comments = 'little my comment'
+    disburser_request_1.specimen_status_comments = 'little my comment'
     disburser_request_1.save!
     disburser_request_detail = disburser_request_1.specimen_status_detail(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED)
     expect({ status_user_name: disburser_request_detail.user.username, status: disburser_request_detail.status, status_comments: disburser_request_detail.comments}).to eq({ status_user_name: @little_my_user.username, status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, status_comments: 'little my comment' })

@@ -9,18 +9,19 @@
       Indicates required field
     = render 'disburser_request', repository: @repository, f: f
     .row
-      %ul#administration-info.tabs{"data-tabs" => "", class: 'large-collapse large-18 columns'}
+      %ul#administration-info.tabs{"data-tabs" => "", class: 'large-collapse large-24 columns'}
         %li.tabs-title.is-active
           %a{"aria-selected" => "true", :href => "#status-history"} Status History
         %li.tabs-title
           %a{:href => "#vote-history"} Vote History
-      .tabs-content{"data-tabs-content" => "administration-info", class: 'large-18 columns'}
+      .tabs-content{"data-tabs-content" => "administration-info", class: 'large-24 columns'}
         #status-history.tabs-panel.is-active
-          = render 'status_history', disburser_request: @disburser_request
+          = render 'status_history', disburser_request: @disburser_request, width: 24
         #vote-history.tabs-panel
-          = render 'vote_history', disburser_request: @disburser_request
-      .status_update{ class: 'large-6 columns' }
-        .status{ class: 'large-24 columns' }
+          = render 'vote_history', disburser_request: @disburser_request, width: 24
+    .row
+      .status_update{ class: 'large-24 columns' }
+        .status{ class: 'large-8 columns' }
           %label{for: 'disburser_request_status' }
             %b
               Status
@@ -31,6 +32,30 @@
           %label{for: 'disburser_request_status_comments' }
             Status Comments
           = f.text_area :status_comments, rows: 3
-        .navigation{ class: 'laft-offset-8 large-16 columns' }
+
+        .data_status{ class: 'large-8 columns' }
+          %label{for: 'disburser_request_data_status' }
+            %b
+              Data Status
+          = f.select :data_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES, selected: f.object.data_status), { include_blank: 'Select a data status' }
+          - if validation_errors?(@disburser_request, :status)
+            %p.error=format_validation_errors(@disburser_request, :status)
+            %br
+          %label{for: 'disburser_request_data_status_comments' }
+            Data Status Comments
+          = f.text_area :data_status_comments, rows: 3
+        .specimen_status{ class: 'large-8 columns' }
+          %label{for: 'disburser_request_specimen_status' }
+            %b
+              Specimen Status
+          = f.select :specimen_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUSES, selected: f.object.specimen_status), { include_blank: 'Select a specimen status' }
+          - if validation_errors?(@disburser_request, :specimen_status)
+            %p.error=format_validation_errors(@disburser_request, :specimen_status)
+            %br
+          %label{for: 'disburser_request_specimen_status_comments' }
+            Specimen Status Comments
+          = f.text_area :specimen_status_comments, rows: 3
+
+        .navigation{ class: 'large-offset-16 large-8 columns' }
           = f.submit 'Save', class: 'button'
           = link_to 'Cancel', admin_disburser_requests_url, class: 'cancel-link button warning'
