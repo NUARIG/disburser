@@ -43,8 +43,6 @@
             = sortable 'irb_number', 'IRB Number'
           %th.status
             = sortable 'status'
-          %th.fulfillment_status
-            = sortable 'fulfillment_status'
           %th.edit
       %tbody
         - @disburser_requests.each do |disburser_request|
@@ -61,8 +59,6 @@
               = disburser_request.irb_number
             %td.status
               = disburser_request.status
-            %td.fulfillment_status
-              = disburser_request.fulfillment_status
             %td.edit
               = link_to 'Review', edit_committee_review_disburser_request_url(disburser_request), { class: 'edit_committee_review_disburser_request_link' }
     = will_paginate @disburser_requests, renderer: FoundationPagination::Rails

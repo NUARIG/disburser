@@ -1,6 +1,6 @@
 .status_history{ class: 'large-18 columns' }
   - disburser_request_statuses = @disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS).order('created_at ASC')
-  .stauses
+  .statuses
     %b
       Status History
     - if disburser_request_statuses.empty?
@@ -30,13 +30,44 @@
               %td.comments
                 = disburser_request_status.comments
 
-  - disburser_request_statuses = @disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_FULLMILLMENT_STATUS).order('created_at ASC')
-  .fulfillment_statuses
+  - disburser_request_statuses = @disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS).order('created_at ASC')
+  .data_statuses
     %b
-      Fulfillment Status History
+      Data Status History
     - if disburser_request_statuses.empty?
       %br
-      Not Started
+      = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED
+    - else
+      %table.hack_stack
+        %thead
+          %tr
+            %th.status
+              Status
+            %th.date
+              Date
+            %th.user
+              User
+            %th.comments
+              Comments
+        %tbody
+          - disburser_request_statuses.each do |disburser_request_status|
+            = content_tag_for(:tr, disburser_request_status) do
+              %td.status
+                = disburser_request_status.status
+              %td.date
+                = disburser_request_status.created_at.to_s(:date)
+              %td.user
+                = disburser_request_status.user.full_name
+              %td.comments
+                = disburser_request_status.comments
+
+  - disburser_request_statuses = @disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS).order('created_at ASC')
+  .specimen_statuses
+    %b
+      Specimen Status History
+    - if disburser_request_statuses.empty?
+      %br
+      = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED
     - else
       %table.hack_stack
         %thead

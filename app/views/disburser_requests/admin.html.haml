@@ -14,19 +14,23 @@
         %label{for: 'status' }
           Status
         = select_tag :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT.map { |status| [status, status] }, (params[:status].blank? ? '' : params[:status])), { include_blank: 'all', class: 'status'}
-      .fulfillment_status{ class: 'large-4 columns' }
-        %label{for: 'fulfillment_status' }
-          Fulfillment Status
-        = select_tag :fulfillment_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUSES.map { |status| [status, status] }, (params[:fulfillment_status].blank? ? '' : params[:fulfillment_status])), { include_blank: 'all', class: 'status'}
+      .data_status{ class: 'large-4 columns' }
+        %label{for: 'data_status' }
+          Data Status
+        = select_tag :data_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES.map { |status| [status, status] }, (params[:data_status].blank? ? '' : params[:data_status])), { include_blank: 'all', class: 'data_status'}
+      .specimen_status{ class: 'large-4 columns' }
+        %label{for: 'specimen_status' }
+          Specimen Status
+        = select_tag :specimen_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUSES.map { |status| [status, status] }, (params[:specimen_status].blank? ? '' : params[:specimen_status])), { include_blank: 'all', class: 'specimen_status'}
       .feasibility{ class: 'large-2 columns' }
         %label{for: 'feasibility' }
           Feasibility
         = select_tag :feasibility, options_for_select([['yes', 'yes'],['no', 'no']], (params[:feasibility].blank? ? '' : params[:feasibility])), { include_blank: 'all', class: 'status'}
-      .search_box{ class: 'large-6 columns' }
+      .search_box{ class: 'large-3 columns' }
         %label{for: 'search' }
           Search
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
-      .search_buttons{ class: 'large-4 columns' }
+      .search_buttons{ class: 'large-3 columns' }
         %button{ type: 'submit', id: 'search_disburser_requests_button', class: 'tiny button' }
           Search
         = link_to 'Clear', admin_disburser_requests_url
@@ -49,8 +53,10 @@
             = sortable 'feasibility'
           %th.status
             = sortable 'status'
-          %th.fulfillment_status
-            = sortable 'fulfillment_status'
+          %th.data_status
+            = sortable 'data_status', 'Data Status'
+          %th.specimen_status
+            = sortable 'specimen_status', 'Specimen Status'
           %th.approve
             Approve
           %th.deny
@@ -73,8 +79,10 @@
               = human_boolean(disburser_request.feasibility)
             %td.status
               = disburser_request.status
-            %td.fulfillment_status
-              = disburser_request.fulfillment_status
+            %td.data_status
+              = disburser_request.data_status
+            %td.specimen_status
+              = disburser_request.specimen_status
             %td.approve
               = disburser_request.disburser_request_votes.by_vote(DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE).count
             %td.deny

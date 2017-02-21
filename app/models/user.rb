@@ -48,14 +48,14 @@ class User < ActiveRecord::Base
 
   #Instance Methods
   def hydrate_from_ldap
-    if !Rails.env.development?
+    # if !Rails.env.development?
       user = User.find_ldap_entry_by_username(self.username)
       if user
         self.first_name = user[:first_name]
         self.last_name = user[:last_name]
         self.email = user[:email]
       end
-    end
+    # end
   end
 
   def admin?
@@ -97,8 +97,12 @@ class User < ActiveRecord::Base
       cdr = cdr.by_status(options[:status])
     end
 
-    if options[:fulfillment_status].present?
-      cdr = cdr.by_fulfillment_status(options[:fulfillment_status])
+    if options[:data_status].present?
+      cdr = cdr.by_data_status(options[:data_status])
+    end
+
+    if options[:specimen_status].present?
+      cdr = cdr.by_specimen_status(options[:specimen_status])
     end
 
     cdr.not_draft
@@ -111,8 +115,12 @@ class User < ActiveRecord::Base
       sdr = sdr.by_status(options[:status])
     end
 
-    if options[:fulfillment_status].present?
-      sdr = sdr.by_fulfillment_status(options[:fulfillment_status])
+    if options[:data_status].present?
+      sdr = sdr.by_data_status(options[:data_status])
+    end
+
+    if options[:specimen_status].present?
+      sdr = sdr.by_specimen_status(options[:specimen_status])
     end
 
     sdr.not_draft

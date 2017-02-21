@@ -107,14 +107,14 @@ describe DisburserRequestsController, type: :request do
 
     it 'should deny access to data status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED } }
+      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
     it 'should deny access to specimen status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
+      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -241,16 +241,16 @@ describe DisburserRequestsController, type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'should deny access to status a disburser request', focus: false do
+    it 'should deny access to data status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED } }
+      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
     it 'should deny access to specimen status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
+      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -402,14 +402,14 @@ describe DisburserRequestsController, type: :request do
 
     it 'should deny access to data status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED } }
+      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
     it 'should deny access to specimen status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
+      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -562,13 +562,13 @@ describe DisburserRequestsController, type: :request do
 
     it 'should allow access to data status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED } }
+      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED } }
       expect(response).to redirect_to(data_coordinator_disburser_requests_url)
     end
 
     it 'should deny access to specimen status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
+      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -722,14 +722,14 @@ describe DisburserRequestsController, type: :request do
 
     it 'should deny access to data status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED } }
+      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
     it 'should allow access to specimen status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
+      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED } }
       expect(response).to redirect_to(specimen_coordinator_disburser_requests_url)
     end
 
@@ -868,14 +868,14 @@ describe DisburserRequestsController, type: :request do
 
     it 'should deny access to data status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED } }
+      patch data_status_disburser_request_url(disburser_request), params: { disburser_request: { data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
     it 'should deny access to specimen status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED } }
+      patch specimen_status_disburser_request_url(disburser_request), params: { disburser_request: { specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end

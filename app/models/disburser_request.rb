@@ -5,7 +5,7 @@ class DisburserRequest < ApplicationRecord
   has_many :disburser_request_statuses
   has_many :disburser_request_votes
   accepts_nested_attributes_for :disburser_request_details, reject_if: :all_blank, allow_destroy: true
-  validates_presence_of :investigator, :title, :methods_justifications, :cohort_criteria, :data_for_cohort, :fulfillment_status, :status
+  validates_presence_of :investigator, :title, :methods_justifications, :cohort_criteria, :data_for_cohort, :specimen_status, :data_status, :status
   validates_presence_of :irb_number, if: Proc.new { |disburser_reqeust| !disburser_reqeust.feasibility }
   validates_associated :disburser_request_details
 
@@ -20,20 +20,22 @@ class DisburserRequest < ApplicationRecord
   DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW = 'committee review'
   DISBURSER_REQUEST_STATUS_APPROVED = 'approved'
   DISBURSER_REQUEST_STATUS_DENIED = 'denied'
-  DISBURSER_REQUEST_STAUTS_CANCELED = 'canceled'
-  DISBURSER_REQUEST_STATUSES = [DISBURSER_REQUEST_STAUTS_DRAFT, DISBURSER_REQUEST_STATUS_SUBMITTED, DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STAUTS_CANCELED]
+  DISBURSER_REQUEST_STATUS_CANCELED = 'canceled'
+  DISBURSER_REQUEST_STATUSES = [DISBURSER_REQUEST_STAUTS_DRAFT, DISBURSER_REQUEST_STATUS_SUBMITTED, DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STATUS_CANCELED]
   DISBURSER_REQUEST_STATUSES_SANS_DRAFT = DISBURSER_REQUEST_STATUSES - [DISBURSER_REQUEST_STAUTS_DRAFT]
-  DISBURSER_REQUEST_STATUSES_REVIEWABLE = [DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STAUTS_CANCELED]
+  DISBURSER_REQUEST_STATUSES_REVIEWABLE = [DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, DISBURSER_REQUEST_STATUS_APPROVED, DISBURSER_REQUEST_STATUS_DENIED, DISBURSER_REQUEST_STATUS_CANCELED]
 
-  DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED = 'not started'
-  DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED = 'query fulfilled'
-  DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_DATA = 'insufficient data'
-  DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED = 'inventory fulfilled'
-  DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_SPECIMENS = 'insufficient specimens'
-  DISBURSER_REQUEST_FULFILLMENT_STATUSES = [DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED, DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_DATA, DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED, DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_SPECIMENS]
-  DISBURSER_REQUEST_FULFILLMENT_STATUSES_SANS_NOT_STARTED = DISBURSER_REQUEST_FULFILLMENT_STATUSES - [DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED]
-  DISBURSER_REQUEST_DATA_FULFILLMENT_STATUSES = [DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED, DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_DATA]
-  DISBURSER_REQUEST_SPECIMEN_FULFILLMENT_STATUSES = [DISBURSER_REQUEST_FULFILLMENT_STATUS_INVENTORY_FULFILLED, DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_SPECIMENS]
+  DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED = 'not started'
+  DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED = 'query fulfilled'
+  DISBURSER_REQUEST_DATA_STATUS_INSUFFICIENT_DATA = 'insufficient data'
+  DISBURSER_REQUEST_DATA_STATUSES = [DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED, DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, DISBURSER_REQUEST_DATA_STATUS_INSUFFICIENT_DATA]
+  DISBURSER_REQUEST_DATA_STATUSES_SANS_NOT_STARTED = DISBURSER_REQUEST_DATA_STATUSES - [DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED]
+
+  DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED = 'not started'
+  DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED = 'inventory fulfilled'
+  DISBURSER_REQUEST_SPECIMEN_STATUS_INSUFFICIENT_SPECIMENS = 'insufficient specimens'
+  DISBURSER_REQUEST_SPECIMEN_STATUSES = [DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED, DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, DISBURSER_REQUEST_SPECIMEN_STATUS_INSUFFICIENT_SPECIMENS]
+  DISBURSER_REQUEST_SPECIMEN_STATUSES_SANS_NOT_STARTED = DISBURSER_REQUEST_SPECIMEN_STATUSES - [DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED]
 
   DISBURSER_REQUEST_VOTE_STATUS_PENDING_MY_VOTE = 'pending my vote'
   DISBURSER_REQUEST_VOTE_STATUS_APPROVED = 'approved'
@@ -49,10 +51,11 @@ class DisburserRequest < ApplicationRecord
     s = s.joins(:submitter)
     s = s.joins(:repository)
     if search_token
-      s = where(["lower(title) like ? OR lower(investigator) like ? OR lower(irb_number) like ?", "%#{search_token}%", "%#{search_token}%", "%#{search_token}%"])
+      s = s.where(["lower(title) like ? OR lower(investigator) like ? OR lower(irb_number) like ?", "%#{search_token}%", "%#{search_token}%", "%#{search_token}%"])
     end
 
     sort = options[:sort_column] + ' ' + options[:sort_direction] + ', disburser_requests.id ASC'
+
     s = s.nil? ? order(sort) : s.order(sort)
 
     s
@@ -88,13 +91,19 @@ class DisburserRequest < ApplicationRecord
 
   scope :by_status, ->(status) do
     if status.present?
-      where(status: status)
+     where(status: status)
     end
   end
 
-  scope :by_fulfillment_status, ->(fulfillment_status) do
-    if fulfillment_status.present?
-      where(fulfillment_status: fulfillment_status)
+  scope :by_data_status, ->(data_status) do
+    if data_status.present?
+     where(data_status: data_status)
+    end
+  end
+
+  scope :by_specimen_status, ->(specimen_status) do
+    if specimen_status.present?
+      where(specimen_status: specimen_status)
     end
   end
 
@@ -116,12 +125,12 @@ class DisburserRequest < ApplicationRecord
     self.status == DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
   end
 
-  def query_fulfilled?
-    self.fulfillment_status == DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+  def data_status_not_started?
+    self.data_status == DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED
   end
 
-  def not_started?
-    self.fulfillment_status == DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED
+  def specimen_status_not_started?
+    self.specimen_status == DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED
   end
 
   def find_or_initialize_disburser_request_vote(user)
@@ -139,17 +148,25 @@ class DisburserRequest < ApplicationRecord
     get_status_detail(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status)
   end
 
-  def fulfillment_status_detail(status)
-    get_status_detail(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_FULLMILLMENT_STATUS, status)
+  def data_status_detail(status)
+    get_status_detail(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS, status)
+  end
+
+  def specimen_status_detail(status)
+    get_status_detail(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS, status)
   end
 
   def build_disburser_request_status
-    if  !self.draft? && self.status_changed?
+    if !self.draft? && self.status_changed?
       disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status: self.status, user_id: self.status_user.id, comments: self.status_comments)
     end
 
-    if !self.not_started? && self.fulfillment_status_changed?
-      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_FULLMILLMENT_STATUS, status: self.fulfillment_status, user_id: self.status_user.id, comments: self.status_comments)
+    if !self.data_status_not_started? && self.data_status_changed?
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS, status: self.data_status, user_id: self.status_user.id, comments: self.status_comments)
+    end
+
+    if !self.specimen_status_not_started? && self.specimen_status_changed?
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS, status: self.specimen_status, user_id: self.status_user.id, comments: self.status_comments)
     end
   end
 
@@ -167,7 +184,8 @@ class DisburserRequest < ApplicationRecord
         if self.status.blank?
           self.status = DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
         end
-        self.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED
+        self.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED
+        self.specimen_status = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED
       end
     end
 
