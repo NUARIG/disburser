@@ -161,7 +161,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     mail(to: to, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
   end
 
-  def fulfillment_status_query_fulfilled_specimen_coordinator(disburser_request)
+  def data_status_query_fulfilled_specimen_coordinator(disburser_request)
     if disburser_request.specimens?
       @disburser_request = disburser_request
       subject = prepare_subject('Query Fulfilled for Disbursement Request')
@@ -182,7 +182,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     end
   end
 
-  def fulfillment_status_query_fulfilled_administrator(disburser_request)
+  def data_status_query_fulfilled_administrator(disburser_request)
     if !disburser_request.specimens?
       @disburser_request = disburser_request
       subject = prepare_subject('Query Fulfilled for Disbursement Request')
@@ -199,7 +199,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     end
   end
 
-  def fulfillment_status_insufficient_data(disburser_request)
+  def data_status_insufficient_data(disburser_request)
     @disburser_request = disburser_request
     subject = prepare_subject('Insufficient Data for Disbursement Request')
     to = []
@@ -215,7 +215,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     end
   end
 
-  def fulfillment_status_inventory_fulfilled(disburser_request)
+  def specimen_status_inventory_fulfilled(disburser_request)
     @disburser_request = disburser_request
     subject = prepare_subject('Inventory Fulfilled for Disbursement Request')
     to = []
@@ -230,7 +230,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     end
   end
 
-  def fulfillment_status_insufficient_specimens(disburser_request)
+  def specimen_status_insufficient_specimens(disburser_request)
     @disburser_request = disburser_request
     subject = prepare_subject('Insufficient Specimens for Disbursement Request')
     to = []

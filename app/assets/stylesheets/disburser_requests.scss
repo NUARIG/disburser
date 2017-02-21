@@ -13,8 +13,7 @@
       );
 
       .search_buttons{
-        margin-top: 1.5rem;
-
+        margin-top: 1.50rem;
         #search_disburser_requests_button {
           margin-top: .50rem;
         }
@@ -63,13 +62,13 @@
     label {
       display: inline;
     }
-    margin-bottom: 1rem;
   }
 
   .status_update {
-    .status {
-      margin-bottom: 1rem;
+    .status, .data_status, .specimen_status {
+      margin-bottom: .5rem;
     }
+
   }
 
   .disburser_request_form_cancel {

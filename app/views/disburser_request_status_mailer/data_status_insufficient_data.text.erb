@@ -10,7 +10,7 @@ If you feel that you have received this message in error, please notify <%= Rail
 
 Unfortunately, the data coordinator has determined there is insufficient data to fulfill your disbursement request.
 
-<%- insufficient_data_comments = @disburser_request.fulfillment_status_detail(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_INSUFFICIENT_DATA).comments -%>
+<%- insufficient_data_comments = @disburser_request.data_status_detail(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_INSUFFICIENT_DATA).comments -%>
 <%- if insufficient_data_comments.present? -%>
 The data coordinator provided this comment regarding your disbursement request:
 

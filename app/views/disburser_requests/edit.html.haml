@@ -15,23 +15,29 @@
       .row
         = render 'status_history', disburser_request: @disburser_request
         .status_update{ class: 'large-6 columns' }
-          %b
-            Status
-          %br
           - if @disburser_request.new_record? || @disburser_request.draft?
+            %b
+              Status
+            %br
             = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, true)
             = f.label :status, 'Draft', value: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
             = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, false)
             = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
           - else
+            %b
+              Statuses
             .status
               %b
                 Status:
               = @disburser_request.status
-            .fulfillment_status
+            .data_status
               %b
-                Fulfillment:
-              = @disburser_request.fulfillment_status
+                Data Status:
+              = @disburser_request.data_status
+            .specimen_status
+              %b
+                Specimen Status:
+              = @disburser_request.specimen_status
       .row
         .navigation{ class: 'large-offset-18 large-6 columns' }
           = f.submit 'Save', class: 'button'

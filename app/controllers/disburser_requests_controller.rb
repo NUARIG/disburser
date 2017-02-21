@@ -12,7 +12,7 @@ class DisburserRequestsController < ApplicationController
     options[:sort_direction] = sort_direction
 
     @repositories = Repository.is_public.order('name ASC')
-    @disburser_requests = current_user.disburser_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_fulfillment_status(params[:fulfillment_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+    @disburser_requests = current_user.disburser_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_data_status(params[:data_status]).by_specimen_status(params[:specimen_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def admin
@@ -24,7 +24,32 @@ class DisburserRequestsController < ApplicationController
     options[:sort_direction] = sort_direction
 
     @repositories = Repository.all.order('name ASC')
-    @disburser_requests = current_user.admin_disbursr_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_fulfillment_status(params[:fulfillment_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+    @disburser_requests = current_user.admin_disbursr_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_data_status(params[:data_status]).by_specimen_status(params[:specimen_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+  end
+
+  def data_coordinator
+    authorize DisburserRequest
+    params[:page]||= 1
+    params[:data_status]||= DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED
+    options = {}
+    options[:sort_column] = sort_column
+    options[:sort_direction] = sort_direction
+
+    @repositories = Repository.all.order('name ASC')
+    @disburser_requests = current_user.data_coordinator_disbursr_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_data_status(params[:data_status]).by_specimen_status(params[:specimen_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
+  end
+
+  def specimen_coordinator
+    authorize DisburserRequest
+    params[:page]||= 1
+    params[:data_status]||= DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
+    params[:specimen_status]||= DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED
+    options = {}
+    options[:sort_column] = sort_column
+    options[:sort_direction] = sort_direction
+
+    @repositories = Repository.all.order('name ASC')
+    @disburser_requests = current_user.specimen_coordinator_disbursr_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_data_status(params[:data_status]).by_specimen_status(params[:specimen_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def committee
@@ -38,30 +63,6 @@ class DisburserRequestsController < ApplicationController
 
     @repositories = Repository.all.order('name ASC')
     @disburser_requests = current_user.committee_disburser_requests(status: params[:status]).by_repository(params[:repository_id]).by_vote_status(current_user, params[:vote_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
-  end
-
-  def data_coordinator
-    authorize DisburserRequest
-    params[:page]||= 1
-    params[:fulfillment_status]||= DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_NOT_STARTED
-    options = {}
-    options[:sort_column] = sort_column
-    options[:sort_direction] = sort_direction
-
-    @repositories = Repository.all.order('name ASC')
-    @disburser_requests = current_user.data_coordinator_disbursr_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_fulfillment_status(params[:fulfillment_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
-  end
-
-  def specimen_coordinator
-    authorize DisburserRequest
-    params[:page]||= 1
-    params[:fulfillment_status]||= DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
-    options = {}
-    options[:sort_column] = sort_column
-    options[:sort_direction] = sort_direction
-
-    @repositories = Repository.all.order('name ASC')
-    @disburser_requests = current_user.specimen_coordinator_disbursr_requests.by_repository(params[:repository_id]).by_feasibility(params[:feasibility]).by_status(params[:status]).by_fulfillment_status(params[:fulfillment_status]).search_across_fields(params[:search], options).paginate(per_page: 10, page: params[:page])
   end
 
   def new
@@ -104,6 +105,7 @@ class DisburserRequestsController < ApplicationController
     end
     @disburser_request.assign_attributes(disburser_request_params)
     @disburser_request.status_user = current_user
+
     if @disburser_request.save
       flash[:success] = 'You have successfully updated a repository request.'
       redirect_to disburser_requests_url
@@ -172,6 +174,7 @@ class DisburserRequestsController < ApplicationController
     load_specimen_types_from_disburser_request
     @disburser_request.assign_attributes(disburser_request_params)
     @disburser_request.status_user = current_user
+
     if @disburser_request.save
       flash[:success] = 'You have successfully updated the status of a repository request.'
       redirect_to admin_disburser_requests_url
@@ -183,7 +186,7 @@ class DisburserRequestsController < ApplicationController
 
   def cancel
     authorize @disburser_request
-    @disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED
+    @disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_CANCELED
     @disburser_request.status_user = current_user
     if @disburser_request.save
       flash[:success] = 'You have successfully canceled the repository request.'
@@ -204,7 +207,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def disburser_request_params
-      params.require(:disburser_request).permit(:status_comments, :status, :fulfillment_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
+      params.require(:disburser_request).permit(:status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
     end
 
     def load_repository
@@ -216,7 +219,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def sort_column
-      ['title', 'investigator', 'irb_number', 'feasibility', 'status', 'fulfillment_status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
+      ['title', 'investigator', 'irb_number', 'feasibility', 'status', 'data_status', 'specimen_status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
     end
 
     def sort_direction

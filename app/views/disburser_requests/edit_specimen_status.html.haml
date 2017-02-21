@@ -10,12 +10,12 @@
       - if policy(@disburser_request).edit_specimen_status?
         = form_for @disburser_request, url: specimen_status_disburser_request_url(@disburser_request), html: { class: 'status_disburser_request_form', id: "status_disburser_request_#{@disburser_request.id}"  } do |f|
           .status{ class: 'large-24 columns' }
-            %label{for: 'disburser_request_fulfillment_status' }
+            %label{for: 'disburser_request_specimen_status' }
               %b
-                Fulfillment Status
-            = f.select :fulfillment_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUSES, selected: f.object.fulfillment_status), { include_blank: 'Select a fulfillment status' }
-            - if validation_errors?(@disburser_request, :fulfillment_status)
-              %p.error=format_validation_errors(@disburser_request, :fulfillment_status)
+                Specimen Status
+            = f.select :specimen_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUSES, selected: f.object.specimen_status), { include_blank: 'Select a specimen status' }
+            - if validation_errors?(@disburser_request, :specimen_status)
+              %p.error=format_validation_errors(@disburser_request, :specimen_status)
               %br
             %label{for: 'disburser_request_status_comments' }
               Status Comments

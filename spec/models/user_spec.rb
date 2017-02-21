@@ -196,17 +196,30 @@ RSpec.describe User, type: :model do
       expect(harold_user.data_coordinator_disbursr_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW).all).to match_array([@disburser_request_3])
     end
 
-    it 'lists data coordinator disburser requests for a data coordinator (excluding drafts) by fulfillment status', focus: false do
+    it 'lists data coordinator disburser requests for a data coordinator (excluding drafts) by data status', focus: false do
       harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
       @white_sox_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
       @white_sox_repository.save!
       harold_user = User.where(username: 'hbaines').first
-      @disburser_request_3.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_3.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
       @disburser_request_3.status_user = harold_user
-      @disburser_request_3.save
+      @disburser_request_3.save!
 
-      expect(harold_user.data_coordinator_disbursr_requests(fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED).all).to match_array([@disburser_request_3])
+      expect(harold_user.data_coordinator_disbursr_requests(data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED).all).to match_array([@disburser_request_3])
+    end
+
+    it 'lists data coordinator disburser requests for a data coordinator (excluding drafts) by speciemn status', focus: false do
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @white_sox_repository.repository_users.build(username: 'hbaines', data_coordinator: true)
+      @white_sox_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      @disburser_request_3.specimen_status = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED
+      @disburser_request_3.status_user = harold_user
+      @disburser_request_3.save!
+
+      expect(harold_user.data_coordinator_disbursr_requests(specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED).all).to match_array([@disburser_request_3])
     end
 
     it 'lists specimen coordinator disburser requests for a s coordinator (excluding drafts)', focus: false do
@@ -232,18 +245,32 @@ RSpec.describe User, type: :model do
       expect(harold_user.specimen_coordinator_disbursr_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW).all).to match_array([@disburser_request_3])
     end
 
-    it 'lists specimen coordinator disburser requests for a specimen coordinator (excluding drafts) by fulfillment status', focus: false do
+    it 'lists specimen coordinator disburser requests for a specimen coordinator (excluding drafts) by data status', focus: false do
       harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
       allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
       @white_sox_repository.repository_users.build(username: 'hbaines', specimen_coordinator: true)
       @white_sox_repository.save!
       harold_user = User.where(username: 'hbaines').first
-      @disburser_request_3.fulfillment_status = DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED
+      @disburser_request_3.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
       @disburser_request_3.status_user = harold_user
       @disburser_request_3.save
 
-      expect(harold_user.specimen_coordinator_disbursr_requests(fulfillment_status: DisburserRequest::DISBURSER_REQUEST_FULFILLMENT_STATUS_QUERY_FULFILLED).all).to match_array([@disburser_request_3])
+      expect(harold_user.specimen_coordinator_disbursr_requests(data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED).all).to match_array([@disburser_request_3])
     end
+
+    it 'lists specimen coordinator disburser requests for a specimen coordinator (excluding drafts) by specimen status', focus: false do
+      harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
+      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold_user)
+      @white_sox_repository.repository_users.build(username: 'hbaines', specimen_coordinator: true)
+      @white_sox_repository.save!
+      harold_user = User.where(username: 'hbaines').first
+      @disburser_request_3.specimen_status = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED
+      @disburser_request_3.status_user = harold_user
+      @disburser_request_3.save
+
+      expect(harold_user.specimen_coordinator_disbursr_requests(specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED).all).to match_array([@disburser_request_3])
+    end
+
 
     it 'lists committee disburser requests for a committee member (but only non-feasiblity requests)', focus: false do
       [@disburser_request_1, @disburser_request_2, @disburser_request_3, @disburser_request_4, @disburser_request_5].each do |disburser_request|
@@ -334,10 +361,10 @@ RSpec.describe User, type: :model do
       expect(harold_user.committee_disburser_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED).all).to match_array([@disburser_request_4])
       expect(harold_user.committee_disburser_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_DENIED).all).to match_array([@disburser_request_5])
 
-      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_CANCELED
       @disburser_request_5.status_user = @nellie_user
       @disburser_request_5.save
-      expect(harold_user.committee_disburser_requests(status: DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED).all).to match_array([@disburser_request_5])
+      expect(harold_user.committee_disburser_requests(status: DisburserRequest::DISBURSER_REQUEST_STATUS_CANCELED).all).to match_array([@disburser_request_5])
     end
   end
 end

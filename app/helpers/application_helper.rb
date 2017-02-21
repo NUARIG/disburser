@@ -3,7 +3,7 @@ module ApplicationHelper
     title ||= column.titleize
     css_class = column == sort_column ? "current #{sort_direction}" : nil
     direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
-    link_to title, params.permit(:sort, :direction, :search, :status, :fulfillment_status, :vote_status, :feasibility, :repository_id).merge({ sort: column, direction: direction }), { class: css_class }
+    link_to title, params.permit(:sort, :direction, :search, :status, :data_status, :specimen_status, :vote_status, :feasibility, :repository_id).merge({ sort: column, direction: direction }), { class: css_class }
   end
 
   def validation_errors?(object, field_name)

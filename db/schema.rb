@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170214145908) do
+ActiveRecord::Schema.define(version: 20170215213322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,9 +70,10 @@ ActiveRecord::Schema.define(version: 20170214145908) do
     t.text     "cohort_criteria",        null: false
     t.text     "data_for_cohort",        null: false
     t.string   "status",                 null: false
-    t.string   "fulfillment_status",     null: false
+    t.string   "data_status",            null: false
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.string   "specimen_status"
   end
 
   create_table "repositories", force: :cascade do |t|
