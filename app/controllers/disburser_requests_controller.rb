@@ -75,16 +75,24 @@ class DisburserRequestsController < ApplicationController
   end
 
   def create
+    if !params[:disburser_request][:custom_request_form_cache].blank? && params[:disburser_request][:custom_request_form].blank?
+      params[:disburser_request][:custom_request_form] = params[:disburser_request][:custom_request_form_cache]
+    end
+
     if !params[:disburser_request][:methods_justifications_cache].blank? && params[:disburser_request][:methods_justifications].blank?
       params[:disburser_request][:methods_justifications] = params[:disburser_request][:methods_justifications_cache]
     end
 
-    @disburser_request = DisburserRequest.new(disburser_request_params)
+    @disburser_request = @repository.disburser_requests.build(disburser_request_params)
 
     if params[:disburser_request][:methods_justifications_cache].blank? && params[:disburser_request][:methods_justifications].blank?
       @disburser_request.methods_justifications = nil
     end
-    @disburser_request.repository = @repository
+
+    if params[:disburser_request][:custom_request_form_cache].blank? && params[:disburser_request][:custom_request_form].blank?
+      @disburser_request.custom_request_form = nil
+    end
+
     @disburser_request.submitter = current_user
     @disburser_request.status_user = current_user
 
@@ -92,6 +100,8 @@ class DisburserRequestsController < ApplicationController
       flash[:success] = 'You have successfully created a repository request.'
       redirect_to disburser_requests_url
     else
+      Rails.logger.info("here we go")
+      Rails.logger.info("#{@disburser_request.errors.full_messages}")
       flash.now[:alert] = 'Failed to create repository request.'
       render action: 'new'
     end
@@ -207,7 +217,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def disburser_request_params
-      params.require(:disburser_request).permit(:data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
+      params.require(:disburser_request).permit(:data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form,  disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
     end
 
     def load_repository

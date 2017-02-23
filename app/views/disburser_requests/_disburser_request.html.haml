@@ -41,63 +41,91 @@
     %label{for: 'disburser_request_feasibility'} Feasibility?
     %span{ id: 'feasibilityHelpText', class: 'help-text' }
       Only aggregrate numbers will be provided for feasability requests. No approved IRB protocol is required.
-.row
-  .methods_justifications{class: 'small-24 columns' }
-    %div{class: 'small-12 large-5 columns' }
-      %label{for: 'disburser_request_methods_justifications' }
-        Methods/Justifications
+- if @disburser_request.use_custom_request_form
+  .row
+    .custom_request_form{class: 'small-24 columns' }
+      %div{class: 'small-12 large-5 columns' }
+        %label{for: 'disburser_request_custom_request_form' }
+          Custom Request Form
+          %span{ class: 'validation required' }
+      %div{class: 'small-12 large-19 columns' }
+        %div
+          - if @disburser_request.custom_request_form? && !@disburser_request.new_record?
+            = link_to download_file_repository_disburser_request_url(@disburser_request, file_type: 'custom_request_form'), 'data-turbolinks' => false, class: 'custom_request_form_url' do
+              %i
+              = @disburser_request.custom_request_form.file.filename
+          - if @disburser_request.custom_request_form? && @disburser_request.new_record?
+            = link_to @disburser_request.custom_request_form.identifier, "#{@disburser_request.custom_request_form.url}",  class: 'custom_request_form_url'
+          = f.file_field :custom_request_form, class: "#{@disburser_request.custom_request_form? ? 'hide' : '' }"
+          - if @disburser_request.custom_request_form_cache
+            = f.hidden_field :custom_request_form_cache, value: @disburser_request.custom_request_form_cache
+          - else
+            = f.hidden_field :custom_request_form_cache, value: @disburser_request.custom_request_form
+          = link_to 'Remove', '', 'data-turbolinks' => false,  class: "alert button tiny remove_custom_request_form_link #{@disburser_request.custom_request_form? ? '' : 'hide' }"
+          - if validation_errors?(@disburser_request, :custom_request_form)
+            %p.error= format_validation_errors(@disburser_request, :custom_request_form)
+        %div
+          = link_to download_file_repository_url(@disburser_request.repository, file_type: 'custom_request_form'), 'data-turbolinks' => false, class: 'custom_request_form_url' do
+            %i.fi-download
+              Custom Request Form (Download, fill out and attach back to this request.)
+- else
+  .row
+    .methods_justifications{class: 'small-24 columns' }
+      %div{class: 'small-12 large-5 columns' }
+        %label{for: 'disburser_request_methods_justifications' }
+          Methods/Justifications
+          %span{ class: 'validation required' }
+      %div{class: 'small-12 large-19 columns' }
+        %div
+          - if @disburser_request.methods_justifications? && !@disburser_request.new_record?
+            = link_to download_file_repository_disburser_request_url(@disburser_request, file_type: 'methods_justifications'), 'data-turbolinks' => false, class: 'methods_justifications_url' do
+              %i
+              = @disburser_request.methods_justifications.file.filename
+          - if @disburser_request.methods_justifications? && @disburser_request.new_record?
+            = link_to @disburser_request.methods_justifications.identifier, "#{@disburser_request.methods_justifications.url}",  class: 'methods_justifications_url'
+          = f.file_field :methods_justifications, class: "#{@disburser_request.methods_justifications? ? 'hide' : '' }"
+          - if @disburser_request.methods_justifications_cache
+            = f.hidden_field :methods_justifications_cache, value: @disburser_request.methods_justifications_cache
+          - else
+            = f.hidden_field :methods_justifications_cache, value: @disburser_request.methods_justifications
+          = link_to 'Remove', '', 'data-turbolinks' => false,  class: "alert button tiny remove_methods_justifications_link #{@disburser_request.methods_justifications? ? '' : 'hide' }"
+          - if validation_errors?(@disburser_request, :methods_justifications)
+            %p.error= format_validation_errors(@disburser_request, :methods_justifications)
+  .row
+    .cohort_criteria{class: 'small-24 columns' }
+      %label{for: 'disburser_request_cohort_criteria' }
+        Cohort Criteria
         %span{ class: 'validation required' }
-    %div{class: 'small-12 large-19 columns' }
-      %div
-        - if @disburser_request.methods_justifications? && !@disburser_request.new_record?
-          = link_to download_file_repository_disburser_request_url(@disburser_request, file_type: 'methods_justifications'), 'data-turbolinks' => false, class: 'methods_justifications_url' do
-            %i
-            = @disburser_request.methods_justifications.file.filename
-        - if @disburser_request.methods_justifications? && @disburser_request.new_record?
-          = link_to @disburser_request.methods_justifications.identifier, "#{@disburser_request.methods_justifications.url}",  class: 'methods_justifications_url'
-        = f.file_field :methods_justifications, class: "#{@disburser_request.methods_justifications? ? 'hide' : '' }"
-        - if @disburser_request.methods_justifications_cache
-          = f.hidden_field :methods_justifications_cache, value: @disburser_request.methods_justifications_cache
-        - else
-          = f.hidden_field :methods_justifications_cache, value: @disburser_request.methods_justifications
-        = link_to 'Remove', '', 'data-turbolinks' => false,  class: "alert button tiny remove_methods_justifications_link #{@disburser_request.methods_justifications? ? '' : 'hide' }"
-        - if validation_errors?(@disburser_request, :methods_justifications)
-          %p.error= format_validation_errors(@disburser_request, :methods_justifications)
-.row
-  .cohort_criteria{class: 'small-24 columns' }
-    %label{for: 'disburser_request_cohort_criteria' }
-      Cohort Criteria
-      %span{ class: 'validation required' }
-    = f.text_area :cohort_criteria, rows: 2
-    - if validation_errors?(@disburser_request, :cohort_criteria)
-      %p.error= format_validation_errors(@disburser_request, :cohort_criteria)
-.row
-  .data_for_cohort{class: 'small-24 columns' }
-    %label{for: 'disburser_request_data_for_cohort' }
-      Data for cohort
-      %span{ class: 'validation required' }
-    = f.text_area :data_for_cohort, rows: 2
-    - if validation_errors?(@disburser_request, :data_for_cohort)
-      %p.error= format_validation_errors(@disburser_request, :data_for_cohort)
-.row
-  .disburser_request_details{class: 'small-24 columns' }
-    - if @disburser_request.repository.specimen_types.any?
-      %b
-        Specimens
-      %table{ id: 'disburser_request_details' }
-        %thead
-          %tr
-            %th.specimen_type{ width: 200 }
-              Type
-            %th.quantity{ width: 200 }
-              Quantity
-            %th.volume{ width: 200 }
-              Volume
-            %th.comments{ width: 200 }
-              Comments
-            %th.remove{ width: 100 }
-        %tbody
-          = f.fields_for :disburser_request_details do |disburser_request_detail|
-            = render 'disburser_request_details/disburser_request_detail_fields', f: disburser_request_detail
-      .links
-        = link_to_add_association 'Add', f, :disburser_request_details, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#disburser_request_details tbody', partial: 'disburser_request_details/disburser_request_detail_fields', class: 'button tiny primary'
+      = f.text_area :cohort_criteria, rows: 2
+      - if validation_errors?(@disburser_request, :cohort_criteria)
+        %p.error= format_validation_errors(@disburser_request, :cohort_criteria)
+  .row
+    .data_for_cohort{class: 'small-24 columns' }
+      %label{for: 'disburser_request_data_for_cohort' }
+        Data for cohort
+        %span{ class: 'validation required' }
+      = f.text_area :data_for_cohort, rows: 2
+      - if validation_errors?(@disburser_request, :data_for_cohort)
+        %p.error= format_validation_errors(@disburser_request, :data_for_cohort)
+  .row
+    .disburser_request_details{class: 'small-24 columns' }
+      - if @disburser_request.repository.specimen_types.any?
+        %b
+          Specimens
+        %table{ id: 'disburser_request_details' }
+          %thead
+            %tr
+              %th.specimen_type{ width: 200 }
+                Type
+              %th.quantity{ width: 200 }
+                Quantity
+              %th.volume{ width: 200 }
+                Volume
+              %th.comments{ width: 200 }
+                Comments
+              %th.remove{ width: 100 }
+          %tbody
+            = f.fields_for :disburser_request_details do |disburser_request_detail|
+              = render 'disburser_request_details/disburser_request_detail_fields', f: disburser_request_detail
+        .links
+          = link_to_add_association 'Add', f, :disburser_request_details, 'data-association-insertion-method' => 'append', 'data-association-insertion-node' => '#disburser_request_details tbody', partial: 'disburser_request_details/disburser_request_detail_fields', class: 'button tiny primary'

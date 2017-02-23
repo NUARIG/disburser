@@ -8,20 +8,28 @@
       = link_to 'Make a request!', new_repository_disburser_request_url(@repository), { class: 'button new_repository_request_link' }
   .row
     .files
-      .data_dictionary{ class: 'small-12 large-offset-12 large-6 columns text-right' }
+      .data_dictionary{ class: 'small-12 large-offset-6 large-6 columns text-right' }
         %label{for: 'repository_data_dictionary' }
           Data Dictionary
         - if @repository.data_dictionary?
           = link_to download_file_repository_url(@repository, file_type: 'data_dictionary'), 'data-turbolinks' => false, class: 'data_dictionary_url' do
             %i
-            = @repository.data_dictionary.file.filename
+              = @repository.data_dictionary.file.filename
       .irb_template{ class: 'small-6 large-6 columns text-right' }
         %label{for: 'repository_irb_template' }
           IRB Template
         - if @repository.irb_template?
           = link_to download_file_repository_url(@repository, file_type: 'irb_template'), 'data-turbolinks' => false, class: 'irb_template_url' do
             %i
-            = @repository.irb_template.file.filename
+              = @repository.irb_template.file.filename
+
+      .custom_request_form{ class: 'small-6 large-6 columns text-right' }
+        %label{for: 'repository_custom_request_form' }
+          Custom Request Form
+        - if @repository.custom_request_form?
+          = link_to download_file_repository_url(@repository, file_type: 'custom_request_form'), 'data-turbolinks' => false, class: 'custom_request_form_url' do
+            %i
+              = @repository.custom_request_form.file.filename
   .row
     .general_content_header{ class: 'small-24 columns' }
       %b

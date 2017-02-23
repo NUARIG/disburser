@@ -5,11 +5,16 @@ class DisburserRequest < ApplicationRecord
   has_many :disburser_request_statuses
   has_many :disburser_request_votes
   accepts_nested_attributes_for :disburser_request_details, reject_if: :all_blank, allow_destroy: true
-  validates_presence_of :investigator, :title, :methods_justifications, :cohort_criteria, :data_for_cohort, :specimen_status, :data_status, :status
+  validates_presence_of :investigator, :title, :specimen_status, :data_status, :status
+  validates_presence_of :methods_justifications, if: Proc.new { |disburser_reqeust| !disburser_reqeust.use_custom_request_form }
+  validates_presence_of :cohort_criteria, if: Proc.new { |disburser_reqeust| !disburser_reqeust.use_custom_request_form }
+  validates_presence_of :data_for_cohort, if: Proc.new { |disburser_reqeust| !disburser_reqeust.use_custom_request_form }
   validates_presence_of :irb_number, if: Proc.new { |disburser_reqeust| !disburser_reqeust.feasibility }
+  validates_presence_of :custom_request_form, if: Proc.new { |disburser_reqeust| disburser_reqeust.use_custom_request_form }
   validates_associated :disburser_request_details
 
   mount_uploader :methods_justifications, MethodsJustificationsUploader
+  mount_uploader :custom_request_form, DisburserRequestCustomRequestFormUploader
 
   after_initialize :set_defaults
   before_save :build_disburser_request_status
@@ -186,6 +191,10 @@ class DisburserRequest < ApplicationRecord
         end
         self.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED
         self.specimen_status = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED
+
+        if self.repository && self.repository.custom_request_form.present?
+          self.use_custom_request_form = true
+        end
       end
     end
 

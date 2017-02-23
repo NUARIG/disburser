@@ -1,3 +1,6 @@
+dn: cn=fhw108,ou=people,dc=test,dc=com
+changetype: delete
+
 dn: cn=ssf5957,ou=people,dc=test,dc=com
 changetype: delete
 

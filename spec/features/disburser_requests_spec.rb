@@ -996,6 +996,49 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(all('.disburser_request_detail')[0].find_field('Comments', with: disburser_request_detail[:comments])).to be_truthy
   end
 
+  scenario 'Creating a disburser request for a request with a custom request form', js: true, focus: false  do
+    @moomin_repository.custom_request_form = Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx')))
+    @moomin_repository.save
+    login_as(@moomintroll_user, scope: :user)
+    visit disburser_requests_path
+    within('.make_a_request') do
+      select('Select a repository', from: 'Repository')
+    end
+    expect(page).to have_selector('#new_repository_request_link', visible: false)
+    within('.make_a_request') do
+      select(@moomin_repository.name, from: 'Repository')
+    end
+    click_link('Make a request!')
+    sleep(1)
+    disburser_request = {}
+    disburser_request[:investigator] = 'Sniff Moomin'
+    disburser_request[:title] = 'Moomin Research'
+    disburser_request[:irb_number] = '123'
+    disburser_request[:feasibility] = true
+    expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
+    fill_in('Investigator', with: disburser_request[:investigator])
+    fill_in('Title', with: disburser_request[:title])
+    fill_in('IRB Number', with: disburser_request[:irb_number])
+    check('Feasibility?')
+    attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
+
+    choose('Submitted')
+    click_button('Save')
+    sleep(1)
+    disburser_request[:status] = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+    match_disburser_request_row(disburser_request, 0)
+    within('.disburser_request:nth-of-type(1)') do
+      click_link('Edit')
+    end
+    sleep(1)
+
+    expect(page.has_field?('Investigator', with: disburser_request[:investigator])).to be_truthy
+    expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
+    expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
+    expect(page.has_checked_field?('Feasibility?')).to be_truthy
+    expect(page).to have_css('a.custom_request_form_url', text: 'custom_request_form.docx')
+  end
+
   scenario 'Creating a disburser request for a repository without specmen types setup', js: true, focus: false  do
     login_as(@moomintroll_user, scope: :user)
     visit disburser_requests_path
@@ -1051,6 +1094,45 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page).to have_css('.data_for_cohort .field_with_errors')
     expect(page).to have_css('.disburser_request_detail:nth-of-type(1) .specimen_type .field_with_errors')
     expect(page).to have_css('.disburser_request_detail:nth-of-type(1) .quantity .field_with_errors')
+  end
+
+  scenario 'Creating a disburser request with validation for a request with a custom request form', js: true, focus: false do
+    @moomin_repository.custom_request_form = Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx')))
+    @moomin_repository.save
+    login_as(@moomintroll_user, scope: :user)
+    visit disburser_requests_path
+    within('.make_a_request') do
+      select(@moomin_repository.name, from: 'Repository')
+    end
+    click_link('Make a request!')
+    expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
+
+    click_button('Save')
+
+    within(".flash .callout") do
+      expect(page).to have_content('Failed to create repository request.')
+    end
+    expect(page).to have_css('.investigator .field_with_errors')
+    expect(page).to have_css('.title .field_with_errors')
+    expect(page).to have_css('.irb_number .field_with_errors')
+    expect(page).to_not have_css('.methods_justifications .field_with_errors')
+    expect(page).to_not have_css('.cohort_criteria .field_with_errors')
+    expect(page).to_not have_css('.data_for_cohort .field_with_errors')
+    expect(page).to have_css('.custom_request_form .field_with_errors')
+
+    attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
+
+    click_button('Save')
+
+    expect(page).to have_css('.investigator .field_with_errors')
+    expect(page).to have_css('.title .field_with_errors')
+    expect(page).to have_css('.irb_number .field_with_errors')
+    expect(page).to_not have_css('.methods_justifications .field_with_errors')
+    expect(page).to_not have_css('.cohort_criteria .field_with_errors')
+    expect(page).to_not have_css('.data_for_cohort .field_with_errors')
+    expect(page).to have_css('a.custom_request_form_url', text: 'custom_request_form.docx')
+    expect(page).to_not have_css('.disburser_request_detail:nth-of-type(1) .specimen_type .field_with_errors')
+    expect(page).to_not have_css('.disburser_request_detail:nth-of-type(1) .quantity .field_with_errors')
   end
 
   scenario 'Editing a disburser request', js: true, focus: false  do

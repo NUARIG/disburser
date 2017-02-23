@@ -8,12 +8,14 @@ class Repository < ApplicationRecord
 
   mount_uploader :irb_template, IrbTemplateUploader
   mount_uploader :data_dictionary, DataDictionaryUploader
+  mount_uploader :custom_request_form, CustomRequestFormUploader
 
   validates_presence_of :name
   validates_size_of :irb_template, maximum: 10.megabytes, message: 'must be less than 10MB'
   validates_size_of :data_dictionary, maximum: 10.megabytes, message: 'must be less than 10MB'
+  validates_size_of :custom_request_form, maximum: 10.megabytes, message: 'must be less than 10MB'
 
-  after_destroy :remove_irb_template!, :remove_data_dictionary!
+  after_destroy :remove_irb_template!, :remove_data_dictionary!, :remove_custom_request_form!
 
   scope :search_across_fields, ->(search_token, options={}) do
     if search_token

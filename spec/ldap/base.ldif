@@ -79,3 +79,17 @@ cn: fhw108
 authorizationRole: blogUser
 userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
  =
+
+dn: cn=nkj5125,ou=people,dc=test,dc=com
+objectClass: inetOrgPerson
+objectClass: authorizations
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: nkj5125
+mail: neelima.katam@northwestern.edu
+uid: nkj5125
+cn: nkj5125
+authorizationRole: blogUser
+userPassword:: e1NTSEF9ZXRYaE9NcjRjOGFiTjlqYUxyczZKSll5MFlaZUF1NURCVWhhY0E9PQ=
+ =

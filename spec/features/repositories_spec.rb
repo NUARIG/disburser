@@ -57,6 +57,7 @@ RSpec.feature 'Repositories', type: :feature do
     check('Public?')
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
+    attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
     click_button('Next')
     sleep(1)
     repository = Repository.where(name: repository_rorty_institute[:name]).first
@@ -66,6 +67,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page.has_checked_field?('Public?')).to be_truthy
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
+    expect(page).to have_css('a.custom_request_form_url', text: 'custom_request_form.docx')
     click_link('Users')
     sleep(1)
     expect(page).to have_css('.menu li.repository_users.active')
@@ -85,10 +87,12 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in 'Name', with: nil
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
+    attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
     click_button('Next')
 
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
+    expect(page).to have_css('a.custom_request_form_url', text: 'custom_request_form.docx')
 
     within(".flash .callout") do
       expect(page).to have_content('Failed to create repository.')

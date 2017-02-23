@@ -55,3 +55,22 @@
           %label{for: 'repository_remove_data_dictionary' }
             Remove file
             = f.check_box :remove_data_dictionary
+.row
+  .custom_request_form
+    %div{class: 'small-14 large-4 columns' }
+      %label{for: 'repository_custom_request_form' }
+        Custom Request Form
+    %div{class: 'small-10 large-20 columns' }
+      %div
+        - if repository.custom_request_form? && !repository.new_record?
+          = link_to download_file_repository_url(repository, file_type: 'custom_request_form'), 'data-turbolinks' => false, class: 'custom_request_form_url' do
+            %i
+            = repository.custom_request_form.file.filename
+        - if repository.custom_request_form? && repository.new_record?
+          = link_to repository.custom_request_form.identifier, "#{repository.custom_request_form.url}", class: 'custom_request_form_url'
+        = f.file_field :custom_request_form
+        = f.hidden_field :custom_request_form_cache
+        - if repository.custom_request_form? && !repository.new_record?
+          %label{for: 'repository_remove_custom_request_form' }
+            Remove file
+            = f.check_box :remove_custom_request_form

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170215213322) do
+ActiveRecord::Schema.define(version: 20170222215609) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,32 +60,35 @@ ActiveRecord::Schema.define(version: 20170215213322) do
   end
 
   create_table "disburser_requests", force: :cascade do |t|
-    t.integer  "repository_id",          null: false
-    t.integer  "submitter_id",           null: false
-    t.string   "title",                  null: false
-    t.string   "investigator",           null: false
-    t.string   "irb_number",             null: false
+    t.integer  "repository_id",           null: false
+    t.integer  "submitter_id",            null: false
+    t.string   "title",                   null: false
+    t.string   "investigator",            null: false
+    t.string   "irb_number",              null: false
     t.boolean  "feasibility"
-    t.text     "methods_justifications", null: false
-    t.text     "cohort_criteria",        null: false
-    t.text     "data_for_cohort",        null: false
-    t.string   "status",                 null: false
-    t.string   "data_status",            null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.text     "methods_justifications"
+    t.text     "cohort_criteria"
+    t.text     "data_for_cohort"
+    t.string   "status",                  null: false
+    t.string   "data_status",             null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
     t.string   "specimen_status"
+    t.boolean  "use_custom_request_form"
+    t.text     "custom_request_form"
   end
 
   create_table "repositories", force: :cascade do |t|
-    t.string   "name",             null: false
+    t.string   "name",                null: false
     t.string   "irb_template"
     t.string   "data_dictionary"
     t.text     "general_content"
     t.text     "data_content"
     t.text     "specimen_content"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
     t.boolean  "public"
+    t.text     "custom_request_form"
   end
 
   create_table "repository_users", force: :cascade do |t|

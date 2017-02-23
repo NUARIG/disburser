@@ -10,9 +10,6 @@ RSpec.describe DisburserRequest, type: :model do
 
   it { should validate_presence_of :investigator }
   it { should validate_presence_of :title }
-  it { should validate_presence_of :methods_justifications }
-  it { should validate_presence_of :cohort_criteria }
-  it { should validate_presence_of :data_for_cohort }
   it { should validate_presence_of :status }
   it { should validate_presence_of :data_status }
   it { should validate_presence_of :specimen_status }
@@ -29,26 +26,98 @@ RSpec.describe DisburserRequest, type: :model do
     @the_groker_user = FactoryGirl.create(:user, email: 'the_groke@moomin.com', username: 'the_groke', first_name: 'The', last_name: 'Groke')
   end
 
+  it "should not validate the presence of methods_justifications if 'use_custom_request_form' is true'", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build(use_custom_request_form: true, methods_justifications: nil)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:methods_justifications]).to be_empty
+  end
+
+  it "should validate the presence of methods_justifications if 'use_custom_request_form' is false", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build(use_custom_request_form: false, methods_justifications: nil)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:methods_justifications]).to eq(["can't be blank"])
+  end
+
+  it "should not validate the presence of data_for_cohort if 'use_custom_request_form' is true'", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build(use_custom_request_form: true, data_for_cohort: nil)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:data_for_cohort]).to be_empty
+  end
+
+  it "should validate the presence of data_for_cohort if 'use_custom_request_form' is false", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build(use_custom_request_form: false, data_for_cohort: nil)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:data_for_cohort]).to eq(["can't be blank"])
+  end
+
+  it "should not validate the presence of cohort_criteria if 'use_custom_request_form' is true'", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build(use_custom_request_form: true, cohort_criteria: nil)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:cohort_criteria]).to be_empty
+  end
+
+  it "should validate the presence of cohort_criteria if 'use_custom_request_form' is false", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build(use_custom_request_form: false, cohort_criteria: nil)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:cohort_criteria]).to eq(["can't be blank"])
+  end
+
+
+
+  it "should not validate the presence of custom_request_form if 'use_custom_request_form' is false'", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build(use_custom_request_form: false)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:custom_request_form]).to be_empty
+  end
+
+  it "should validate the presence of custom_request_form if 'use_custom_request_form' is true", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build(use_custom_request_form: true)
+    disburser_request.valid?
+    expect(disburser_request.errors.messages[:custom_request_form]).to eq(["can't be blank"])
+  end
+
+
   it 'should not validate the presence of irb number if feasibility is true', focus: false do
-    disburser_request = FactoryGirl.build(:disburser_request, feasibility: true, irb_number: nil)
+    disburser_request = @moomin_repository.disburser_requests.build(feasibility: true, irb_number: nil)
     disburser_request.valid?
     expect(disburser_request.errors.messages[:irb_number]).to be_empty
   end
 
   it 'should validate the presence of irb number if feasibility is false', focus: false do
-    disburser_request = FactoryGirl.build(:disburser_request, feasibility: false, irb_number: nil)
+    disburser_request = @moomin_repository.disburser_requests.build(feasibility: false, irb_number: nil)
     disburser_request.valid?
     expect(disburser_request.errors.messages[:irb_number]).to eq(["can't be blank"])
   end
 
   it "defaults status to 'draft' for a new record that does not provide a status", focus: false do
-    disburser_request = DisburserRequest.new
+    disburser_request = @moomin_repository.disburser_requests.build
     expect(disburser_request.status).to eq(DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT)
   end
 
   it "leaves status intact for a new record that provides a status", focus: false do
     disburser_request = DisburserRequest.new(status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
     expect(disburser_request.status).to eq(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+  end
+
+  it "defaults data status to 'not started' for a new record", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build
+    expect(disburser_request.data_status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
+  end
+
+  it "defaults specimen status to 'not started' for a new record", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build
+    expect(disburser_request.specimen_status).to eq(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED)
+  end
+
+  it "defaults use_custom_request_form to 'false' for a new record if use_custom_request_form is blank", focus: false do
+    disburser_request = @moomin_repository.disburser_requests.build
+    expect(disburser_request.use_custom_request_form).to be_falsy
+  end
+
+  it "defaults use_custom_request_form to 'true' for a new record if use_custom_request_form is not blank", focus: false do
+    @moomin_repository.custom_request_form = Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx')))
+    disburser_request = @moomin_repository.disburser_requests.build
+    expect(disburser_request.use_custom_request_form).to be_truthy
   end
 
   it 'can search accross fields (by title)', focus: false do
