@@ -13,10 +13,6 @@ staging:
   cert_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_cert.cer
   chain_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_interm.cer
   key_file: /etc/pki/tls/private/disburser-staging_cancer_northwestern_edu.key
-support:
-  recepients:
-    - m-gurley@northwestern.edu
-  sender_address: m-gurley@northwestern.edu
 production:
   app_host: vfsmnubicapps01.fsm.northwestern.edu
   server_name: disburser.cancer.northwestern.edu
