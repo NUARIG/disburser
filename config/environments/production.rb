@@ -85,7 +85,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = { address: 'smtprelay.northwestern.edu', port: 25, domain: 'northwestern.edu' }
-  config.action_mailer.default_url_options = { host: Rails.configuration.custom.app_config['staging']['server_name'] }
+  config.action_mailer.default_url_options = { host: Rails.configuration.custom.app_config['production']['server_name'] }
 
   config.middleware.use ExceptionNotification::Rack,
     :email => {
