@@ -1,4 +1,5 @@
 class DisburserRequest < ApplicationRecord
+  has_paper_trail
   belongs_to :repository
   belongs_to :submitter, class_name: 'User', foreign_key: :submitter_id
   has_many :disburser_request_details

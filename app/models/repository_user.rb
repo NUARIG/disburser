@@ -1,4 +1,5 @@
 class RepositoryUser < ApplicationRecord
+  has_paper_trail
   belongs_to :user
   belongs_to :repository
   attr_accessor :username

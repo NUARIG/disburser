@@ -1,7 +1,5 @@
 require './lib/ldap'
-
-# class User < ApplicationRecord
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   devise :ldap_authenticatable, :trackable, :timeoutable
   has_many :repository_users
   has_many :repositories, through: :repository_users

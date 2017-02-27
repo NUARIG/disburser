@@ -1,4 +1,5 @@
 class DisburserRequestVote < ApplicationRecord
+  has_paper_trail
   belongs_to :disburser_request
   belongs_to :committee_member, class_name: 'User', foreign_key: :committee_member_user_id
   validates_presence_of :committee_member_user_id, :vote

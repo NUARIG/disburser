@@ -1,4 +1,5 @@
 class Repository < ApplicationRecord
+  has_paper_trail
   has_many :repository_users
   has_many :users, through: :repository_users
   accepts_nested_attributes_for :repository_users, reject_if: :all_blank, allow_destroy: true
