@@ -128,6 +128,8 @@ class DisburserRequestsController < ApplicationController
   def download_file
     authorize @disburser_request
     case params[:file_type]
+    when 'custom_request_form'
+      file = @disburser_request.custom_request_form.path
     when 'methods_justifications'
       file = @disburser_request.methods_justifications.path
     end
