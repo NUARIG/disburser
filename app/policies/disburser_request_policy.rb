@@ -28,7 +28,7 @@ class DisburserRequestPolicy < ApplicationPolicy
   end
 
   def download_file?
-    user.system_administrator || record.repository.repository_administrator?(user) || record.mine?(user) || record.repository.repository_coordinator?(user)
+    user.system_administrator || record.repository.repository_administrator?(user) || record.mine?(user) || record.repository.repository_coordinator?(user) || record.repository.committee_member?(user)
   end
 
   def edit_admin_status?
