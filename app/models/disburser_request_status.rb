@@ -32,7 +32,7 @@ class DisburserRequestStatus < ApplicationRecord
           DisburserRequestStatusMailer.status_approved_specimen_coordinator(self.disburser_request).deliver_later
         when DisburserRequest::DISBURSER_REQUEST_STATUS_DENIED
           DisburserRequestStatusMailer.status_denied(self.disburser_request).deliver_later
-        when DisburserRequest::DISBURSER_REQUEST_STAUTS_CANCELED
+        when DisburserRequest::DISBURSER_REQUEST_STATUS_CANCELED
           DisburserRequestStatusMailer.status_canceled(self.disburser_request).deliver_later
         end
       when DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS
