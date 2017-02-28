@@ -22,5 +22,5 @@ production:
   key_file: /etc/pki/tls/private/disburser_cancer_northwestern_edu.key
 support:
   recepients:
-    - m-gurley@northwestern.edu
-  sender_address: m-gurley@northwestern.edu
+    - disburser@northwestern.edu
+  sender_address: disburser@northwestern.edu
