@@ -945,6 +945,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
     fill_in('Cohort Criteria', with: disburser_request[:cohort_criteria])
     fill_in('Data for cohort', with: disburser_request[:data_for_cohort])
 
+    scroll_to_bottom_of_the_page
+
     within('.disburser_request_details') do
       click_link('Add')
     end
@@ -970,7 +972,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     within(".disburser_request_detail:nth-of-type(1) .comments") do
       find('textarea').set(disburser_request_detail[:comments])
     end
-
+    scroll_to_bottom_of_the_page
     choose('Submitted')
     click_button('Save')
     sleep(1)
@@ -1059,6 +1061,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     click_link('Make a request!')
     expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
 
+    scroll_to_bottom_of_the_page
     within('.disburser_request_details') do
       click_link('Add')
     end
@@ -1070,6 +1073,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       find('textarea').set(disburser_request_detail[:comments])
     end
 
+    scroll_to_bottom_of_the_page
     click_button('Save')
 
     within(".flash .callout") do
@@ -1084,6 +1088,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
     attach_file('Methods/Justifications', Rails.root + 'spec/fixtures/files/methods_justificatons.docx')
 
+    scroll_to_bottom_of_the_page
     click_button('Save')
 
     expect(page).to have_css('.investigator .field_with_errors')
@@ -1121,7 +1126,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page).to have_css('.custom_request_form .field_with_errors')
 
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
-
+    scroll_to_bottom_of_the_page
     click_button('Save')
 
     expect(page).to have_css('.investigator .field_with_errors')
@@ -1191,6 +1196,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     disburser_request_detail[:volume] = '20 mg'
     disburser_request_detail[:comments] = 'Moominmama specimen'
 
+    scroll_to_bottom_of_the_page
     within('.disburser_request_details') do
       click_link('Add')
     end
@@ -1216,6 +1222,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(all('.disburser_request_detail')[1].find_field('Volume', with: disburser_request_detail[:volume])).to be_truthy
     expect(all('.disburser_request_detail')[1].find_field('Comments', with: disburser_request_detail[:comments])).to be_truthy
 
+    scroll_to_bottom_of_the_page
     click_button('Save')
 
     all('.disburser_request')[0].find('.edit_disburser_request_link').click
@@ -1230,6 +1237,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
     sleep(1)
 
+    scroll_to_bottom_of_the_page
     within(".disburser_request_detail:nth-of-type(1)") do
       click_link('Remove')
     end
@@ -1299,6 +1307,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.disburser_request_detail:nth-of-type(1) .quantity .field_with_errors')
    sleep(1)
    check('Feasibility?')
+   scroll_to_bottom_of_the_page
    click_button('Save')
    sleep(1)
    expect(page).to_not have_css('.irb_number .field_with_errors')
@@ -1785,6 +1794,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
    login_as(harold_user, scope: :user)
    visit committee_disburser_requests_path
    find("#disburser_request_#{disburser_request.id}").click_link('Review')
+   sleep(1)
+
+   scroll_to_bottom_of_the_page
 
    click_button('Save')
    sleep(1)
@@ -1809,6 +1821,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    end
 
    expect(all('.disburser_request_vote_history .disburser_request_vote').size).to eq(0)
+   scroll_to_bottom_of_the_page
    choose('Approve')
    comments = 'Help the moomins!'
    fill_in('Vote Comments', with: comments)

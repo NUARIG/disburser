@@ -11,3 +11,11 @@
     = csrf_meta_tags
   %body{ class: "#{controller_name} #{action_name}"}
     = render 'shared/navigation'
+    .footer
+      Created by
+      = link_to 'CDSI', 'https://nucats.northwestern.edu/centers-programs/cdsi'
+      for the
+      = link_to 'Robert H. Lurie Comprehensive Cancer Center of Northwestern University', 'http://cancer.northwestern.edu/home/index.cfm'
+
+      | For support issues, please email:
+      = mail_to Rails.configuration.custom.app_config['support']['sender_address'], Rails.configuration.custom.app_config['support']['sender_address']

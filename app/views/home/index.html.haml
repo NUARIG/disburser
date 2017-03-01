@@ -1,32 +1,72 @@
 - content_for(:title) do
   Repositories
 
-#repositories
-  .repositories_header
-    %h4
-      Repositories
-    = form_tag root_url, method: 'get', id: 'search_repositories_form'  do
-      .search_box{ class: 'large-offset-12 large-8 columns' }
-        %label{for: 'search' }
-          Search
-        = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
-      .search_buttons{ class: 'large-4 columns' }
-        %button{ type: 'submit', id: 'search_repositories_button', class: 'tiny button' }
-          Search
-        = link_to 'Clear', root_url(mine: params[:mine])
-  .repositories_list
-    = will_paginate @repositories, renderer: FoundationPagination::Rails
-    %table
-      %thead
-        %tr
-          %th.name{ width: 200 }
-            = sortable 'name'
-          %th.edit{ width: 100 }
-      %tbody
-        - @repositories.each do |respository|
-          = content_tag_for(:tr, respository) do
-            %td.name
-              = respository.name
-            %td.view
-              = link_to 'View', repository_url(respository), { class: 'show_repository_link' }
-    = will_paginate @repositories, renderer: FoundationPagination::Rails
+#home
+  .disburser-welcome
+    %h1
+      Welcome
+    .introduction
+      %p
+        Thank you for your interest in
+        = link_to 'Disburser:', root_url()
+        the Disbursement Managment System of the
+        = link_to 'Robert H. Lurie Comprehensive Cancer Center of Northwestern University.', 'http://cancer.northwestern.edu/home/index.cfm'
+      %p
+        This system is a centralized location for investigators to view available Cancer-focused clinical research repositories across Northwestern campus and make disbursement requests for clinical data and specimens.
+    .instructions
+      .new_user
+        %h2
+          New User?
+        %ul
+          %li
+            Browse the list of available clinical research repositories below.
+          %li
+            - if user_signed_in?
+              Login.
+            - else
+              = link_to "Login.", new_user_session_path
+          %li
+            Create a disbursement request.
+      .existing_user
+        %h2
+          Existing User?
+        %ul
+          %li
+            - if user_signed_in?
+              Sign in.
+            - else
+              = link_to "Login.", new_user_session_path
+          %li
+            And new a new disbursement request.
+          %li
+            Check the status of existing disbursement requests.
+  %hr
+  #repositories
+    .repositories_header
+      = form_tag root_url, method: 'get', id: 'search_repositories_form'  do
+        %h4{ class: 'large-4 columns' }
+          Repositories
+        .search_box{ class: 'large-offset-8 large-8 columns' }
+          %label{for: 'search' }
+            Search
+          = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
+        .search_buttons{ class: 'large-4 columns' }
+          %button{ type: 'submit', id: 'search_repositories_button', class: 'tiny button' }
+            Search
+          = link_to 'Clear', root_url
+    .repositories_list
+      = will_paginate @repositories, renderer: FoundationPagination::Rails
+      %table
+        %thead
+          %tr
+            %th.name{ width: 200 }
+              = sortable 'name'
+            %th.edit{ width: 100 }
+        %tbody
+          - @repositories.each do |respository|
+            = content_tag_for(:tr, respository) do
+              %td.name
+                = respository.name
+              %td.view
+                = link_to 'View', repository_url(respository), { class: 'show_repository_link' }
+      = will_paginate @repositories, renderer: FoundationPagination::Rails

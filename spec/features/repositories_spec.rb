@@ -139,6 +139,7 @@ RSpec.feature 'Repositories', type: :feature do
       check('Remove file')
     end
 
+    scroll_to_bottom_of_the_page
     click_button('Save')
 
     expect(page).to_not have_css('a.irb_template_url', text: 'moomins.docx')
@@ -162,6 +163,7 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in_ckeditor 'repository_general_content', :with => 'Be a a good person!'
     fill_in_ckeditor 'repository_data_content', :with => 'Be a good moomin!'
     fill_in_ckeditor 'repository_specimen_content', :with => 'Be a really good moomin!'
+    scroll_to_bottom_of_the_page
     click_button('Save')
     sleep(4)
     expect(page).to have_css('.menu li.repository_content.active')
@@ -187,6 +189,8 @@ RSpec.feature 'Repositories', type: :feature do
     moominmama = { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }
     allow(User).to receive(:find_ldap_entry_by_username).and_return(moominmama)
     click_button('Save')
+    sleep(1)
+    scroll_to_bottom_of_the_page
     repository_user = moominmama
     repository_user[:administrator] = true
     repository_user[:committee] = true
@@ -272,6 +276,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
     fill_in 'Name', with: 'Preanuts Repository'
+    scroll_to_bottom_of_the_page
     click_button('Save')
 
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
@@ -363,4 +368,8 @@ def read_ckeditor(locator)
   page.evaluate_script <<-SCRIPT
     CKEDITOR.instances['#{locator}'].getData();
   SCRIPT
+end
+
+def scroll_to_bottom_of_the_page
+  page.execute_script "window.scrollBy(0,10000)"
 end

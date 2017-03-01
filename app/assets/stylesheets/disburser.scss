@@ -14,6 +14,7 @@
   .disburser_logo {
     @include hide-for-only(small);
   }
+  margin-bottom: 2rem;
 }
 
 .field_with_errors {
@@ -63,4 +64,33 @@
 
 .required:after {
   content:" *";
+}
+
+#home {
+  @include grid-row();
+  .disburser-welcome {
+    @include grid-row();
+
+    .instructions {
+      @include grid-row();
+      .new_user {
+        @include grid-column(
+         $columns: 12
+        );
+      }
+      .existing_user {
+        @include grid-column(
+         $columns: 12
+        );
+      }
+    }
+  }
+}
+
+.footer {
+  text-align: center;
+  background-color: $light-gray;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
 }
