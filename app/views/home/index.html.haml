@@ -21,10 +21,14 @@
           %li
             Browse the list of available clinical research repositories below.
           %li
+            If affiliated with Northwestern, use your NetID and password to
             - if user_signed_in?
               Login.
             - else
               = link_to "Login.", new_user_session_path
+            %br
+          %li
+            If not affiliated with Northwestern, create an account by signing up (coming soon!).
           %li
             Create a disbursement request.
       .existing_user

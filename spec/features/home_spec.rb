@@ -27,6 +27,7 @@ RSpec.feature 'Repositories', type: :feature do
   end
 
   scenario 'Visting a repository ', js: true, focus: false do
+    scroll_to_bottom_of_the_page
     within("#repository_#{@repository_moomin.id}") do
       click_link('View')
     end
