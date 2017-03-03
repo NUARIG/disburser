@@ -161,10 +161,10 @@ class DisburserRequestStatusMailer < ApplicationMailer
     mail(to: to, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
   end
 
-  def data_status_query_fulfilled_specimen_coordinator(disburser_request)
+  def data_status_data_checked_specimen_coordinator(disburser_request)
     if disburser_request.specimens?
       @disburser_request = disburser_request
-      subject = prepare_subject('Query Fulfilled for Disbursement Request')
+      subject = prepare_subject('Data Checked for Disbursement Request')
       to = []
       cc = []
 
@@ -182,10 +182,10 @@ class DisburserRequestStatusMailer < ApplicationMailer
     end
   end
 
-  def data_status_query_fulfilled_administrator(disburser_request)
+  def data_status_data_checked_administrator(disburser_request)
     if !disburser_request.specimens?
       @disburser_request = disburser_request
-      subject = prepare_subject('Query Fulfilled for Disbursement Request')
+      subject = prepare_subject('Data Checked for Disbursement Request')
       to = []
       cc = []
 
@@ -215,9 +215,24 @@ class DisburserRequestStatusMailer < ApplicationMailer
     end
   end
 
-  def specimen_status_inventory_fulfilled(disburser_request)
+  def data_status_query_fulfilled_administrator(disburser_request)
     @disburser_request = disburser_request
-    subject = prepare_subject('Inventory Fulfilled for Disbursement Request')
+    subject = prepare_subject('Query Fulfilled for Disbursement Request')
+    to = []
+    cc = []
+
+    if disburser_request.repository.repository_administrators.any?
+      to = disburser_request.repository.repository_administrators.map(&:email)
+    end
+
+    if to.any?
+      mail(to: to, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
+    end
+  end
+
+  def specimen_status_inventory_checked(disburser_request)
+    @disburser_request = disburser_request
+    subject = prepare_subject('Inventory Checked for Disbursement Request')
     to = []
     cc = []
 
@@ -239,6 +254,21 @@ class DisburserRequestStatusMailer < ApplicationMailer
 
     if disburser_request.repository.repository_administrators.any?
       cc = disburser_request.repository.repository_administrators.map(&:email)
+    end
+
+    if to.any?
+      mail(to: to, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
+    end
+  end
+
+  def specimen_status_inventory_fulfilled(disburser_request)
+    @disburser_request = disburser_request
+    subject = prepare_subject('Inventory Fulfilled for Disbursement Request')
+    to = []
+    cc = []
+
+    if disburser_request.repository.repository_administrators.any?
+      to = disburser_request.repository.repository_administrators.map(&:email)
     end
 
     if to.any?

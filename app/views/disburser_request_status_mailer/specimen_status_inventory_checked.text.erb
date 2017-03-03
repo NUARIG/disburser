@@ -1,6 +1,6 @@
 Dear Repository Administrator for the <%= @disburser_request.repository.name %> Repository,
 
-  A 'Specimen' disbursement request titled "<%= @disburser_request.title %>" submitted by <%= @disburser_request.submitter.full_name %> on behalf of the investigator <%= @disburser_request.investigator %> has reached a specimen status of 'Inventory Fulfilled'.
+  A 'Specimen' disbursement request titled "<%= @disburser_request.title %>" submitted by <%= @disburser_request.submitter.full_name %> on behalf of the investigator <%= @disburser_request.investigator %> has reached a specimen status of 'Inventory Checked'.
 
 <%- if @disburser_request.repository.specimen_coordinators.any? -%>
   Here is the contact information of the repository's specimen coordinators:

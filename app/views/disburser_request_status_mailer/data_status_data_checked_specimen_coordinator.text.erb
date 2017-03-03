@@ -1,6 +1,6 @@
 Dear Specimen Coordinator for the <%= @disburser_request.repository.name %> Repository,
 
-  A disbursement request titled "<%= @disburser_request.title %>" submitted by <%= @disburser_request.submitter.full_name %> on behalf of the investigator <%= @disburser_request.investigator %> has reached a fulfillment status of 'Query Fulfilled'.  A data coordinator for the <%= @disburser_request.repository.name %> repository should be contacting you to begin an inventory check.
+  A disbursement request titled "<%= @disburser_request.title %>" submitted by <%= @disburser_request.submitter.full_name %> on behalf of the investigator <%= @disburser_request.investigator %> has reached a data status of 'Data Checked'.  A data coordinator for the <%= @disburser_request.repository.name %> repository should be contacting you to begin an inventory check.
 
 <%- if @disburser_request.repository.data_coordinators.any? -%>
   Here is the contact information of the repository's data coordinators:

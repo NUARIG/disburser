@@ -37,18 +37,22 @@ class DisburserRequestStatus < ApplicationRecord
         end
       when DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS
         case self.status
-        when DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
-          DisburserRequestStatusMailer.data_status_query_fulfilled_specimen_coordinator(self.disburser_request).deliver_later
-          DisburserRequestStatusMailer.data_status_query_fulfilled_administrator(self.disburser_request).deliver_later
+        when DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
+          DisburserRequestStatusMailer.data_status_data_checked_specimen_coordinator(self.disburser_request).deliver_later
+          DisburserRequestStatusMailer.data_status_data_checked_administrator(self.disburser_request).deliver_later
         when DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_INSUFFICIENT_DATA
           DisburserRequestStatusMailer.data_status_insufficient_data(self.disburser_request).deliver_later
+        when DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
+          DisburserRequestStatusMailer.data_status_query_fulfilled_administrator(self.disburser_request).deliver_later
         end
       when DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS
         case self.status
-        when DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED
-          DisburserRequestStatusMailer.specimen_status_inventory_fulfilled(self.disburser_request).deliver_later
+        when DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_CHECKED
+          DisburserRequestStatusMailer.specimen_status_inventory_checked(self.disburser_request).deliver_later
         when DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INSUFFICIENT_SPECIMENS
           DisburserRequestStatusMailer.specimen_status_insufficient_specimens(self.disburser_request).deliver_later
+        when DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED
+          DisburserRequestStatusMailer.specimen_status_inventory_fulfilled(self.disburser_request).deliver_later
         end
       end
     end

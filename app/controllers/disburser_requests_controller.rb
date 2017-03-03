@@ -42,7 +42,7 @@ class DisburserRequestsController < ApplicationController
   def specimen_coordinator
     authorize DisburserRequest
     params[:page]||= 1
-    params[:data_status]||= DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
+    params[:data_status]||= DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
     params[:specimen_status]||= DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED
     options = {}
     options[:sort_column] = sort_column

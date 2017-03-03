@@ -591,7 +591,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_1.save!
 
       @disburser_request_1.status_user = harold_user
-      @disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
+      @disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
       @disburser_request_1.save!
 
       @disburser_request_3.status_user = @paul_user
@@ -599,7 +599,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_3.save!
 
       @disburser_request_3.status_user = harold_user
-      @disburser_request_3.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
+      @disburser_request_3.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
       @disburser_request_3.save!
 
       @disburser_request_5.status_user = @paul_user
@@ -607,7 +607,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_5.save!
 
       @disburser_request_5.status_user = harold_user
-      @disburser_request_5.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
+      @disburser_request_5.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
       @disburser_request_5.save!
 
       visit specimen_coordinator_disburser_requests_path
@@ -711,14 +711,14 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       click_link('Data Status')
       sleep(1)
-      match_disburser_request_row(@disburser_request_5, 0)
-      match_disburser_request_row(@disburser_request_3, 1)
+      match_disburser_request_row(@disburser_request_3, 0)
+      match_disburser_request_row(@disburser_request_5, 1)
 
 
       click_link('Data Status')
       sleep(1)
-      match_disburser_request_row(@disburser_request_3, 0)
-      match_disburser_request_row(@disburser_request_5, 1)
+      match_disburser_request_row(@disburser_request_5, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
 
       @moomin_repository.repository_users.build(username: 'hbaines', administrator: false, specimen_coordinator: true)
       @moomin_repository.save!
@@ -1423,7 +1423,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    end
  end
 
- scenario 'Updating the status of a disburser request as a specimen coordinator', js: true, focus: false  do
+ scenario 'Updating the status of a disburser request as a specimen coordinator', js: true, focus: false do
    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
@@ -1435,7 +1435,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.save
    disburser_request.reload
    expect(disburser_request.data_status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
-   disburser_request.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
+   disburser_request.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
    disburser_request.status_user = @paul_user
    disburser_request.save!
    harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
@@ -1446,7 +1446,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    login_as(harold_user, scope: :user)
    visit specimen_coordinator_disburser_requests_path
 
-   expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
+   expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED)
    find("#disburser_request_#{disburser_request.id}").click_link('Update')
    select('Select a specimen status', from: 'Specimen Status')
 
