@@ -3,10 +3,10 @@
 
 #repositories
   .repositories_header
-    %h4
-      Repositories
     = form_tag repositories_url, method: 'get', id: 'search_repositories_form'  do
-      .search_box{ class: 'large-offset-12 large-8 columns' }
+      %h4{ class: 'large-4 columns' }
+        Repositories
+      .search_box{ class: 'large-offset-8 large-8 columns' }
         %label{for: 'search' }
           Search
         = text_field_tag :search, (params[:search].nil? ? '' : params[:search]), type: 'search'
