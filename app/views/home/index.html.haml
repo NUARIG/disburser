@@ -18,31 +18,32 @@
         %h2
           New User?
         %ul
-          %li
+          %li.fi-check
             Browse the list of available clinical research repositories below.
-          %li
-            If affiliated with Northwestern, use your NetID and password to
+          %li.fi-check
+            If you have Northwestern NetID, use it to sign in.
             - if user_signed_in?
               Login.
             - else
-              = link_to "Login.", new_user_session_path
+              = link_to "NetID Login", new_northwestern_user_session_url, class: 'button'
             %br
-          %li
-            If not affiliated with Northwestern, create an account by signing up (coming soon!).
-          %li
+          %li.fi-check
+            If you don't have an Northwestern NetID, create an account by clicking the 'Sign up' button
+            = link_to "Sign up", new_registration_path(ExternalUser), class: 'button'
+          %li.fi-check
             Create a disbursement request.
       .existing_user
         %h2
           Existing User?
         %ul
-          %li
+          %li.fi-check
             - if user_signed_in?
-              Sign in.
+              Login.
             - else
-              = link_to "Login.", new_user_session_path
-          %li
-            And new a new disbursement request.
-          %li
+              = link_to "Login", login_path, class: 'button'
+          %li.fi-check
+            Add new a new disbursement request.
+          %li.fi-check
             Check the status of existing disbursement requests.
   %hr
   #repositories

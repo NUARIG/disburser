@@ -1,0 +1,61 @@
+%h4 Sign up
+= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+  .row
+    .name
+      %div{class: 'small-14 large-4 columns' }
+        %label{for: 'external_user_first_name' }
+          First Name
+          %span{ class: 'required' }
+      %div{class: 'small-10 large-20 columns' }
+        = f.text_field :first_name, autofocus: true
+        - if validation_errors?(resource, :first_name)
+          %p.error= format_validation_errors(resource, :first_name)
+  .row
+    .name
+      %div{class: 'small-14 large-4 columns' }
+        %label{for: 'external_user_last_name' }
+          Last Name
+          %span{ class: 'required' }
+      %div{class: 'small-10 large-20 columns' }
+        = f.text_field :last_name, autofocus: true
+        - if validation_errors?(resource, :last_name)
+          %p.error= format_validation_errors(resource, :last_name)
+  .row
+    .name
+      %div{class: 'small-14 large-4 columns' }
+        %label{for: 'external_user_email' }
+          Email
+          %span{ class: 'required' }
+      %div{class: 'small-10 large-20 columns' }
+        = f.email_field :email, autofocus: true
+        - if validation_errors?(resource, :email)
+          %p.error= format_validation_errors(resource, :email)
+  .row
+    .name
+      %div{class: 'small-14 large-4 columns' }
+        %label{for: 'external_user_password' }
+          Password
+          %span{ class: 'required' }
+          - if @minimum_password_length
+            %em
+              (#{@minimum_password_length} characters minimum)
+      %div{class: 'small-10 large-20 columns' }
+        = f.password_field :password, autocomplete: "off"
+        - if validation_errors?(resource, :password)
+          %p.error= format_validation_errors(resource, :password)
+
+  .row
+    .name
+      %div{class: 'small-14 large-4 columns' }
+        %label{for: 'external_user_password_confirmation' }
+          Password Confirmation
+          %span{ class: 'required' }
+      %div{class: 'small-10 large-20 columns' }
+        = f.password_field :password_confirmation, autocomplete: "off"
+        - if validation_errors?(resource, :password_confirmation)
+          %p.error= format_validation_errors(resource, :password_confirmation)
+  .row
+    .actions{class: 'small-24 columns' }
+      = f.submit 'Submit', class: 'button'
+      = link_to 'Cancel', login_url, class: 'cancel-link button warning'
+      = render "devise/shared/links"

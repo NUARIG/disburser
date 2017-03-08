@@ -11,10 +11,36 @@ class ApplicationController < ActionController::Base
     render :text => exception, :status => 500
   end
 
+  def authenticate_user!
+    if (!northwestern_user_signed_in? && !external_user_signed_in?)
+      flash[:alert] = 'You need to sign in or sign up before continuing.'
+      redirect_to login_url
+    end
+  end
+
+  def current_user
+    current_northwestern_user || current_external_user
+  end
+
+  def after_update_path_for(resource)
+    user_path(resource)
+  end
+
+  helper_method :current_user
+  helper_method :destroy_user_session_path
+
   protected
     def configure_permitted_parameters
       devise_parameter_sanitizer.permit(:sign_in) do |user_params|
-        user_params.permit(:username, :password)
+        user_params.permit(:username, :email, :password)
+      end
+
+      devise_parameter_sanitizer.permit(:sign_up) do |user_params|
+        user_params.permit(:username, :email, :password, :last_name, :first_name)
+      end
+
+      devise_parameter_sanitizer.permit(:account_update) do |user_params|
+        user_params.permit(:current_password, :password, :password_confirmation, :last_name, :first_name)
       end
     end
 

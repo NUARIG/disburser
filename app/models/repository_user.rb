@@ -32,7 +32,7 @@ class RepositoryUser < ApplicationRecord
     u = User.where(username: self.username).first
 
     if !self.username.blank? && u.blank?
-      u = User.new(username: self.username)
+      u = NorthwesternUser.new(username: self.username)
       u.hydrate_from_ldap
       u.save!
     end

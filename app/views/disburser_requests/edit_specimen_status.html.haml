@@ -9,17 +9,19 @@
     .status_update{ class: 'large-6 columns' }
       - if policy(@disburser_request).edit_specimen_status?
         = form_for @disburser_request, url: specimen_status_disburser_request_url(@disburser_request), html: { class: 'status_disburser_request_form', id: "status_disburser_request_#{@disburser_request.id}"  } do |f|
-          .status{ class: 'large-24 columns' }
-            %label{for: 'disburser_request_specimen_status' }
-              %b
-                Specimen Status
-            = f.select :specimen_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUSES, selected: f.object.specimen_status), { include_blank: 'Select a specimen status' }
-            - if validation_errors?(@disburser_request, :specimen_status)
-              %p.error=format_validation_errors(@disburser_request, :specimen_status)
-              %br
-            %label{for: 'disburser_request_specimen_status_comments' }
-              Specimen Status Comments
-            = f.text_area :specimen_status_comments, rows: 3
-          .navigation{ class: 'large-offset-8 large-16 columns' }
-            = f.submit 'Save', class: 'button'
-            = link_to 'Cancel', specimen_coordinator_disburser_requests_url, class: 'cancel-link button warning'
+          .row
+            .status{ class: 'large-24 columns' }
+              %label{for: 'disburser_request_specimen_status' }
+                %b
+                  Specimen Status
+              = f.select :specimen_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUSES, selected: f.object.specimen_status), { include_blank: 'Select a specimen status' }
+              - if validation_errors?(@disburser_request, :specimen_status)
+                %p.error=format_validation_errors(@disburser_request, :specimen_status)
+                %br
+              %label{for: 'disburser_request_specimen_status_comments' }
+                Specimen Status Comments
+              = f.text_area :specimen_status_comments, rows: 3
+          .row
+            .navigation{ class: 'large-offset-8 large-16 columns' }
+              = f.submit 'Submit', class: 'button'
+              = link_to 'Cancel', specimen_coordinator_disburser_requests_url, class: 'cancel-link button warning'

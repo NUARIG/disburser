@@ -183,19 +183,17 @@ class DisburserRequestStatusMailer < ApplicationMailer
   end
 
   def data_status_data_checked_administrator(disburser_request)
-    if !disburser_request.specimens?
-      @disburser_request = disburser_request
-      subject = prepare_subject('Data Checked for Disbursement Request')
-      to = []
-      cc = []
+    @disburser_request = disburser_request
+    subject = prepare_subject('Data Checked for Disbursement Request')
+    to = []
+    cc = []
 
-      if disburser_request.repository.repository_administrators.any?
-        to = disburser_request.repository.repository_administrators.map(&:email)
-      end
+    if disburser_request.repository.repository_administrators.any?
+      to = disburser_request.repository.repository_administrators.map(&:email)
+    end
 
-      if to.any?
-        mail(to: to, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
-      end
+    if to.any?
+      mail(to: to, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
     end
   end
 

@@ -5,24 +5,24 @@ RSpec.feature 'Repositories', type: :feature do
     @peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts')
     @repository_bossy_bear = FactoryGirl.create(:repository, name: 'Bossy Bear')
     @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(@harold)
     @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
     @moomin_repository.save!
     @peanuts_repository.repository_users.build(username: 'hbaines', administrator: true)
     @peanuts_repository.save!
-    @harold_user = User.where(username: 'hbaines').first
-    login_as(@harold_user, scope: :user)
+    @harold_user = NorthwesternUser.where(username: 'hbaines').first
+    login_as(@harold_user, scope: :northwestern_user)
     visit root_path
   end
 
   scenario 'Not seeing a list of Repositories', js: true, focus: false do
     @paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com', administator: false,  committee: false, specimen_coordinator: false, data_coordinator: false }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(@paul)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(@paul)
     @moomin_repository.repository_users.build(username: 'pkonerko', administrator: false, committee: true)
     @moomin_repository.save!
     @paul_user = User.where(username: 'pkonerko').first
     click_link('Log out')
-    login_as(@paul_user, scope: :user)
+    login_as(@paul_user, scope: :northwestern_user)
     visit root_path
     sleep(1)
     expect(page).to_not have_css('.menu li.repositories')
@@ -127,7 +127,7 @@ RSpec.feature 'Repositories', type: :feature do
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
 
-    click_button('Save')
+    click_button('Submit')
 
     expect(page).to have_css('.menu li.repository.active')
     expect(page.has_field?('Name', with: repository_moomin[:name])).to be_truthy
@@ -140,7 +140,7 @@ RSpec.feature 'Repositories', type: :feature do
     end
 
     scroll_to_bottom_of_the_page
-    click_button('Save')
+    click_button('Submit')
 
     expect(page).to_not have_css('a.irb_template_url', text: 'moomins.docx')
 
@@ -148,7 +148,7 @@ RSpec.feature 'Repositories', type: :feature do
       check('Remove file')
     end
 
-    click_button('Save')
+    click_button('Submit')
     expect(page).to_not have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
     visit repositories_path
@@ -164,7 +164,7 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in_ckeditor 'repository_data_content', :with => 'Be a good moomin!'
     fill_in_ckeditor 'repository_specimen_content', :with => 'Be a really good moomin!'
     scroll_to_bottom_of_the_page
-    click_button('Save')
+    click_button('Submit')
     sleep(4)
     expect(page).to have_css('.menu li.repository_content.active')
     expect(read_ckeditor('repository_general_content')).to eq("<p>Be a a good person!</p>\n")
@@ -175,8 +175,8 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page).to have_css('.menu li.repository_users.active')
     moomins = [{ username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com' }, { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }]
     moominpapa = [{ username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com' }]
-    allow(User).to receive(:find_ldap_entries_by_name).with('moomin').and_return(moomins)
-    allow(User).to receive(:find_ldap_entries_by_name).with('moominpapa').and_return(moominpapa)
+    allow(NorthwesternUser).to receive(:find_ldap_entries_by_name).with('moomin').and_return(moomins)
+    allow(NorthwesternUser).to receive(:find_ldap_entries_by_name).with('moominpapa').and_return(moominpapa)
     click_link('New User')
     page.find('.select2-selection ').native.send_keys(:return)
     find('.select2-dropdown input').set('moomin')
@@ -187,8 +187,8 @@ RSpec.feature 'Repositories', type: :feature do
     check('Specimen Coordinator?')
     check('Data Coordinator?')
     moominmama = { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(moominmama)
-    click_button('Save')
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominmama)
+    click_button('Submit')
     sleep(1)
     scroll_to_bottom_of_the_page
     repository_user = moominmama
@@ -221,7 +221,7 @@ RSpec.feature 'Repositories', type: :feature do
     repository_user[:committee] = false
     repository_user[:specimen_coordinator] = false
     repository_user[:data_coordinator] = false
-    click_button('Save')
+    click_button('Submit')
     sleep(1)
     match_repository_user_row(repository_user, 1)
     click_link('Specimen Types')
@@ -239,7 +239,7 @@ RSpec.feature 'Repositories', type: :feature do
       find('input').set 'Little My'
     end
 
-    click_button('Save')
+    click_button('Submit')
 
     within(".specimen_type:nth-of-type(1) .name") do
       expect(find('input').value).to eq('Little My')
@@ -257,7 +257,7 @@ RSpec.feature 'Repositories', type: :feature do
     end
 
     fill_in 'Name', with: nil
-    click_button('Save')
+    click_button('Submit')
 
     within(".flash .callout") do
       expect(page).to have_content('Failed to update repository.')
@@ -270,14 +270,14 @@ RSpec.feature 'Repositories', type: :feature do
 
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
-    click_button('Save')
+    click_button('Submit')
 
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
     fill_in 'Name', with: 'Preanuts Repository'
     scroll_to_bottom_of_the_page
-    click_button('Save')
+    click_button('Submit')
 
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
@@ -288,7 +288,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page).to have_css('.menu li.repository_users.active')
 
     click_link('New User')
-    click_button('Save')
+    click_button('Submit')
 
     expect(page).to have_css('.username .field_with_errors')
     within(".username .error") do
@@ -297,8 +297,8 @@ RSpec.feature 'Repositories', type: :feature do
 
     moomins = [{ username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com' }, { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }]
     moominpapa = [{ username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com' }]
-    allow(User).to receive(:find_ldap_entries_by_name).with('moomin').and_return(moomins)
-    allow(User).to receive(:find_ldap_entries_by_name).with('moominpapa').and_return(moominpapa)
+    allow(NorthwesternUser).to receive(:find_ldap_entries_by_name).with('moomin').and_return(moomins)
+    allow(NorthwesternUser).to receive(:find_ldap_entries_by_name).with('moominpapa').and_return(moominpapa)
 
     page.find('.select2-selection ').native.send_keys(:return)
     find('.select2-dropdown input').set('moomin')
@@ -311,7 +311,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page).to have_css('.menu li.specimen_types.active')
     sleep(1)
     click_link('Add')
-    click_button('Save')
+    click_button('Submit')
 
     expect(page).to have_css('.specimen_type:nth-of-type(1) .name .field_with_errors')
 

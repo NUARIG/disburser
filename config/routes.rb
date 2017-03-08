@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :external_users, controllers: { registrations: 'registrations' }
+  devise_for :northwestern_users, controllers: { registrations: 'registrations' }
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  get 'login', to: 'users#login'
+
   resources :disburser_requests, only: :index, path: 'requests' do
     collection do
       get :admin

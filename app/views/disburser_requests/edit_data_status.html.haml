@@ -9,17 +9,19 @@
     .status_update{ class: 'large-6 columns' }
       - if policy(@disburser_request).edit_data_status?
         = form_for @disburser_request, url: data_status_disburser_request_url(@disburser_request), html: { class: 'status_disburser_request_form', id: "status_disburser_request_#{@disburser_request.id}"  } do |f|
-          .status{ class: 'large-24 columns' }
-            %label{for: 'disburser_request_data_status' }
-              %b
-                Data Status
-            = f.select :data_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES, selected: f.object.data_status), { include_blank: 'Select a data status' }
-            - if validation_errors?(@disburser_request, :data_status)
-              %p.error=format_validation_errors(@disburser_request, :data_status)
-              %br
-            %label{for: 'disburser_request_data_status_comments' }
-              Data Status Comments
-            = f.text_area :data_status_comments, rows: 3
-          .navigation{ class: 'laft-offset-8 large-16 columns' }
-            = f.submit 'Save', class: 'button'
-            = link_to 'Cancel', data_coordinator_disburser_requests_url, class: 'cancel-link button warning'
+          .row
+            .status{ class: 'large-24 columns' }
+              %label{for: 'disburser_request_data_status' }
+                %b
+                  Data Status
+              = f.select :data_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES, selected: f.object.data_status), { include_blank: 'Select a data status' }
+              - if validation_errors?(@disburser_request, :data_status)
+                %p.error=format_validation_errors(@disburser_request, :data_status)
+                %br
+              %label{for: 'disburser_request_data_status_comments' }
+                Data Status Comments
+              = f.text_area :data_status_comments, rows: 3
+          .row
+            .navigation{ class: 'large-offset-8 large-16 columns' }
+              = f.submit 'Submit', class: 'button'
+              = link_to 'Cancel', data_coordinator_disburser_requests_url, class: 'cancel-link button warning'

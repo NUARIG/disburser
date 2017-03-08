@@ -24,7 +24,7 @@ class Disburser.RepositoryUser
                 params.page = params.page or 1
                 results = $.map(data.users, (obj) ->
                   obj.id = obj.username
-                  obj.text = "<b>Name: </b>" + obj.first_name + " " + obj.last_name + " <b>Net ID: </b>" + obj.username + " <b>Email: </b>" + obj.email
+                  obj.text = "<b>Name: </b>" + obj.first_name + " " + obj.last_name + " <b>Username: </b>" + obj.username + " <b>Email: </b>" + obj.email
                   obj
                 )
 

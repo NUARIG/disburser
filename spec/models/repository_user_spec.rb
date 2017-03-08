@@ -17,7 +17,7 @@ RSpec.describe RepositoryUser, type: :model do
       last_name = 'Moomin'
       email = 'moominpapa@moomin.com'
       moominpapa = { username: username, first_name: first_name, last_name: last_name, email: email}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository, username: username)
       user = User.where(username: username).first
       repository_user.reload
@@ -33,7 +33,7 @@ RSpec.describe RepositoryUser, type: :model do
       last_name = 'Moomin'
       email = 'moominpapa@moomin.com'
       moominpapa = { username: username, first_name: first_name, last_name: last_name, email: email}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository, username: username)
       user = User.where(username: username).first
       repository_user.reload
@@ -60,7 +60,7 @@ RSpec.describe RepositoryUser, type: :model do
       last_name = 'Moomin4'
       email = 'moominpapa3@moomin.com'
       moominpapa = { username: username, first_name: first_name, last_name: last_name, email: email}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       @repository_user_moominpapa = FactoryGirl.create(:repository_user, repository: @repository, username: username)
 
       username = 'moominmmama1'
@@ -68,7 +68,7 @@ RSpec.describe RepositoryUser, type: :model do
       last_name = 'Moomin5'
       email = 'moominmmama3@moomin.com'
       moominmmama = { username: username, first_name: first_name, last_name: last_name, email: email}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominmmama)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominmmama)
       @repository_user_moominmmama = FactoryGirl.create(:repository_user, repository: @repository, username: username)
     end
 

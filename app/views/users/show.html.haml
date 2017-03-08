@@ -34,3 +34,7 @@
             Email
         %div{class: 'small-14 large-20 columns' }
           = @user.email
+    .row
+      .actions{class: 'small-24 columns' }
+        - if user_type?(@user, ExternalUser)
+          = link_to 'Edit', edit_external_user_registration_url, class: 'button'

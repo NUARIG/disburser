@@ -8,6 +8,8 @@ RSpec.feature 'Repositories', type: :feature do
     @repository_peanuts = FactoryGirl.create(:repository, name: 'Peanuts', public: true, general_content: '<b>Some general Peanuts information.</b>', data_content: '<b>Peanuts collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
     @repository_white_sox = FactoryGirl.create(:repository, name: 'White Sox', public: false, general_content: '<b>Some general White Sox information.</b>', data_content: '<b>White Sox collect data</b>', specimen_content: '<b>Peanuts collect specimens</b>')
     visit root_path
+    scroll_to_bottom_of_the_page
+    sleep(2)
   end
 
   scenario 'Visiting home repositories and sorting', js: true, focus: false do
@@ -16,12 +18,14 @@ RSpec.feature 'Repositories', type: :feature do
     match_repository_row(@repository_peanuts, 1)
 
     click_link('Name')
-    sleep(1)
+    sleep(2)
+    scroll_to_bottom_of_the_page
     match_repository_row(@repository_peanuts, 0)
     match_repository_row(@repository_moomin, 1)
 
     click_link('Name')
-    sleep(1)
+    sleep(2)
+    scroll_to_bottom_of_the_page
     match_repository_row(@repository_moomin, 0)
     match_repository_row(@repository_peanuts, 1)
   end

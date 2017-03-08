@@ -19,5 +19,5 @@
           = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, false)
           = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       .navigation{ class: 'large-offset-18 large-6 columns' }
-        = f.submit 'Save', class: 'button'
+        = f.submit 'Submit', class: 'button'
         = link_to 'Cancel', disburser_requests_url, class: 'cancel-link button warning'

@@ -1,0 +1,73 @@
+%h4
+  Profile
+= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
+  = devise_error_messages!
+  .row
+    .username
+      %div{class: 'small-10 large-4 columns' }
+        %label
+          Username
+      %div{class: 'small-14 large-20 columns' }
+        = resource.username
+  .row
+    .email
+      %div{class: 'small-10 large-4 columns' }
+        %label
+          Email
+      %div{class: 'small-14 large-20 columns' }
+        = resource.email
+  .row
+    .first_name
+      %div{class: 'small-10 large-4 columns' }
+        = f.label :first_name
+      %div{class: 'small-14 large-20 columns' }
+        = f.text_field :first_name, autofocus: true
+        - if validation_errors?(resource, :first_name)
+          %p.error= format_validation_errors(resource, :first_name)
+  .row
+    .last_name
+      %div{class: 'small-10 large-4 columns' }
+        = f.label :last_name
+      %div{class: 'small-14 large-20 columns' }
+        = f.text_field :last_name, autofocus: true
+        - if validation_errors?(resource, :last_name)
+          %p.error= format_validation_errors(resource, :last_name)
+  - if devise_mapping.confirmable? && resource.pending_reconfirmation?
+    %div
+      Currently waiting confirmation for: #{resource.unconfirmed_email}
+  .row
+    .password
+      %div{class: 'small-10 large-4 columns' }
+        %label{for: 'external_user_current_password' }
+          Current Password
+        %i (we need your current password to confirm your changes)
+      %div{class: 'small-14 large-20 columns' }
+        = f.password_field :current_password, autocomplete: "off"
+        - if validation_errors?(resource, :current_password)
+          %p.error= format_validation_errors(resource, :current_password)
+  .row
+    .password
+      %div{class: 'small-10 large-4 columns' }
+        = f.label :password
+        %i (leave blank if you don't want to change it)
+      %div{class: 'small-14 large-20 columns' }
+        = f.password_field :password, autocomplete: "off"
+        - if @minimum_password_length
+          %br/
+          %em
+            = @minimum_password_length
+            characters minimum
+        - if validation_errors?(resource, :password)
+          %p.error= format_validation_errors(resource, :password)
+  .row
+    .password_confirmation
+      %div{class: 'small-10 large-4 columns' }
+        = f.label :password_confirmation
+      %div{class: 'small-14 large-20 columns' }
+        = f.password_field :password_confirmation, autocomplete: "off"
+        - if validation_errors?(resource, :password_confirmation)
+          %p.error= format_validation_errors(resource, :password_confirmation)
+  .row
+    .actions{class: 'small-24 columns' }
+      = f.submit 'Submit', class: 'button'
+      = link_to 'Cancel', user_url(resource), class: 'cancel-link button warning'

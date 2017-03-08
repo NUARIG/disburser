@@ -1,0 +1,34 @@
+.devise
+  .session
+    - if user_type?(resource, NorthwesternUser)
+      %h4 Login with your Northwestern NetID
+      .help-text
+        Use your Northwestern University NetID and password to login.
+    - elsif user_type?(resource, ExternalUser)
+      %h4 Login with your Email
+      .help-text
+        Use your email and a password of your choice to login.
+    = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+      - if user_type?(resource, NorthwesternUser)
+        .field
+          = f.label :username, 'NetID'
+          %br/
+          = f.text_field :username, autofocus: true
+      - elsif user_type?(resource, ExternalUser)
+        .field
+          = f.label :email, 'Email'
+          %br/
+          = f.text_field :username, autofocus: true
+      .field
+        = f.label :password
+        %br/
+        = f.password_field :password, autocomplete: "off"
+      - if devise_mapping.rememberable?
+        .field
+          = f.check_box :remember_me
+          = f.label :remember_me
+      .actions
+        .row
+          = f.submit "Submit", class: 'button'
+          = link_to 'Cancel', login_url, class: 'cancel-link button warning'
+          = render "devise/shared/links"

@@ -2,7 +2,7 @@ require 'rails_helper'
 describe RepositoryUsersController, type: :request do
   before(:each) do
     @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins')
-    @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
+    @paul_user = FactoryGirl.create(:northwestern_user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
   end
 
   describe 'regular user' do
@@ -30,7 +30,7 @@ describe RepositoryUsersController, type: :request do
 
     it 'should deny access to edit a repository user', focus: false do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
       get edit_repository_repository_user_url(@repository_moomin, repository_user)
       expect(response).to redirect_to(root_path)
@@ -39,7 +39,7 @@ describe RepositoryUsersController, type: :request do
 
     it 'should deny access to update a repository user', focus: false do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
       put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to redirect_to(root_path)
@@ -66,7 +66,7 @@ describe RepositoryUsersController, type: :request do
 
     it 'should allow to create a repository user', focus: false  do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
       post repository_repository_users_url(@repository_moomin), params: { format: :js, repository_user: { username: moominpapa[:username], administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to have_http_status(:no_content)
@@ -74,7 +74,7 @@ describe RepositoryUsersController, type: :request do
 
     it 'should allow access to edit a repository user', focus: false do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
       get edit_repository_repository_user_url(@repository_moomin, repository_user)
       expect(response).to have_http_status(:success)
@@ -82,7 +82,7 @@ describe RepositoryUsersController, type: :request do
 
     it 'should allow access to update a repository user', focus: false do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
       put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to have_http_status(:no_content)
@@ -92,7 +92,7 @@ describe RepositoryUsersController, type: :request do
   describe 'repository administrator user' do
     before(:each) do
       @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(@harold)
       @repository_moomin.repository_users.build(username: @harold[:username], administrator: true)
       @repository_moomin.save!
       @harold_user = User.where(username: @harold[:username]).first
@@ -111,7 +111,7 @@ describe RepositoryUsersController, type: :request do
 
     it 'should allow to create a repository user', focus: false  do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
       post repository_repository_users_url(@repository_moomin), params: { format: :js, repository_user: { username: moominpapa[:username], administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to have_http_status(:no_content)
@@ -119,7 +119,7 @@ describe RepositoryUsersController, type: :request do
 
     it 'should allow access to edit a repository user', focus: false do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
       get edit_repository_repository_user_url(@repository_moomin, repository_user)
       expect(response).to have_http_status(:success)
@@ -127,7 +127,7 @@ describe RepositoryUsersController, type: :request do
 
     it 'should allow access to update a repository user', focus: false do
       moominpapa = { username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com'}
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(moominpapa)
       repository_user = FactoryGirl.create(:repository_user, repository: @repository_moomin, username: moominpapa[:username])
       put repository_repository_user_url(@repository_moomin, repository_user), params: { format: :js, repository_user: { administrator: true, committee: true, specimen_coordinator: true, data_coordinator: true } }
       expect(response).to have_http_status(:no_content)

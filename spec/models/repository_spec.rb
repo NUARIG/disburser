@@ -35,7 +35,7 @@ RSpec.describe Repository, type: :model do
 
   it 'knows if a user is a repository administrator', focus: false do
     harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold_user)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold_user)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', administrator: true)
     repository.save!
@@ -52,7 +52,7 @@ RSpec.describe Repository, type: :model do
 
   it 'knows if a user is a repository committee member', focus: false do
     harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold_user)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold_user)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', committee: true)
     repository.save!
@@ -69,7 +69,7 @@ RSpec.describe Repository, type: :model do
 
   it 'knows if a user is a data coordinator', focus: false do
     harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold_user)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold_user)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', data_coordinator: true)
     repository.save!
@@ -88,7 +88,7 @@ RSpec.describe Repository, type: :model do
 
   it 'knows if a user is a specimen coordinator', focus: false do
     harold_user = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold_user)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold_user)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', specimen_coordinator: true)
     repository.save!
@@ -107,13 +107,13 @@ RSpec.describe Repository, type: :model do
 
   it 'knows its specimen coordinators', focus: false do
     harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', specimen_coordinator: true)
     repository.save!
     harold_user = User.where(username: 'hbaines').first
     paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(paul)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(paul)
     repository.repository_users.build(username: 'pkonerko', specimen_coordinator: false)
     repository.save!
     paul_user = User.where(username: 'pkonerko').first
@@ -123,13 +123,13 @@ RSpec.describe Repository, type: :model do
 
   it 'knows its specimen coordinators', focus: false do
     harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', data_coordinator: true)
     repository.save!
     harold_user = User.where(username: 'hbaines').first
     paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(paul)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(paul)
     repository.repository_users.build(username: 'pkonerko', data_coordinator: false)
     repository.save!
     paul_user = User.where(username: 'pkonerko').first
@@ -139,13 +139,13 @@ RSpec.describe Repository, type: :model do
 
   it 'knows its repository administrators', focus: false do
     harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', administrator: true)
     repository.save!
     harold_user = User.where(username: 'hbaines').first
     paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(paul)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(paul)
     repository.repository_users.build(username: 'pkonerko', administrator: false)
     repository.save!
     paul_user = User.where(username: 'pkonerko').first
@@ -155,13 +155,13 @@ RSpec.describe Repository, type: :model do
 
   it 'knows its repository administrators (optionally including system administrator)', focus: false do
     harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
     repository = FactoryGirl.create(:repository, name: 'Moomins')
     repository.repository_users.build(username: 'hbaines', administrator: true)
     repository.save!
     harold_user = User.where(username: 'hbaines').first
     paul = { username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko', email: 'pkonerko@whitesox.com' }
-    allow(User).to receive(:find_ldap_entry_by_username).and_return(paul)
+    allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(paul)
     repository.repository_users.build(username: 'pkonerko', administrator: false)
     repository.save!
     paul_user = User.where(username: 'pkonerko').first

@@ -8,10 +8,10 @@ RSpec.feature 'Disburser Requests', type: :feature do
     @moomin_repository.specimen_types.build(name: @specimen_type_tissue)
     @moomin_repository.save!
     @white_sox_repository = FactoryGirl.create(:repository, name: 'White Sox', public: true)
-    @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
-    @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
-    @the_groke_user = FactoryGirl.create(:user, email: 'thegroker@moomin.com', username: 'thegroke', first_name: 'The', last_name: 'Groke')
-    @wilbur_wood_user = FactoryGirl.create(:user, email: 'wilburwood@whitesox.com', username: 'wwood', first_name: 'Wilbur', last_name: 'Wood')
+    @moomintroll_user = FactoryGirl.create(:northwestern_user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
+    @paul_user = FactoryGirl.create(:northwestern_user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
+    @the_groke_user = FactoryGirl.create(:northwestern_user, email: 'thegroker@moomin.com', username: 'thegroke', first_name: 'The', last_name: 'Groke')
+    @wilbur_wood_user = FactoryGirl.create(:northwestern_user, email: 'wilburwood@whitesox.com', username: 'wwood', first_name: 'Wilbur', last_name: 'Wood')
   end
 
   describe 'Seeing a list of disburser requests' do
@@ -33,7 +33,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       @disburser_request_1.feasibility = 0
       @disburser_request_1.save!
-      login_as(@moomintroll_user, scope: :user)
+      login_as(@moomintroll_user, scope: :northwestern_user)
       visit root_path
 
       expect(page).to have_selector('.menu li.requests', visible: true)
@@ -205,7 +205,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       @moomintroll_user.system_administrator = true
       @moomintroll_user
-      login_as(@moomintroll_user, scope: :user)
+      login_as(@moomintroll_user, scope: :northwestern_user)
       visit root_path
       expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.admin', visible: true)
@@ -386,12 +386,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
     scenario 'As a repository administrator and sorting', js: true, focus: false do
       @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort', feasibility: 0)
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
       @white_sox_repository.repository_users.build(username: 'hbaines', administrator: true)
       @white_sox_repository.save!
       harold_user = User.where(username: 'hbaines').first
 
-      login_as(harold_user, scope: :user)
+      login_as(harold_user, scope: :northwestern_user)
       visit root_path
       expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.admin', visible: true)
@@ -412,12 +412,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
     scenario 'As a data coordinator and sorting', js: true, focus: false do
       @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 1, cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
       @white_sox_repository.repository_users.build(username: 'hbaines', administrator: false, data_coordinator: true)
       @white_sox_repository.save!
       harold_user = User.where(username: 'hbaines').first
 
-      login_as(harold_user, scope: :user)
+      login_as(harold_user, scope: :northwestern_user)
       visit root_path
       expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.data_coordinator', visible: true)
@@ -573,12 +573,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
     scenario 'As a specimen coordinator and sorting', js: true, focus: false do
       @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @paul_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 1,  cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
       @white_sox_repository.repository_users.build(username: 'hbaines', administrator: false, specimen_coordinator: true)
       @white_sox_repository.save!
       harold_user = User.where(username: 'hbaines').first
 
-      login_as(harold_user, scope: :user)
+      login_as(harold_user, scope: :northwestern_user)
       visit root_path
       expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.specimen_coordinator', visible: true)
@@ -770,12 +770,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       @disburser_request_5 = FactoryGirl.create(:disburser_request, repository: @white_sox_repository, submitter: @moomintroll_user, title: 'White Sox z research', investigator: 'Wilbur Woodz', irb_number: '999', feasibility: 0,  cohort_criteria: 'White Sox z cohort criteria', data_for_cohort: 'White Sox z data for cohort')
       harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+      allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
       @white_sox_repository.repository_users.build(username: 'hbaines', committee: true)
       @white_sox_repository.save!
       harold_user = User.where(username: 'hbaines').first
 
-      login_as(harold_user, scope: :user)
+      login_as(harold_user, scope: :northwestern_user)
       visit root_path
       expect(page).to have_selector('.menu li.requests', visible: true)
       expect(page).to have_selector('.menu li.committee', visible: true)
@@ -908,7 +908,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
   scenario 'Creating a disburser request', js: true, focus: false  do
     peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts', public: false)
-    login_as(@moomintroll_user, scope: :user)
+    login_as(@moomintroll_user, scope: :northwestern_user)
     visit disburser_requests_path
     expect(page).to have_selector('#new_repository_request_link', visible: false)
     within('.make_a_request') do
@@ -974,7 +974,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
     scroll_to_bottom_of_the_page
     choose('Submitted')
-    click_button('Save')
+    click_button('Submit')
     sleep(1)
     disburser_request[:status] = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
     match_disburser_request_row(disburser_request, 0)
@@ -1001,7 +1001,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
   scenario 'Creating a disburser request for a request with a custom request form', js: true, focus: false  do
     @moomin_repository.custom_request_form = Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx')))
     @moomin_repository.save
-    login_as(@moomintroll_user, scope: :user)
+    login_as(@moomintroll_user, scope: :northwestern_user)
     visit disburser_requests_path
     within('.make_a_request') do
       select('Select a repository', from: 'Repository')
@@ -1025,7 +1025,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
 
     choose('Submitted')
-    click_button('Save')
+    click_button('Submit')
     sleep(1)
     disburser_request[:status] = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
     match_disburser_request_row(disburser_request, 0)
@@ -1042,7 +1042,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
   end
 
   scenario 'Creating a disburser request for a repository without specmen types setup', js: true, focus: false  do
-    login_as(@moomintroll_user, scope: :user)
+    login_as(@moomintroll_user, scope: :northwestern_user)
     visit disburser_requests_path
     within('.make_a_request') do
       select(@white_sox_repository.name, from: 'Repository')
@@ -1053,7 +1053,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
   end
 
   scenario 'Creating a disburser request with validation', js: true, focus: false do
-    login_as(@moomintroll_user, scope: :user)
+    login_as(@moomintroll_user, scope: :northwestern_user)
     visit disburser_requests_path
     within('.make_a_request') do
       select(@moomin_repository.name, from: 'Repository')
@@ -1074,7 +1074,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
 
     scroll_to_bottom_of_the_page
-    click_button('Save')
+    click_button('Submit')
 
     within(".flash .callout") do
       expect(page).to have_content('Failed to create repository request.')
@@ -1089,7 +1089,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     attach_file('Methods/Justifications', Rails.root + 'spec/fixtures/files/methods_justificatons.docx')
 
     scroll_to_bottom_of_the_page
-    click_button('Save')
+    click_button('Submit')
 
     expect(page).to have_css('.investigator .field_with_errors')
     expect(page).to have_css('.title .field_with_errors')
@@ -1104,7 +1104,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
   scenario 'Creating a disburser request with validation for a request with a custom request form', js: true, focus: false do
     @moomin_repository.custom_request_form = Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx')))
     @moomin_repository.save
-    login_as(@moomintroll_user, scope: :user)
+    login_as(@moomintroll_user, scope: :northwestern_user)
     visit disburser_requests_path
     within('.make_a_request') do
       select(@moomin_repository.name, from: 'Repository')
@@ -1112,7 +1112,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     click_link('Make a request!')
     expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
 
-    click_button('Save')
+    click_button('Submit')
 
     within(".flash .callout") do
       expect(page).to have_content('Failed to create repository request.')
@@ -1127,7 +1127,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
     scroll_to_bottom_of_the_page
-    click_button('Save')
+    click_button('Submit')
 
     expect(page).to have_css('.investigator .field_with_errors')
     expect(page).to have_css('.title .field_with_errors')
@@ -1150,7 +1150,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     specimen_type = @moomin_repository.specimen_types.where(name: @specimen_type_blood).first
     disburser_request.disburser_request_details.build(specimen_type: specimen_type, quantity: disburser_request_detail[:quantity], volume: disburser_request_detail[:volume], comments: disburser_request_detail[:comments])
     disburser_request.save
-    login_as(@moomintroll_user, scope: :user)
+    login_as(@moomintroll_user, scope: :northwestern_user)
     visit disburser_requests_path
 
     all('.disburser_request')[0].find('.edit_disburser_request_link').click
@@ -1223,7 +1223,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(all('.disburser_request_detail')[1].find_field('Comments', with: disburser_request_detail[:comments])).to be_truthy
 
     scroll_to_bottom_of_the_page
-    click_button('Save')
+    click_button('Submit')
 
     all('.disburser_request')[0].find('.edit_disburser_request_link').click
     sleep(1)
@@ -1241,7 +1241,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     within(".disburser_request_detail:nth-of-type(1)") do
       click_link('Remove')
     end
-    click_button('Save')
+    click_button('Submit')
     sleep(1)
     all('.disburser_request')[0].find('.edit_disburser_request_link').click
     sleep(1)
@@ -1263,7 +1263,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    specimen_type = @moomin_repository.specimen_types.where(name: @specimen_type_blood).first
    disburser_request.disburser_request_details.build(specimen_type: specimen_type, quantity: disburser_request_detail[:quantity], volume: disburser_request_detail[:volume], comments: disburser_request_detail[:comments])
    disburser_request.save
-   login_as(@moomintroll_user, scope: :user)
+   login_as(@moomintroll_user, scope: :northwestern_user)
    visit disburser_requests_path
 
    all('.disburser_request')[0].find('.edit_disburser_request_link').click
@@ -1295,7 +1295,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
      find('textarea').set(nil)
    end
 
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(page).to have_css('.investigator .field_with_errors')
    expect(page).to have_css('.title .field_with_errors')
@@ -1308,7 +1308,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    sleep(1)
    check('Feasibility?')
    scroll_to_bottom_of_the_page
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(page).to_not have_css('.irb_number .field_with_errors')
  end
@@ -1317,7 +1317,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: false)
    expect(disburser_request.status).to eq(DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT)
 
-   login_as(@moomintroll_user, scope: :user)
+   login_as(@moomintroll_user, scope: :northwestern_user)
    visit disburser_requests_path
 
    all('.disburser_request')[0].find('.edit_disburser_request_link').click
@@ -1345,11 +1345,11 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.reload
    expect(disburser_request.data_status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
    harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-   allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+   allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
    @moomin_repository.repository_users.build(username: 'hbaines', administrator: false, data_coordinator: true)
    @moomin_repository.save!
    harold_user = User.where(username: 'hbaines').first
-   login_as(harold_user, scope: :user)
+   login_as(harold_user, scope: :northwestern_user)
    visit data_coordinator_disburser_requests_path
 
    expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
@@ -1357,7 +1357,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    find("#disburser_request_#{disburser_request.id}").click_link('Update')
 
    select('Select a data status', from: 'Data Status')
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(page).to have_css('.status_update .field_with_errors')
    expect(find(".status_update .error")).to have_content("can't be blank")
@@ -1393,7 +1393,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, from: 'Data Status')
    comments = 'Help the moomins!'
    fill_in('Data Status Comments', with: comments)
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(all('.disburser_request').size).to eq(0)
    select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, from: 'Data Status')
@@ -1439,18 +1439,18 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.status_user = @paul_user
    disburser_request.save!
    harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-   allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+   allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
    @moomin_repository.repository_users.build(username: 'hbaines', administrator: false, specimen_coordinator: true)
    @moomin_repository.save!
    harold_user = User.where(username: 'hbaines').first
-   login_as(harold_user, scope: :user)
+   login_as(harold_user, scope: :northwestern_user)
    visit specimen_coordinator_disburser_requests_path
 
    expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED)
    find("#disburser_request_#{disburser_request.id}").click_link('Update')
    select('Select a specimen status', from: 'Specimen Status')
 
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(page).to have_css('.status_update .field_with_errors')
    expect(find(".status_update .error")).to have_content("can't be blank")
@@ -1493,7 +1493,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, from: 'Specimen Status')
    comments = 'Help the moomins!'
    fill_in('Specimen Status Comments', with: comments)
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(all('.disburser_request').size).to eq(0)
    select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, from: 'Specimen Status')
@@ -1548,11 +1548,11 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @the_groke_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, comments: 'The groke says sure thing!')
    disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @wilbur_wood_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, comments: 'Wilbur does not like!')
    harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-   allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+   allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
    @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
    @moomin_repository.save!
    harold_user = User.where(username: 'hbaines').first
-   login_as(harold_user, scope: :user)
+   login_as(harold_user, scope: :northwestern_user)
    visit admin_disburser_requests_path
 
    expect(find("#disburser_request_#{disburser_request.id} .status")).to have_content(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
@@ -1563,7 +1563,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select('Select a status', from: 'Status')
    select('Select a data status', from: 'Data Status')
    select('Select a specimen status', from: 'Specimen Status')
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(page).to have_css('.status_update .status .field_with_errors')
    expect(find(".status_update .status .error")).to have_content("can't be blank")
@@ -1613,7 +1613,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    specimen_status_comments = 'Help the moomins with specimens!'
    fill_in('Specimen Status Comments', with: specimen_status_comments)
 
-   click_button('Save')
+   click_button('Submit')
 
    expect(find("#disburser_request_#{disburser_request.id} .status")).to have_content(DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW)
    expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
@@ -1667,11 +1667,11 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @the_groke_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, comments: 'The groke says sure thing!')
    disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @wilbur_wood_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, comments: 'Wilbur does not like!')
    harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-   allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+   allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
    @moomin_repository.repository_users.build(username: 'hbaines', administrator: true)
    @moomin_repository.save!
    harold_user = User.where(username: 'hbaines').first
-   login_as(harold_user, scope: :user)
+   login_as(harold_user, scope: :northwestern_user)
    visit admin_disburser_requests_path
 
    expect(find("#disburser_request_#{disburser_request.id} .status")).to have_content(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
@@ -1683,7 +1683,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select('Select a status', from: 'Status')
    select('Select a data status', from: 'Data Status')
    select('Select a specimen status', from: 'Specimen Status')
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(page).to have_css('.status_update .status .field_with_errors')
    expect(find(".status_update .status .error")).to have_content("can't be blank")
@@ -1727,7 +1727,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    specimen_status_comments = 'Help the moomins with specimens!'
    fill_in('Specimen Status Comments', with: specimen_status_comments)
 
-   click_button('Save')
+   click_button('Submit')
 
    expect(find("#disburser_request_#{disburser_request.id} .status")).to have_content(DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW)
    expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
@@ -1787,18 +1787,18 @@ RSpec.feature 'Disburser Requests', type: :feature do
    disburser_request.status_user = @paul_user
    disburser_request.save!
    harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-   allow(User).to receive(:find_ldap_entry_by_username).and_return(harold)
+   allow(NorthwesternUser).to receive(:find_ldap_entry_by_username).and_return(harold)
    @moomin_repository.repository_users.build(username: 'hbaines', committee: true)
    @moomin_repository.save!
    harold_user = User.where(username: 'hbaines').first
-   login_as(harold_user, scope: :user)
+   login_as(harold_user, scope: :northwestern_user)
    visit committee_disburser_requests_path
    find("#disburser_request_#{disburser_request.id}").click_link('Review')
    sleep(1)
 
    scroll_to_bottom_of_the_page
 
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(page).to have_css(".vote .field_with_errors input[name='disburser_request_vote[vote]']")
    expect(find(".vote .error")).to have_content("can't be blank")
@@ -1825,7 +1825,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    choose('Approve')
    comments = 'Help the moomins!'
    fill_in('Vote Comments', with: comments)
-   click_button('Save')
+   click_button('Submit')
    sleep(1)
    expect(all('.disburser_request').size).to eq(0)
    select('all', from: 'Vote Status')

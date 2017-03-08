@@ -1,11 +1,11 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: :login
   before_action :load_repository, only: :index
   before_action :load_user, only: :show
 
   def index
     params[:page]||= 1
-    @all_users = User.search_ldap(params[:q], @repository)
+    @all_users = User.search(params[:q], @repository)
     @users = @all_users.paginate(per_page: 10, page: params[:page])
     respond_to do |format|
         format.json {
@@ -19,6 +19,9 @@ class UsersController < ApplicationController
   end
 
   def show
+  end
+
+  def sigin_in
   end
 
   private

@@ -8,20 +8,22 @@
     = render '/disburser_requests/vote_history', disburser_request: @disburser_request, width: 18
     .disburser_request_vote{ class: 'large-6 columns' }
       = form_for [@disburser_request, @disburser_request_vote], html: { class: 'disburser_request_vote_form' } do |f|
-        .vote{ class: 'large-24 columns' }
-          %label{for: 'disburser_request_vote_vote' }
-            %b
-              Vote
-          = f.radio_button :vote, DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, checked: checked?(@disburser_request_vote.vote, DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, false)
-          = f.label :vote, 'Approve', value: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE
-          = f.radio_button :vote, DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, checked: checked?(@disburser_request_vote.vote, DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, false)
-          = f.label :vote, 'Deny', value: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY
-          - if validation_errors?(@disburser_request_vote, :vote)
-            %br
-            %p.error=format_validation_errors(@disburser_request_vote, :vote)
-          %label{for: 'disburser_request_vote_comments' }
-            Vote Comments
-          = f.text_area :comments, rows: 3
-        .navigation{ class: 'laft-offset-8 large-16 columns' }
-          = f.submit 'Save', class: 'button'
-          = link_to 'Cancel', committee_disburser_requests_url, class: 'cancel-link button warning'
+        .row
+          .vote{ class: 'large-24 columns' }
+            %label{for: 'disburser_request_vote_vote' }
+              %b
+                Vote
+            = f.radio_button :vote, DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, checked: checked?(@disburser_request_vote.vote, DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, false)
+            = f.label :vote, 'Approve', value: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE
+            = f.radio_button :vote, DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, checked: checked?(@disburser_request_vote.vote, DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY, false)
+            = f.label :vote, 'Deny', value: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_DENY
+            - if validation_errors?(@disburser_request_vote, :vote)
+              %br
+              %p.error=format_validation_errors(@disburser_request_vote, :vote)
+            %label{for: 'disburser_request_vote_comments' }
+              Vote Comments
+            = f.text_area :comments, rows: 3
+        .row
+          .navigation{ class: 'large-offset-8 large-16 columns' }
+            = f.submit 'Submit', class: 'button'
+            = link_to 'Cancel', committee_disburser_requests_url, class: 'cancel-link button warning'

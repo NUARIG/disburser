@@ -1,0 +1,16 @@
+%h4 Forgot your password?
+= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f|
+  .row
+    .name
+      %div{class: 'small-14 large-4 columns' }
+        %label{for: 'external_user_email' }
+          Email
+      %div{class: 'small-10 large-20 columns' }
+        = f.email_field :email, autofocus: true
+        - if validation_errors?(resource, :email)
+          %p.error= format_validation_errors(resource, :email)
+  .row
+    .actions{class: 'small-24 columns' }
+      = f.submit "Send me reset password instructions", class: 'button'
+      = link_to 'Cancel', login_url, class: 'cancel-link button warning'
+      = render "devise/shared/links"

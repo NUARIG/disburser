@@ -33,4 +33,12 @@ module ApplicationHelper
   def human_boolean(boolean)
     boolean ? 'Yes' : 'No'
   end
+
+  def user_signed_in?
+    northwestern_user_signed_in? || external_user_signed_in?
+  end
+
+  def user_type?(resource, user_class)
+    resource.class == user_class
+  end
 end

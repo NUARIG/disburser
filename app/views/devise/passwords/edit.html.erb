@@ -18,8 +18,10 @@
   </div>
 
   <div class="actions">
-    <%= f.submit "Change my password" %>
+    <%= f.submit "Change my password", class: 'button' %>
+    <%= link_to 'Cancel', login_url, class: 'cancel-link button warning' %>
+    <%= render "devise/shared/links" %>
   </div>
 <% end %>
 
-<%= render "devise/shared/links" %>
+

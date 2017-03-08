@@ -21,4 +21,3 @@
 //= require disburser.repository_user
 //= require disburser.disburser_request
 //= require disburser.disburser_requests
-

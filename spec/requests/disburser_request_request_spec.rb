@@ -3,7 +3,7 @@ describe DisburserRequestsController, type: :request do
   before(:each) do
     @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins')
     @peanuts_repository = FactoryGirl.create(:repository, name: 'Moomins')
-    @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
+    @paul_user = FactoryGirl.create(:northwestern_user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
     @moomintroll_user = FactoryGirl.create(:user, email: 'moomintroll@moomin.com', username: 'moomintroll', first_name: 'Moomintroll', last_name: 'Moomin')
   end
 
@@ -288,12 +288,10 @@ describe DisburserRequestsController, type: :request do
 
   describe 'repository administrator user' do
     before(:each) do
-      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
-      @moomin_repository.repository_users.build(username: @harold[:username], administrator: true)
+      @moomin_repository.repository_users.build(username: @paul_user.username, administrator: true)
       @moomin_repository.save!
-      @harold_user = User.where(username: @harold[:username]).first
-      sign_in @harold_user
+
+      sign_in @paul_user
     end
 
     it 'should allow access to index of disburser requests', focus: false do
@@ -335,7 +333,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
       expect(response).to have_http_status(:success)
     end
@@ -355,7 +353,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should deny access to edit a data disburser request status', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       get edit_data_status_disburser_request_url(disburser_request)
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
@@ -421,14 +419,14 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to cancel a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch cancel_disburser_request_url(disburser_request)
       expect(response).to redirect_to(disburser_requests_url)
       expect(flash[:success]).to eq('You have successfully canceled the repository request.')
     end
 
     it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
       disburser_request.status_user = @moomintroll_user
       disburser_request.save!
@@ -447,12 +445,10 @@ describe DisburserRequestsController, type: :request do
 
   describe 'repository data coordinator user' do
     before(:each) do
-      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
-      @moomin_repository.repository_users.build(username: @harold[:username], administrator: false, data_coordinator: true)
+      @moomin_repository.repository_users.build(username: @paul_user.username, administrator: false, data_coordinator: true)
       @moomin_repository.save!
-      @harold_user = User.where(username: @harold[:username]).first
-      sign_in @harold_user
+
+      sign_in @paul_user
     end
 
     it 'should allow access to index of disburser requests', focus: false do
@@ -494,7 +490,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
       expect(response).to have_http_status(:success)
     end
@@ -555,7 +551,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to update a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       put repository_disburser_request_url(@moomin_repository, disburser_request), params: { disburser_request: { title: 'Moomin request', investigator: 'Moomin investigator', irb_number: '123', feasibility: false, cohort_criteria: 'Moomin cohort criteria', data_for_cohort: 'Moomin data for cohort', methods_justifications: 'Moomin methods justifications' } }
       expect(response).to have_http_status(:success)
     end
@@ -581,14 +577,14 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to cancel a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch cancel_disburser_request_url(disburser_request)
       expect(response).to redirect_to(disburser_requests_url)
       expect(flash[:success]).to eq('You have successfully canceled the repository request.')
     end
 
     it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
       disburser_request.status_user = @moomintroll_user
       disburser_request.save!
@@ -607,12 +603,10 @@ describe DisburserRequestsController, type: :request do
 
   describe 'repository specimen coordinator user' do
     before(:each) do
-      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
-      @moomin_repository.repository_users.build(username: @harold[:username], administrator: false, specimen_coordinator: true)
+      @moomin_repository.repository_users.build(username: @paul_user.username, administrator: false, specimen_coordinator: true)
       @moomin_repository.save!
-      @harold_user = User.where(username: @harold[:username]).first
-      sign_in @harold_user
+
+      sign_in @paul_user
     end
 
     it 'should allow access to index of disburser requests', focus: false do
@@ -654,7 +648,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
       expect(response).to have_http_status(:success)
     end
@@ -715,7 +709,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to update a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       put repository_disburser_request_url(@moomin_repository, disburser_request), params: { disburser_request: { title: 'Moomin request', investigator: 'Moomin investigator', irb_number: '123', feasibility: false, cohort_criteria: 'Moomin cohort criteria', data_for_cohort: 'Moomin data for cohort', methods_justifications: 'Moomin methods justifications' } }
       expect(response).to have_http_status(:success)
     end
@@ -741,14 +735,14 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to cancel a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch cancel_disburser_request_url(disburser_request)
       expect(response).to redirect_to(disburser_requests_url)
       expect(flash[:success]).to eq('You have successfully canceled the repository request.')
     end
 
     it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
       disburser_request.status_user = @moomintroll_user
       disburser_request.save!
@@ -767,12 +761,10 @@ describe DisburserRequestsController, type: :request do
 
   describe 'repository committee member user' do
     before(:each) do
-      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com' }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
-      @moomin_repository.repository_users.build(username: @harold[:username], committee: true)
+      @moomin_repository.repository_users.build(username: @paul_user.username, committee: true)
       @moomin_repository.save!
-      @harold_user = User.where(username: @harold[:username]).first
-      sign_in @harold_user
+
+      sign_in @paul_user
     end
 
     it 'should allow access to index of disburser requests', focus: false do
@@ -814,7 +806,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to edit a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       get edit_repository_disburser_request_url(@moomin_repository, disburser_request)
       expect(response).to have_http_status(:success)
     end
@@ -861,7 +853,7 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to update a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       put repository_disburser_request_url(@moomin_repository, disburser_request), params: { disburser_request: { title: 'Moomin request', investigator: 'Moomin investigator', irb_number: '123',  feasibility: false, cohort_criteria: 'Moomin cohort criteria', data_for_cohort: 'Moomin data for cohort', methods_justifications: 'Moomin methods justifications' } }
       expect(response).to have_http_status(:success)
     end
@@ -888,14 +880,14 @@ describe DisburserRequestsController, type: :request do
     end
 
     it 'should allow access to cancel a disburser request created by the user', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       patch cancel_disburser_request_url(disburser_request)
       expect(response).to redirect_to(disburser_requests_url)
       expect(flash[:success]).to eq('You have successfully canceled the repository request.')
     end
 
     it 'should deny access to cancel a disburser request created by the user but not in a cancellable state', focus: false do
-      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @harold_user)
+      disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
       disburser_request.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
       disburser_request.status_user = @moomintroll_user
       disburser_request.save!

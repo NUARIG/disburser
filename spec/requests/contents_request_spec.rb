@@ -1,8 +1,8 @@
 require 'rails_helper'
 describe ContentsController, type: :request do
   before(:each) do
-    @repository_moomin = FactoryGirl.create(:repository, name: 'Moomins')
-    @paul_user = FactoryGirl.create(:user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins')
+    @paul_user = FactoryGirl.create(:northwestern_user, email: 'paulie@whitesox.com', username: 'pkonerko', first_name: 'Paul', last_name: 'Konerko')
   end
 
   describe 'regular user' do
@@ -11,13 +11,13 @@ describe ContentsController, type: :request do
     end
 
     it 'should deny access to edit repository content', focus: false do
-      get edit_repository_content_url(@repository_moomin)
+      get edit_repository_content_url(@moomin_repository)
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
 
     it 'should deny access to update a repository content', focus: false do
-      put repository_content_url(@repository_moomin), params: { repository: { data_content: 'Foo', specimen_content: 'Bar' } }
+      put repository_content_url(@moomin_repository), params: { repository: { data_content: 'Foo', specimen_content: 'Bar' } }
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq(ApplicationController::UNAUTHORIZED_MESSAGE)
     end
@@ -31,12 +31,12 @@ describe ContentsController, type: :request do
     end
 
     it 'should allow access to edit repository content', focus: false do
-      get edit_repository_content_url(@repository_moomin)
+      get edit_repository_content_url(@moomin_repository)
       expect(response).to have_http_status(:success)
     end
 
     it 'should allow access to update repository content', focus: false do
-      put repository_content_url(@repository_moomin), params: { repository: { data_content: 'Foo', specimen_content: 'Bar' } }
+      put repository_content_url(@moomin_repository), params: { repository: { data_content: 'Foo', specimen_content: 'Bar' } }
       expect(response).to have_http_status(:found)
       expect(flash[:success]).to eq('You have successfully updated repository content.')
     end
@@ -44,21 +44,19 @@ describe ContentsController, type: :request do
 
   describe 'repository administrator user' do
     before(:each) do
-      @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
-      allow(User).to receive(:find_ldap_entry_by_username).and_return(@harold)
-      @repository_moomin.repository_users.build(username: @harold[:username], administrator: true)
-      @repository_moomin.save!
-      @harold_user = User.where(username: @harold[:username]).first
-      sign_in @harold_user
+      @moomin_repository.repository_users.build(username: @paul_user.username, administrator: true)
+      @moomin_repository.save!
+
+      sign_in @paul_user
     end
 
     it 'should allow access to edit repository content', focus: false do
-      get edit_repository_content_url(@repository_moomin)
+      get edit_repository_content_url(@moomin_repository)
       expect(response).to have_http_status(:success)
     end
 
     it 'should allow access to update repository content', focus: false do
-      put repository_content_url(@repository_moomin), params: { repository: { data_content: 'Foo', specimen_content: 'Bar' } }
+      put repository_content_url(@moomin_repository), params: { repository: { data_content: 'Foo', specimen_content: 'Bar' } }
       expect(response).to have_http_status(:found)
       expect(flash[:success]).to eq('You have successfully updated repository content.')
     end
