@@ -1,4 +1,5 @@
 class ContentsController < ApplicationController
+  before_action :authenticate_user!
   before_action :load_repository, only: [:edit, :update]
 
   def edit
