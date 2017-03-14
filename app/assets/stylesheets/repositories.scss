@@ -106,4 +106,7 @@
     background-color: $primary-color;
     color: white;
   }
+  .general_content, .specimen_content, .data_content {
+    padding: 1rem;
+  }
 }
