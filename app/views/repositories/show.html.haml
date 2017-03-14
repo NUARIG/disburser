@@ -38,15 +38,16 @@
     .general_content{ class: 'small-24 columns' }
       = raw @repository.general_content
   .row
+    .specimen_content_header{ class: 'small-24 columns' }
+      %b
+        Specimen
+  .row
+    .specimen_content{ class: 'small-24 columns' }
+      = raw @repository.specimen_content
+  .row
     .data_content_header{ class: 'small-24 columns' }
       %b
         Data
   .row
     .data_content{ class: 'small-24 columns' }
       = raw @repository.data_content
-  .row
-    .specimen_content_header{ class: 'small-24 columns' }
-      %b
-        Specimen
-    .specimen_content{ class: 'small-24 columns' }
-      = raw @repository.specimen_content
