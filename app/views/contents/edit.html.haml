@@ -12,15 +12,15 @@
           General Content
         = f.cktext_area :general_content
     .row
-      .data_content
-        %h3
-          Data Content
-        = f.cktext_area :data_content
-    .row
       .specimen_content
         %h3
           Specimen Content
         = f.cktext_area :specimen_content
+    .row
+      .data_content
+        %h3
+          Data Content
+        = f.cktext_area :data_content
     .navigation{class: 'small-offset-12 small-12 large-offset-18 large-6 columns' }
       = f.submit 'Submit', class: 'button'
       = link_to 'View', repository_url(@repository), class: 'button', target: '_blank'
