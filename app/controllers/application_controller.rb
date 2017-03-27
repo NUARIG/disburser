@@ -12,6 +12,8 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_user!
+    store_location_for(:external_user, request.original_url)
+    store_location_for(:northwestern_user, request.original_url)
     if (!northwestern_user_signed_in? && !external_user_signed_in?)
       flash[:alert] = 'You need to sign in or sign up before continuing.'
       redirect_to login_url
@@ -22,8 +24,8 @@ class ApplicationController < ActionController::Base
     current_northwestern_user || current_external_user
   end
 
-  def after_update_path_for(resource)
-    user_path(resource)
+  def after_sign_in_path_for(resource)
+    stored_location_for(resource) || root_path
   end
 
   helper_method :current_user
