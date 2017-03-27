@@ -27,6 +27,11 @@ class ExternalUser < User
     all_users
   end
 
+  def after_database_authentication
+    login_audit = LoginAudit.new(user: self)
+    login_audit.save!
+  end
+
   private
     def set_defaults
       if self.new_record?

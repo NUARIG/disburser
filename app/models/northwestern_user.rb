@@ -43,17 +43,19 @@ class NorthwesternUser < User
 
   #Instance Methods
   def hydrate_from_ldap
-    # if !Rails.env.development?
+    if !Rails.env.development?
       user = NorthwesternUser.find_ldap_entry_by_username(self.username)
       if user
         self.first_name = user[:first_name]
         self.last_name = user[:last_name]
         self.email = user[:email]
       end
-    # end
+    end
   end
 
   def after_ldap_authentication
+    login_audit = LoginAudit.new(user: self)
+    login_audit.save!
     hydrate_from_ldap
   end
 end
