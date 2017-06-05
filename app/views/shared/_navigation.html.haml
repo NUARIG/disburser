@@ -6,7 +6,11 @@
           Clinical Research Repository Disburser
         %h6
           Robert H. Lurie Comprehensive Cancer Center of Northwestern University
-      .disburser_logo{ class: 'large-6 columns text-right' }
+      .disburser_environment{ class: 'large-2 columns text-right' }
+        - if Rails.env.development? || Rails.env.staging?
+          %h3
+            = "#{Rails.env.capitalize}"
+      .disburser_logo{ class: 'large-4 columns text-right' }
         %a{ :href => 'http://cancer.northwestern.edu/home/index.cfm' }
           = image_tag('rhlccc_small_2.png', alt: 'Robert H. Lurie Comprehensive Cancer Center of Northwestern University')
   .off-canvas-wrapper

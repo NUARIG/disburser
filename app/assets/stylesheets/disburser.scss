@@ -11,10 +11,15 @@
       color: $dark-gray;
     }
   }
+  .disburser_environment {
+    color: red;
+  }
   .disburser_logo {
     @include hide-for-only(small);
   }
   margin-bottom: 2rem;
+
+
 }
 
 .field_with_errors {
