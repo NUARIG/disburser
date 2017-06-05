@@ -3,7 +3,7 @@
 #disburser_request
   %h4
     = "New Request for: #{@repository.name}"
-  = form_for [@repository, @disburser_request], html: { class: 'disburser_request_form', multipart: true  } do |f|
+  = form_for [@repository, @disburser_request], html: { class: 'disburser_request_form disburser_request_form_submitter', multipart: true  } do |f|
     %p.help-text
       %span{ class: 'required' }
       Indicates required field
@@ -12,12 +12,14 @@
       .status_update{ class: 'large-offset-18 large-6 columns' }
         %b
           Status
-        %br
+        %p.help-text
+          %br
+          'Submitted' will send your request for review.
         - if @disburser_request.new_record? || @disburser_request.draft?
           = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT, true)
           = f.label :status, 'Draft', value: DisburserRequest::DISBURSER_REQUEST_STAUTS_DRAFT
           = f.radio_button :status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, checked: checked?(@disburser_request.status, DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, false)
           = f.label :status, 'Submitted', value: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       .navigation{ class: 'large-offset-18 large-6 columns' }
-        = f.submit 'Submit', class: 'button'
+        = f.submit 'Save', class: 'button'
         = link_to 'Cancel', disburser_requests_url, class: 'cancel-link button warning'

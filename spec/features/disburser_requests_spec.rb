@@ -974,7 +974,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
     scroll_to_bottom_of_the_page
     choose('Submitted')
-    click_button('Submit')
+    accept_confirm do
+      click_button('Save')
+    end
     sleep(1)
     disburser_request[:status] = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
     match_disburser_request_row(disburser_request, 0)
@@ -998,7 +1000,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(all('.disburser_request_detail')[0].find_field('Comments', with: disburser_request_detail[:comments])).to be_truthy
   end
 
-  scenario 'Creating a disburser request for a request with a custom request form', js: true, focus: false  do
+  scenario 'Creating a disburser request for a request with a custom request form', js: true, focus: false do
     @moomin_repository.custom_request_form = Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx')))
     @moomin_repository.save
     login_as(@moomintroll_user, scope: :northwestern_user)
@@ -1025,7 +1027,11 @@ RSpec.feature 'Disburser Requests', type: :feature do
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
 
     choose('Submitted')
-    click_button('Submit')
+
+    accept_confirm do
+      click_button('Save')
+    end
+
     sleep(1)
     disburser_request[:status] = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
     match_disburser_request_row(disburser_request, 0)
@@ -1074,7 +1080,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
 
     scroll_to_bottom_of_the_page
-    click_button('Submit')
+    accept_confirm do
+      click_button('Save')
+    end
 
     within(".flash .callout") do
       expect(page).to have_content('Failed to create repository request.')
@@ -1089,7 +1097,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
     attach_file('Methods/Justifications', Rails.root + 'spec/fixtures/files/methods_justificatons.docx')
 
     scroll_to_bottom_of_the_page
-    click_button('Submit')
+    accept_confirm do
+      click_button('Save')
+    end
 
     expect(page).to have_css('.investigator .field_with_errors')
     expect(page).to have_css('.title .field_with_errors')
@@ -1111,8 +1121,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
     click_link('Make a request!')
     expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
-
-    click_button('Submit')
+    accept_confirm do
+      click_button('Save')
+    end
 
     within(".flash .callout") do
       expect(page).to have_content('Failed to create repository request.')
@@ -1127,7 +1138,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
     scroll_to_bottom_of_the_page
-    click_button('Submit')
+    accept_confirm do
+      click_button('Save')
+    end
 
     expect(page).to have_css('.investigator .field_with_errors')
     expect(page).to have_css('.title .field_with_errors')
@@ -1223,7 +1236,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(all('.disburser_request_detail')[1].find_field('Comments', with: disburser_request_detail[:comments])).to be_truthy
 
     scroll_to_bottom_of_the_page
-    click_button('Submit')
+    accept_confirm do
+      click_button('Save')
+    end
 
     all('.disburser_request')[0].find('.edit_disburser_request_link').click
     sleep(1)
@@ -1241,7 +1256,10 @@ RSpec.feature 'Disburser Requests', type: :feature do
     within(".disburser_request_detail:nth-of-type(1)") do
       click_link('Remove')
     end
-    click_button('Submit')
+    accept_confirm do
+      click_button('Save')
+    end
+
     sleep(1)
     all('.disburser_request')[0].find('.edit_disburser_request_link').click
     sleep(1)
@@ -1294,8 +1312,11 @@ RSpec.feature 'Disburser Requests', type: :feature do
    within(".disburser_request_detail:nth-of-type(1) .comments") do
      find('textarea').set(nil)
    end
+   scroll_to_bottom_of_the_page
+   accept_confirm do
+     click_button('Save')
+   end
 
-   click_button('Submit')
    sleep(1)
    expect(page).to have_css('.investigator .field_with_errors')
    expect(page).to have_css('.title .field_with_errors')
@@ -1308,7 +1329,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
    sleep(1)
    check('Feasibility?')
    scroll_to_bottom_of_the_page
-   click_button('Submit')
+   accept_confirm do
+     click_button('Save')
+   end
    sleep(1)
    expect(page).to_not have_css('.irb_number .field_with_errors')
  end
@@ -1357,7 +1380,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    find("#disburser_request_#{disburser_request.id}").click_link('Update')
 
    select('Select a data status', from: 'Data Status')
-   click_button('Submit')
+   click_button('Save')
    sleep(1)
    expect(page).to have_css('.status_update .field_with_errors')
    expect(find(".status_update .error")).to have_content("can't be blank")
@@ -1393,7 +1416,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, from: 'Data Status')
    comments = 'Help the moomins!'
    fill_in('Data Status Comments', with: comments)
-   click_button('Submit')
+   click_button('Save')
    sleep(1)
    expect(all('.disburser_request').size).to eq(0)
    select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, from: 'Data Status')
@@ -1450,7 +1473,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    find("#disburser_request_#{disburser_request.id}").click_link('Update')
    select('Select a specimen status', from: 'Specimen Status')
 
-   click_button('Submit')
+   click_button('Save')
    sleep(1)
    expect(page).to have_css('.status_update .field_with_errors')
    expect(find(".status_update .error")).to have_content("can't be blank")
@@ -1493,7 +1516,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, from: 'Specimen Status')
    comments = 'Help the moomins!'
    fill_in('Specimen Status Comments', with: comments)
-   click_button('Submit')
+   click_button('Save')
    sleep(1)
    expect(all('.disburser_request').size).to eq(0)
    select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, from: 'Specimen Status')
@@ -1563,7 +1586,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select('Select a status', from: 'Status')
    select('Select a data status', from: 'Data Status')
    select('Select a specimen status', from: 'Specimen Status')
-   click_button('Submit')
+   click_button('Save')
    sleep(1)
    expect(page).to have_css('.status_update .status .field_with_errors')
    expect(find(".status_update .status .error")).to have_content("can't be blank")
@@ -1613,7 +1636,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    specimen_status_comments = 'Help the moomins with specimens!'
    fill_in('Specimen Status Comments', with: specimen_status_comments)
 
-   click_button('Submit')
+   click_button('Save')
 
    expect(find("#disburser_request_#{disburser_request.id} .status")).to have_content(DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW)
    expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
@@ -1683,7 +1706,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select('Select a status', from: 'Status')
    select('Select a data status', from: 'Data Status')
    select('Select a specimen status', from: 'Specimen Status')
-   click_button('Submit')
+   click_button('Save')
+
    sleep(1)
    expect(page).to have_css('.status_update .status .field_with_errors')
    expect(find(".status_update .status .error")).to have_content("can't be blank")
@@ -1726,8 +1750,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, from: 'Specimen Status')
    specimen_status_comments = 'Help the moomins with specimens!'
    fill_in('Specimen Status Comments', with: specimen_status_comments)
-
-   click_button('Submit')
+   click_button('Save')
 
    expect(find("#disburser_request_#{disburser_request.id} .status")).to have_content(DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW)
    expect(find("#disburser_request_#{disburser_request.id} .data_status")).to have_content(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED)
@@ -1798,7 +1821,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
    scroll_to_bottom_of_the_page
 
-   click_button('Submit')
+   click_button('Save')
    sleep(1)
    expect(page).to have_css(".vote .field_with_errors input[name='disburser_request_vote[vote]']")
    expect(find(".vote .error")).to have_content("can't be blank")
@@ -1825,7 +1848,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    choose('Approve')
    comments = 'Help the moomins!'
    fill_in('Vote Comments', with: comments)
-   click_button('Submit')
+   click_button('Save')
    sleep(1)
    expect(all('.disburser_request').size).to eq(0)
    select('all', from: 'Vote Status')
