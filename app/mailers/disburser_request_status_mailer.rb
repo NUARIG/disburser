@@ -68,6 +68,23 @@ class DisburserRequestStatusMailer < ApplicationMailer
     end
   end
 
+  def committee_review_reminder(disburser_request, user)
+    @disburser_request = disburser_request
+    subject = prepare_subject('Committee Review for Disbursement Request Reminder')
+    to = []
+    cc = []
+
+    if disburser_request.repository.repository_administrators.any?
+      cc = disburser_request.repository.repository_administrators.map(&:email)
+    end
+
+    to << user.email
+
+    if to.any?
+      mail(to: user.email, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
+    end
+  end
+
   def status_committee_review(disburser_request)
     @disburser_request = disburser_request
     subject = prepare_subject('Committee Review for Disbursement Request')

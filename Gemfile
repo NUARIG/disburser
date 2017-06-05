@@ -26,8 +26,10 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'american_date'
 gem 'carrierwave', '>= 1.0.0.rc', '< 2.0'
+gem 'chronic'
 gem 'ckeditor'
 gem 'cocoon'
+gem 'concurrent-ruby'
 gem 'daemons'
 gem 'delayed_job_active_record'
 gem 'devise', '~> 4.2'
@@ -39,6 +41,7 @@ gem 'net-ldap'
 gem 'paper_trail'
 gem 'pundit'
 gem 'record_tag_helper'
+gem 'whenever', :require => false
 gem 'will_paginate'
 gem 'will_paginate-foundation'
 
