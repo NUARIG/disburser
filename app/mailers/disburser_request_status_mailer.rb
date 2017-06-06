@@ -74,10 +74,6 @@ class DisburserRequestStatusMailer < ApplicationMailer
     to = []
     cc = []
 
-    if disburser_request.repository.repository_administrators.any?
-      cc = disburser_request.repository.repository_administrators.map(&:email)
-    end
-
     to << user.email
 
     if to.any?
