@@ -24,11 +24,11 @@ set :output, {:error => 'log/whenever_error.log', :standard => 'log/whenever.log
 
 case environment
   when 'production'
-    every :tuesday, at: '12:20PM' do
+    every :sunday, at: '12:00PM' do
       rake "maintenance:committe_email_reminder"
     end
   when 'staging'
-    every :tuesday, at: '12:20PM' do
+    every :sunday, at: '12:00PM' do
       rake "maintenance:committe_email_reminder"
     end
 end
