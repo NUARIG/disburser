@@ -346,6 +346,17 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request_1.submitted_at).to eq(disburser_request_status_submitted.created_at)
   end
 
+  it 'knows when a request was sent for committee review at', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+    disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
+    disburser_request_1.status_user = @moomintroll_user
+    disburser_request_1.status_comments = 'moomintroll comment'
+    disburser_request_1.save!
+
+    disburser_request_status_committee_review = disburser_request_1.reload.disburser_request_statuses.detect { |disburser_request_status| disburser_request_status.status == DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW }
+    expect(disburser_request_1.committee_review_at).to eq(disburser_request_status_committee_review.created_at)
+  end
+
   it 'gets the latest status detail by status', focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, status_comments: 'moomintroll comment')
     disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW

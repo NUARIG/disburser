@@ -152,6 +152,13 @@ class DisburserRequest < ApplicationRecord
     end
   end
 
+  def committee_review_at
+    disburser_reqeust_status = disburser_request_statuses.select { |disburser_request_status| disburser_request_status.status_type == DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS &&  disburser_request_status.status == DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW }.last
+    if disburser_reqeust_status.present?
+      disburser_reqeust_status.created_at
+    end
+  end
+
   def status_detail(status)
     get_status_detail(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status)
   end

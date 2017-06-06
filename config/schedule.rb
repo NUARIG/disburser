@@ -23,9 +23,12 @@ set :environment, ENV['RAILS_ENV']
 set :output, {:error => 'log/whenever_error.log', :standard => 'log/whenever.log'}
 
 case environment
-  # when 'production'
+  when 'production'
+    every :tuesday, at: '11:30AM' do
+      rake "maintenance:committe_email_reminder"
+    end
   when 'staging'
-    every 5.minute do # 1.minute 1.day 1.week 1.month 1.year is also supported
+    every :tuesday, at: '11:30AM' do
       rake "maintenance:committe_email_reminder"
     end
 end
