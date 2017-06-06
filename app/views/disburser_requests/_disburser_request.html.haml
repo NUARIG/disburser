@@ -91,6 +91,8 @@
           = link_to 'Remove', '', 'data-turbolinks' => false,  class: "alert button tiny remove_methods_justifications_link #{@disburser_request.methods_justifications? ? '' : 'hide' }"
           - if validation_errors?(@disburser_request, :methods_justifications)
             %p.error= format_validation_errors(@disburser_request, :methods_justifications)
+          %span{ id: 'feasibilityHelpText', class: 'help-text' }
+            Please provide a Methods/Justifications document scientifcally justifying your receipt of data/specimens.
   .row
     .cohort_criteria{class: 'small-24 columns' }
       %label{for: 'disburser_request_cohort_criteria' }
