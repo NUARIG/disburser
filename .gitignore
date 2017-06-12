@@ -19,4 +19,5 @@
 
 /public/system
 /public/*
+!/public/*.pdf
 /uploads/
