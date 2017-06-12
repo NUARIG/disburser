@@ -40,7 +40,7 @@
     = f.check_box :feasibility
     %label{for: 'disburser_request_feasibility'} Feasibility?
     %span{ id: 'feasibilityHelpText', class: 'help-text' }
-      Only aggregrate numbers will be provided for feasibility requests. No approved IRB protocol is required.
+      Only aggregate numbers will be provided for feasibility requests. No approved IRB protocol is required.
 - if @disburser_request.use_custom_request_form
   .row
     .custom_request_form{class: 'small-24 columns' }
@@ -92,7 +92,7 @@
           - if validation_errors?(@disburser_request, :methods_justifications)
             %p.error= format_validation_errors(@disburser_request, :methods_justifications)
           %span{ id: 'feasibilityHelpText', class: 'help-text' }
-            Please provide a Methods/Justifications document scientifcally justifying your receipt of data/specimens.
+            Please provide a Methods/Justifications document scientifically justifying your receipt of data/specimens.
   .row
     .cohort_criteria{class: 'small-24 columns' }
       %label{for: 'disburser_request_cohort_criteria' }

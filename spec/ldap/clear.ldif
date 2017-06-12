@@ -13,6 +13,12 @@ changetype: delete
 dn: cn=mjg994,ou=people,dc=test,dc=com
 changetype: delete
 
+dn: cn=tds704,ou=people,dc=test,dc=com
+changetype: delete
+
+dn: cn=jwr057,ou=people,dc=test,dc=com
+changetype: delete
+
 dn: ou=people,dc=test,dc=com
 changetype: delete
 
