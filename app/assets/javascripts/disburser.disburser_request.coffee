@@ -6,9 +6,9 @@ class Disburser.DisburserRequest
       $('.disburser_request_form_submitter').on 'submit', (e) ->
         dsiburserRequestmode = $("input[name='disburser_request[status]']:checked").val()
         if dsiburserRequestmode == 'draft'
-          dataConfirm = "Please confirm that you would like save your request in 'Draft' status."
+          dataConfirm = "Please confirm that you would like to save your request in 'Draft' status."
         else
-          dataConfirm = "Please confirm that you would like save your request in 'Submitted' status."
+          dataConfirm = "Please confirm that you would like to save your request in 'Submitted' status."
         if confirm(dataConfirm) == true
           true
         else
