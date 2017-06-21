@@ -107,6 +107,7 @@ RSpec.feature 'Repositories', type: :feature do
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/peanuts.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/moomins.docx')
     fill_in 'Name', with: 'Moomin Repository'
+    scroll_to_bottom_of_the_page
     click_button('Next')
     expect(page).to have_css('a.irb_template_url', text: 'peanuts.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'moomins.docx')
@@ -150,7 +151,7 @@ RSpec.feature 'Repositories', type: :feature do
     within(".data_dictionary") do
       check('Remove file')
     end
-
+    scroll_to_bottom_of_the_page
     click_button('Save')
     expect(page).to_not have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
