@@ -82,4 +82,15 @@ class Repository < ApplicationRecord
     dc = repository_users.where(data_coordinator: true).map(&:user)
     dc
   end
+
+  def unpublished_content?
+    (general_content != general_content_published) || (data_content != data_content_published) || (specimen_content != specimen_content_published)
+  end
+
+  def publish_content!
+    self.general_content_published = self.general_content
+    self.data_content_published = self.data_content
+    self.specimen_content_published = self.specimen_content
+    save!
+  end
 end

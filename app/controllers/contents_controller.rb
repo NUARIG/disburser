@@ -9,6 +9,11 @@ class ContentsController < ApplicationController
   def update
     authorize @repository
     if @repository.update_attributes(repository_params)
+      if params['submit'] == 'Publish'
+        Rails.logger.info("Little my says love the booch!")
+        @repository.publish_content!
+      end
+
       flash[:success] = 'You have successfully updated repository content.'
       redirect_to edit_repository_content_url(@repository)
     else

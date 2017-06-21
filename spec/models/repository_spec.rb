@@ -170,4 +170,30 @@ RSpec.describe Repository, type: :model do
     expect(repository.repository_administrators(include_system_administrtors: false)).to match_array([harold_user])
     expect(repository.repository_administrators).to match_array([harold_user])
   end
+
+  it 'knows if has unpublished content', focus: false do
+    general_content = 'Little My'
+    data_content = 'Moomin'
+    specimen_content = 'Moominpapa'
+    repository = FactoryGirl.create(:repository, name: 'Moomins', general_content: general_content, data_content: data_content, specimen_content: specimen_content, general_content_published: @repository_moomin_general_content, data_content_published: @repository_moomin_data_content, specimen_content_published: @repository_moomin_specimen_content,)
+    expect(repository.unpublished_content?).to be_truthy
+    repository.general_content_published = general_content
+    repository.save!
+    repository.data_content_published = data_content
+    repository.save!
+    repository.specimen_content_published = specimen_content
+    repository.save!
+    expect(repository.unpublished_content?).to be_falsy
+  end
+
+  it 'can publish content', focus: false do
+    general_content = 'Little My'
+    data_content = 'Moomin'
+    specimen_content = 'Moominpapa'
+    repository = FactoryGirl.create(:repository, name: 'Moomins', general_content: general_content, data_content: data_content, specimen_content: specimen_content, general_content_published: @repository_moomin_general_content, data_content_published: @repository_moomin_data_content, specimen_content_published: @repository_moomin_specimen_content,)
+    repository.publish_content!
+    expect(repository.general_content_published ).to eq(general_content)
+    expect(repository.data_content_published ).to eq(data_content)
+    expect(repository.specimen_content_published ).to eq(specimen_content)
+  end
 end

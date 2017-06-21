@@ -163,19 +163,45 @@ RSpec.feature 'Repositories', type: :feature do
     end
 
     click_link('Content')
+
+    general_content = 'Be a a good person!'
+    data_content = 'Be a good moomin!'
+    specimen_content = 'Be a really good moomin!'
+
+    general_content_html = "<p>#{general_content}</p>\n"
+    data_content_html = "<p>#{data_content}</p>\n"
+    specimen_content_html = "<p>#{specimen_content}</p>\n"
+
     expect(page).to have_css('.menu li.repository_content.active')
-    fill_in_ckeditor 'repository_general_content', :with => 'Be a a good person!'
-    fill_in_ckeditor 'repository_data_content', :with => 'Be a good moomin!'
-    fill_in_ckeditor 'repository_specimen_content', :with => 'Be a really good moomin!'
+    fill_in_ckeditor 'repository_general_content', with: general_content
+    fill_in_ckeditor 'repository_data_content', with: data_content
+    fill_in_ckeditor 'repository_specimen_content', with: specimen_content
     scroll_to_bottom_of_the_page
     click_button('Save')
     sleep(8)
     expect(page).to have_css('.menu li.repository_content.active')
-    expect(read_ckeditor('repository_general_content')).to eq("<p>Be a a good person!</p>\n")
-    expect(read_ckeditor('repository_data_content')).to eq("<p>Be a good moomin!</p>\n")
-    expect(read_ckeditor('repository_specimen_content')).to eq("<p>Be a really good moomin!</p>\n")
+    expect(read_ckeditor('repository_general_content')).to eq(general_content_html)
+    expect(read_ckeditor('repository_data_content')).to eq(data_content_html)
+    expect(read_ckeditor('repository_specimen_content')).to eq(specimen_content_html)
+    expect(@moomin_repository.general_content_published ).to be_nil
+    expect(@moomin_repository.data_content_published ).to be_nil
+    expect(@moomin_repository.specimen_content_published ).to be_nil
+
+    scroll_to_bottom_of_the_page
+    click_button('Publish')
+    sleep(8)
+
+    @moomin_repository.reload
+
+    general_content_html = "<p>#{general_content}</p>\r\n"
+    data_content_html = "<p>#{data_content}</p>\r\n"
+    specimen_content_html = "<p>#{specimen_content}</p>\r\n"
+    expect(@moomin_repository.general_content_published ).to eq(general_content_html)
+    expect(@moomin_repository.data_content_published ).to eq(data_content_html)
+    expect(@moomin_repository.specimen_content_published ).to eq(specimen_content_html)
 
     click_link('Users')
+    sleep(5)
     expect(page).to have_css('.menu li.repository_users.active')
     moomins = [{ username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com' }, { username: 'moominmamma', first_name: 'Moominmamma', last_name: 'Moomin', email: 'moominmamma@moomin.com' }]
     moominpapa = [{ username: 'moominpapa', first_name: 'Moominpapa', last_name: 'Moomin', email: 'moominpapa@moomin.com' }]

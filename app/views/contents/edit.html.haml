@@ -21,7 +21,8 @@
         %h3
           Data Content
         = f.cktext_area :data_content
-    .navigation{class: 'small-offset-12 small-12 large-offset-18 large-6 columns' }
-      = f.submit 'Save', class: 'button'
+    .navigation{class: 'small-offset-12 small-12 large-offset-16 large-8 columns text-right' }
+      = f.submit 'Save', class: 'button', name: 'submit', value: 'Save'
+      = f.submit 'Publish', class: 'button', name: 'submit', value: 'Publish', disabled: !@repository.unpublished_content?
       = link_to 'View', repository_url(@repository), class: 'button', target: '_blank'
       = link_to 'Cancel', repositories_url, class: 'cancel-link button warning'
