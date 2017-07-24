@@ -1026,6 +1026,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     check('Feasibility?')
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
 
+    scroll_to_bottom_of_the_page
     choose('Submitted')
 
     accept_confirm do
@@ -1121,6 +1122,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
     click_link('Make a request!')
     expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
+    scroll_to_bottom_of_the_page
+
     accept_confirm do
       click_button('Save')
     end
@@ -1169,6 +1172,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
     all('.disburser_request')[0].find('.edit_disburser_request_link').click
     sleep(1)
 
+    expect(page.has_css?('.submitter', text: @moomintroll_user.full_name)).to be_truthy
+    expect(page.has_css?('.submitter_email', text: @moomintroll_user.email)).to be_truthy
     expect(page.has_field?('Investigator', with: disburser_request[:investigator])).to be_truthy
     expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
     expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
@@ -1243,6 +1248,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
     all('.disburser_request')[0].find('.edit_disburser_request_link').click
     sleep(1)
 
+    expect(page.has_css?('.submitter', text: @moomintroll_user.full_name)).to be_truthy
+    expect(page.has_css?('.submitter_email', text: @moomintroll_user.email)).to be_truthy
     expect(page.has_field?('Investigator', with: disburser_request[:investigator])).to be_truthy
     expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
     expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
@@ -1385,6 +1392,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.status_update .field_with_errors')
    expect(find(".status_update .error")).to have_content("can't be blank")
 
+   expect(page.has_css?('.submitter', text: @moomintroll_user.full_name)).to be_truthy
+   expect(page.has_css?('.submitter_email', text: @moomintroll_user.email)).to be_truthy
    expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
    expect(page).to have_css('.investigator', text: disburser_request[:investigator])
    expect(page).to have_css('.title', text: disburser_request[:title])
@@ -1478,6 +1487,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.status_update .field_with_errors')
    expect(find(".status_update .error")).to have_content("can't be blank")
 
+   expect(page.has_css?('.submitter', text: @moomintroll_user.full_name)).to be_truthy
+   expect(page.has_css?('.submitter_email', text: @moomintroll_user.email)).to be_truthy
    expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
    expect(page).to have_css('.investigator', text: disburser_request[:investigator])
    expect(page).to have_css('.title', text: disburser_request[:title])
@@ -1597,6 +1608,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.status_update .specimen_status .field_with_errors')
    expect(find(".status_update .specimen_status .error")).to have_content("can't be blank")
 
+   expect(page.has_css?('.submitter', text: @moomintroll_user.full_name)).to be_truthy
+   expect(page.has_css?('.submitter_email', text: @moomintroll_user.email)).to be_truthy
    expect(page.has_field?('Investigator', with: disburser_request[:investigator])).to be_truthy
    expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
    expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
@@ -1718,6 +1731,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.status_update .specimen_status .field_with_errors')
    expect(find(".status_update .specimen_status .error")).to have_content("can't be blank")
 
+   expect(page.has_css?('.submitter', text: @moomintroll_user.full_name)).to be_truthy
+   expect(page.has_css?('.submitter_email', text: @moomintroll_user.email)).to be_truthy
    expect(page.has_field?('Investigator', with: disburser_request[:investigator])).to be_truthy
    expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
    expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
@@ -1826,6 +1841,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css(".vote .field_with_errors input[name='disburser_request_vote[vote]']")
    expect(find(".vote .error")).to have_content("can't be blank")
 
+   expect(page.has_css?('.submitter', text: @moomintroll_user.full_name)).to be_truthy
+   expect(page.has_css?('.submitter_email', text: @moomintroll_user.email)).to be_truthy
    expect(page).to have_css('.submitter', text: @moomintroll_user.full_name)
    expect(page).to have_css('.investigator', text: disburser_request[:investigator])
    expect(page).to have_css('.title', text: disburser_request[:title])

@@ -6,6 +6,13 @@
     %div{class: 'small-12 large-19 columns' }
       = disburser_request.submitter.full_name
 .row
+  .submitter_email{class: 'small-24 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'disburser_request_submitter_email' }
+        Submitter Email
+    %div{class: 'small-12 large-19 columns' }
+      = @disburser_request.submitter.email
+.row
   .investigator{class: 'small-24 columns' }
     %div{class: 'small-12 large-5 columns' }
       %label{for: 'disburser_request_investigator' }
