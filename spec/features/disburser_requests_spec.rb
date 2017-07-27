@@ -942,6 +942,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     fill_in('IRB Number', with: disburser_request[:irb_number])
     check('Feasibility?')
     attach_file('Methods/Justifications', Rails.root + 'spec/fixtures/files/methods_justificatons.docx')
+    attach_file('Supporting Document', Rails.root + 'spec/fixtures/files/supporting_document.docx')
     fill_in('Cohort Criteria', with: disburser_request[:cohort_criteria])
     fill_in('Data for cohort', with: disburser_request[:data_for_cohort])
 
@@ -990,6 +991,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
     expect(page.has_checked_field?('Feasibility?')).to be_truthy
     expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
+    expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
     expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_truthy
     expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
 
@@ -1025,6 +1027,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     fill_in('IRB Number', with: disburser_request[:irb_number])
     check('Feasibility?')
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
+    attach_file('Supporting Document', Rails.root + 'spec/fixtures/files/supporting_document.docx')
 
     scroll_to_bottom_of_the_page
     choose('Submitted')
@@ -1046,6 +1049,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
     expect(page.has_checked_field?('Feasibility?')).to be_truthy
     expect(page).to have_css('a.custom_request_form_url', text: 'custom_request_form.docx')
+    expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
   end
 
   scenario 'Creating a disburser request for a repository without specmen types setup', js: true, focus: false  do
@@ -1092,10 +1096,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page).to have_css('.title .field_with_errors')
     expect(page).to have_css('.irb_number .field_with_errors')
     expect(page).to have_css('.methods_justifications .field_with_errors')
+    expect(page).to_not have_css('.supporting_document .field_with_errors')
     expect(page).to have_css('.cohort_criteria .field_with_errors')
     expect(page).to have_css('.data_for_cohort .field_with_errors')
 
     attach_file('Methods/Justifications', Rails.root + 'spec/fixtures/files/methods_justificatons.docx')
+    attach_file('Supporting Document', Rails.root + 'spec/fixtures/files/supporting_document.docx')
 
     scroll_to_bottom_of_the_page
     accept_confirm do
@@ -1106,6 +1112,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page).to have_css('.title .field_with_errors')
     expect(page).to have_css('.irb_number .field_with_errors')
     expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
+    expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
     expect(page).to have_css('.cohort_criteria .field_with_errors')
     expect(page).to have_css('.data_for_cohort .field_with_errors')
     expect(page).to have_css('.disburser_request_detail:nth-of-type(1) .specimen_type .field_with_errors')
@@ -1138,8 +1145,11 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page).to_not have_css('.cohort_criteria .field_with_errors')
     expect(page).to_not have_css('.data_for_cohort .field_with_errors')
     expect(page).to have_css('.custom_request_form .field_with_errors')
+    expect(page).to_not have_css('.supporting_document .field_with_errors')
 
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
+    attach_file('Supporting Document', Rails.root + 'spec/fixtures/files/supporting_document.docx')
+
     scroll_to_bottom_of_the_page
     accept_confirm do
       click_button('Save')
@@ -1152,12 +1162,13 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page).to_not have_css('.cohort_criteria .field_with_errors')
     expect(page).to_not have_css('.data_for_cohort .field_with_errors')
     expect(page).to have_css('a.custom_request_form_url', text: 'custom_request_form.docx')
+    expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
     expect(page).to_not have_css('.disburser_request_detail:nth-of-type(1) .specimen_type .field_with_errors')
     expect(page).to_not have_css('.disburser_request_detail:nth-of-type(1) .quantity .field_with_errors')
   end
 
-  scenario 'Editing a disburser request', js: true, focus: false  do
-    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true)
+  scenario 'Editing a disburser request', js: true, focus: false do
+    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, supporting_document: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/supporting_document.docx'))))
     disburser_request_detail = {}
     disburser_request_detail[:specimen_type] = @specimen_type_blood
     disburser_request_detail[:quantity] = '5'
@@ -1179,6 +1190,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
     expect(page.has_checked_field?('Feasibility?')).to be_truthy
     expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
+    expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
     expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_truthy
     expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
 
@@ -1199,11 +1211,18 @@ RSpec.feature 'Disburser Requests', type: :feature do
     fill_in('Title', with: disburser_request[:title])
     fill_in('IRB Number', with: disburser_request[:irb_number])
     uncheck('Feasibility?')
+
     within('.methods_justifications') do
       click_link('Remove')
     end
+
+    within('.supporting_document') do
+      click_link('Remove')
+    end
+
     sleep(1)
     attach_file('Methods/Justifications', Rails.root + 'spec/fixtures/files/methods_justificatons2.docx')
+    attach_file('Supporting Document', Rails.root + 'spec/fixtures/files/supporting_document2.docx')
     fill_in('Cohort Criteria', with: disburser_request[:cohort_criteria])
     fill_in('Data for cohort', with: disburser_request[:data_for_cohort])
 
@@ -1255,6 +1274,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
     expect(page.has_unchecked_field?('Feasibility?')).to be_truthy
     expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons2.docx')
+    expect(page).to have_css('a.supporting_document_url', text: 'supporting_document2.docx')
     expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_truthy
     expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
     sleep(1)
@@ -1278,7 +1298,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     sleep(1)
  end
 
- scenario 'Editing a disburser request with validation', js: true, focus: false  do
+ scenario 'Editing a disburser request with validation', js: true, focus: false do
    disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: false)
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
@@ -1329,6 +1349,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.title .field_with_errors')
    expect(page).to have_css('.irb_number .field_with_errors')
    expect(page).to have_css('.methods_justifications .field_with_errors')
+   expect(page).to_not have_css('.supporting_document .field_with_errors')
    expect(page).to have_css('.cohort_criteria .field_with_errors')
    expect(page).to have_css('.data_for_cohort .field_with_errors')
    expect(page).to have_css('.disburser_request_detail:nth-of-type(1) .specimen_type .field_with_errors')
@@ -1362,8 +1383,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    match_disburser_request_row(disburser_request, 0)
  end
 
- scenario 'Updating the status of a disburser request as a data coordinator', js: true, focus: false  do
-   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+ scenario 'Updating the status of a disburser request as a data coordinator', js: true, focus: false do
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, supporting_document: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/supporting_document.docx'))))
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
    disburser_request_detail[:quantity] = '5'
@@ -1400,6 +1421,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.irb_number', text: disburser_request[:irb_number])
    expect(page.has_checked_field?('Feasibility?', disabled: true)).to be_truthy
    expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
+   expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
    expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria], disabled: true)).to be_truthy
    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort], disabled: true)).to be_truthy
 
@@ -1456,7 +1478,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
  end
 
  scenario 'Updating the status of a disburser request as a specimen coordinator', js: true, focus: false do
-   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', feasibility: true, status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, supporting_document: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/supporting_document.docx'))))
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
    disburser_request_detail[:quantity] = '5'
@@ -1495,6 +1517,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.irb_number', text: disburser_request[:irb_number])
    expect(page.has_checked_field?('Feasibility?', disabled: true)).to be_truthy
    expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
+   expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
    expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria], disabled: true)).to be_truthy
    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort], disabled: true)).to be_truthy
 
@@ -1566,8 +1589,8 @@ RSpec.feature 'Disburser Requests', type: :feature do
    end
  end
 
- scenario 'Updating the status of a disburser request as a repository administrator', js: true, focus: false  do
-   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, feasibility: 0)
+ scenario 'Updating the status of a disburser request as a repository administrator', js: true, focus: false do
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, feasibility: 0, supporting_document: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/supporting_document.docx'))))
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
    disburser_request_detail[:quantity] = '5'
@@ -1615,6 +1638,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
    expect(page.has_checked_field?('Feasibility?')).to be_falsy
    expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
+   expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
    expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_truthy
    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_truthy
 
@@ -1692,12 +1716,21 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(find("#disburser_request_vote_#{disburser_request_vote.id} .vote")).to have_content(disburser_request_vote.vote)
      expect(find("#disburser_request_vote_#{disburser_request_vote.id} .comments")).to have_content(disburser_request_vote.comments)
    end
+
+   within('.supporting_document') do
+     click_link('Remove')
+   end
+
+   scroll_to_bottom_of_the_page
+   click_button('Save')
+   sleep(1)
+   expect(page).to_not have_css('a.supporting_document_url', text: 'supporting_document.docx')
  end
 
  scenario 'Updating the status of a disburser request as a repository administrator with a custom request form', js: true, focus: false do
    @moomin_repository.custom_request_form = Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx')))
    @moomin_repository.save
-   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, feasibility: 0, use_custom_request_form: true, custom_request_form: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx'))))
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, feasibility: 0, use_custom_request_form: true, custom_request_form: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/custom_request_form.docx'))), supporting_document: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/supporting_document.docx'))))
    expect(disburser_request.data_status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
    disburser_request_votes = []
    disburser_request_votes << FactoryGirl.create(:disburser_request_vote, disburser_request: disburser_request, committee_member: @the_groke_user, vote: DisburserRequestVote::DISBURSER_REQUEST_VOTE_TYPE_APPROVE, comments: 'The groke says sure thing!')
@@ -1737,7 +1770,9 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page.has_field?('Title', with: disburser_request[:title])).to be_truthy
    expect(page.has_field?('IRB Number', with: disburser_request[:irb_number])).to be_truthy
    expect(page.has_checked_field?('Feasibility?')).to be_falsy
+   sleep(10)
    expect(page).to have_css('a.custom_request_form_url', text: 'custom_request_form.docx')
+   expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
    expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria])).to be_falsy
    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort])).to be_falsy
    expect(page).to_not have_css('.disburser_request_details')
@@ -1808,10 +1843,19 @@ RSpec.feature 'Disburser Requests', type: :feature do
      expect(find("#disburser_request_vote_#{disburser_request_vote.id} .vote")).to have_content(disburser_request_vote.vote)
      expect(find("#disburser_request_vote_#{disburser_request_vote.id} .comments")).to have_content(disburser_request_vote.comments)
    end
+
+   within('.supporting_document') do
+     click_link('Remove')
+   end
+
+   scroll_to_bottom_of_the_page
+   click_button('Save')
+   sleep(1)
+   expect(page).to_not have_css('a.supporting_document_url', text: 'supporting_document.docx')
  end
 
  scenario 'Voting on a disburser request as a committee member', js: true, focus: false do
-   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, feasibility: 0)
+   disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'Moomin research', investigator: 'Sniff Moomin', irb_number: '123', cohort_criteria: 'Moomin cohort criteria.', data_for_cohort: 'Moomin data for cohort.', status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user, feasibility: 0, supporting_document: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/supporting_document.docx'))))
    disburser_request_detail = {}
    disburser_request_detail[:specimen_type] = @specimen_type_blood
    disburser_request_detail[:quantity] = '5'
@@ -1849,6 +1893,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
    expect(page).to have_css('.irb_number', text: disburser_request[:irb_number])
    expect(page.has_checked_field?('Feasibility?', disabled: true)).to be_falsy
    expect(page).to have_css('a.methods_justifications_url', text: 'methods_justificatons.docx')
+   expect(page).to have_css('a.supporting_document_url', text: 'supporting_document.docx')
    expect(page.has_field?('Cohort Criteria', with: disburser_request[:cohort_criteria], disabled: true)).to be_truthy
    expect(page.has_field?('Data for cohort', with: disburser_request[:data_for_cohort], disabled: true)).to be_truthy
 

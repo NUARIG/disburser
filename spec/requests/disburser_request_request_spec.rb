@@ -257,7 +257,8 @@ describe DisburserRequestsController, type: :request do
 
     it 'should allow access to admin status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
+      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, methods_justifications: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/methods_justificatons.docx'))) } }
+      puts response
       expect(response).to redirect_to(admin_disburser_requests_url)
     end
 
@@ -414,7 +415,7 @@ describe DisburserRequestsController, type: :request do
 
     it 'should allow access to admin status a disburser request', focus: false do
       disburser_request = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @paul_user)
-      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW } }
+      patch admin_status_disburser_request_url(disburser_request), params: { disburser_request: { status: DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW, methods_justifications: Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/fixtures/files/methods_justificatons.docx')))} }
       expect(response).to redirect_to(admin_disburser_requests_url)
     end
 

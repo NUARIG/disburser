@@ -75,23 +75,15 @@ class DisburserRequestsController < ApplicationController
   end
 
   def create
-    if !params[:disburser_request][:custom_request_form_cache].blank? && params[:disburser_request][:custom_request_form].blank?
-      params[:disburser_request][:custom_request_form] = params[:disburser_request][:custom_request_form_cache]
-    end
-
-    if !params[:disburser_request][:methods_justifications_cache].blank? && params[:disburser_request][:methods_justifications].blank?
-      params[:disburser_request][:methods_justifications] = params[:disburser_request][:methods_justifications_cache]
-    end
+    add_file_uload('methods_justifications')
+    add_file_uload('custom_request_form')
+    add_file_uload('supporting_document')
 
     @disburser_request = @repository.disburser_requests.build(disburser_request_params)
 
-    if params[:disburser_request][:methods_justifications_cache].blank? && params[:disburser_request][:methods_justifications].blank?
-      @disburser_request.methods_justifications = nil
-    end
-
-    if params[:disburser_request][:custom_request_form_cache].blank? && params[:disburser_request][:custom_request_form].blank?
-      @disburser_request.custom_request_form = nil
-    end
+    remove_file_uload('methods_justifications')
+    remove_file_uload('custom_request_form')
+    remove_file_uload('supporting_document')
 
     @disburser_request.submitter = current_user
     @disburser_request.status_user = current_user
@@ -109,10 +101,10 @@ class DisburserRequestsController < ApplicationController
 
   def update
     authorize @disburser_request
+    remove_file_uload('methods_justifications')
+    remove_file_uload('custom_request_form')
+    remove_file_uload('supporting_document')
 
-    if params[:disburser_request][:methods_justifications_cache].blank? && params[:disburser_request][:methods_justifications].blank?
-      @disburser_request.methods_justifications = nil
-    end
     @disburser_request.assign_attributes(disburser_request_params)
     @disburser_request.status_user = current_user
 
@@ -132,6 +124,8 @@ class DisburserRequestsController < ApplicationController
       file = @disburser_request.custom_request_form.path
     when 'methods_justifications'
       file = @disburser_request.methods_justifications.path
+    when 'supporting_document'
+      file = @disburser_request.supporting_document.path
     end
 
     return send_file file, disposition: 'attachment', x_sendfile: true unless file.blank?
@@ -184,6 +178,9 @@ class DisburserRequestsController < ApplicationController
   def admin_status
     authorize @disburser_request
     load_specimen_types_from_disburser_request
+    remove_file_uload('methods_justifications')
+    remove_file_uload('custom_request_form')
+    remove_file_uload('supporting_document')
     @disburser_request.assign_attributes(disburser_request_params)
     @disburser_request.status_user = current_user
 
@@ -191,6 +188,7 @@ class DisburserRequestsController < ApplicationController
       flash[:success] = 'You have successfully updated the status of a repository request.'
       redirect_to admin_disburser_requests_url
     else
+      puts 'love the booch'
       flash.now[:alert] = 'Failed to update the status of a repository request.'
       render action: 'edit_admin_status'
     end
@@ -219,7 +217,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def disburser_request_params
-      params.require(:disburser_request).permit(:data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form,  disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
+      params.require(:disburser_request).permit(:data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :supporting_document, :supporting_document_cache, :remove_supporting_document, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
     end
 
     def load_repository
@@ -236,5 +234,17 @@ class DisburserRequestsController < ApplicationController
 
     def sort_direction
       %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
+    end
+
+    def remove_file_uload(file)
+      if params[:disburser_request]["#{file}_cache".to_sym].blank? && params[:disburser_request][file.to_sym].blank?
+        @disburser_request[file.to_sym] = nil
+      end
+    end
+
+    def add_file_uload(file)
+      if !params[:disburser_request]["#{file}_cache".to_sym].blank? && params[:disburser_request][file.to_sym].blank?
+        params[:disburser_request][file.to_sym] = params[:disburser_request]["#{file}_cache".to_sym]
+      end
     end
 end

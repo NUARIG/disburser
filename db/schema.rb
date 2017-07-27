@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170621151838) do
+ActiveRecord::Schema.define(version: 20170727145137) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,7 @@ ActiveRecord::Schema.define(version: 20170621151838) do
     t.string   "specimen_status"
     t.boolean  "use_custom_request_form"
     t.text     "custom_request_form"
+    t.text     "supporting_document"
   end
 
   create_table "login_audits", force: :cascade do |t|

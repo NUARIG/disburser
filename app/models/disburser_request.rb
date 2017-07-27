@@ -16,6 +16,7 @@ class DisburserRequest < ApplicationRecord
 
   mount_uploader :methods_justifications, MethodsJustificationsUploader
   mount_uploader :custom_request_form, DisburserRequestCustomRequestFormUploader
+  mount_uploader :supporting_document, DisburserRequestSupportingDocumentUploader
 
   after_initialize :set_defaults
   before_save :build_disburser_request_status

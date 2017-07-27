@@ -177,6 +177,7 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in_ckeditor 'repository_data_content', with: data_content
     fill_in_ckeditor 'repository_specimen_content', with: specimen_content
     scroll_to_bottom_of_the_page
+    sleep(1)
     click_button('Save')
     sleep(8)
     expect(page).to have_css('.menu li.repository_content.active')
