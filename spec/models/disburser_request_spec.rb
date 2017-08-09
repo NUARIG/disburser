@@ -167,6 +167,15 @@ RSpec.describe DisburserRequest, type: :model do
     expect(DisburserRequest.search_across_fields(nil, { sort_column: 'investigator', sort_direction: 'desc' })).to eq([disburser_request_1, disburser_request_2])
   end
 
+  it 'can search accross fields (and sort ascending/descending by a passed in column on a child table)', focus: false do
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'a', investigator: 'b', status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+    disburser_request_2 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'b', investigator: 'a', status: DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED, status_user: @moomintroll_user)
+    disburser_request_3 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, title: 'c', investigator: 'c')
+
+    expect(DisburserRequest.search_across_fields(nil, { sort_column: 'submitted_at', sort_direction: 'asc' })).to eq([disburser_request_1, disburser_request_2, disburser_request_3])
+    expect(DisburserRequest.search_across_fields(nil, { sort_column: 'submitted_at', sort_direction: 'desc' })).to eq([disburser_request_3, disburser_request_2, disburser_request_1])
+  end
+
   it 'knows if a request is mine', focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(disburser_request_1.mine?(@moomintroll_user)).to be_truthy

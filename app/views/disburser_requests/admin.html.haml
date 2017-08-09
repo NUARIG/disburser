@@ -6,7 +6,7 @@
     %h4
       Admin
     %p
-      To learn more about how to user Diburser as a repository administrator, check out the
+      To learn more about how to user Disburser as a repository administrator, check out the
       = link_to 'user guide.', '/disburser_administrator_coordinator_user_guide.pdf', target: '_blank'
     = form_tag admin_disburser_requests_url, method: 'get', id: 'search_disburser_requests_form'  do
       .repository{ class: 'large-4 columns' }
@@ -44,6 +44,8 @@
         %tr
           %th.repository
             = sortable 'repositories.name', 'Repository'
+          %th.submitted_at
+            = sortable 'submitted_at', 'Submitted'
           %th.title
             = sortable 'title'
           %th.submitter
@@ -70,6 +72,8 @@
           = content_tag_for(:tr, disburser_request) do
             %td.repository
               = disburser_request.repository.name
+            %td.submitted_at
+              = format_date(disburser_request.submitted_at)
             %td.title
               = disburser_request.title
             %td.submitter

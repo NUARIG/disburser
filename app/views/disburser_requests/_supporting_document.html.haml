@@ -1,0 +1,23 @@
+.row
+  .supporting_document{class: 'small-24 columns' }
+    %div{class: 'small-12 large-5 columns' }
+      %label{for: 'disburser_request_supporting_document' }
+        Supporting Document
+    %div{class: 'small-12 large-19 columns' }
+      %div
+        - if disburser_request.supporting_document? && !disburser_request.new_record?
+          = link_to download_file_repository_disburser_request_url(disburser_request, file_type: 'supporting_document'), 'data-turbolinks' => false, class: 'supporting_document_url' do
+            %i
+            = disburser_request.supporting_document.file.filename
+        - if disburser_request.supporting_document? && disburser_request.new_record?
+          = link_to disburser_request.supporting_document.identifier, "#{disburser_request.supporting_document.url}",  class: 'supporting_document_url'
+        = f.file_field :supporting_document, class: "#{disburser_request.supporting_document? ? 'hide' : '' }"
+        - if disburser_request.supporting_document_cache
+          = f.hidden_field :supporting_document_cache, value: disburser_request.supporting_document_cache
+        - else
+          = f.hidden_field :supporting_document_cache, value: disburser_request.supporting_document
+        = link_to 'Remove', '', 'data-turbolinks' => false,  class: "alert button tiny remove_supporting_document_link #{disburser_request.supporting_document? ? '' : 'hide' }"
+        - if validation_errors?(disburser_request, :supporting_document)
+          %p.error= format_validation_errors(disburser_request, :supporting_document)
+        %span{ id: 'supportingDocumentHelpText', class: 'help-text' }
+          Provide a supporting document if needed.

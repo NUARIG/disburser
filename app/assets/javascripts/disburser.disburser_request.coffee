@@ -33,6 +33,31 @@ class Disburser.DisburserRequest
 
       e.preventDefault()
 
+    $('.remove_custom_request_form_link').on 'click', (e) ->
+      if $('#disburser_request_custom_request_form').hasClass('hide')
+        $('#disburser_request_custom_request_form').removeClass('hide')
+        $(this).addClass('hide')
+        $('.custom_request_form_url').addClass('hide')
+        $('#disburser_request_custom_request_form').val('')
+        $('#disburser_request_custom_request_form_cache').val('')
+      else
+        $('#disburser_request_custom_request_form').addClass('hide')
+
+      e.preventDefault()
+
+    $('.remove_supporting_document_link').on 'click', (e) ->
+      if $('#disburser_request_supporting_document').hasClass('hide')
+        $('#disburser_request_supporting_document').removeClass('hide')
+        $(this).addClass('hide')
+        $('.supporting_document_url').addClass('hide')
+        $('#disburser_request_supporting_document').val('')
+        $('#disburser_request_supporting_document_cache').val('')
+      else
+        $('#disburser_request_supporting_document').addClass('hide')
+
+      e.preventDefault()
+
+
 $(document).on 'turbolinks:load', ->
   return unless ($('.disburser_requests.new').length > 0 || $('.disburser_requests.create').length > 0 || ('.disburser_requests.edit').length > 0 || ('.disburser_requests.update').length > 0)
   ui = new Disburser.DisburserRequest

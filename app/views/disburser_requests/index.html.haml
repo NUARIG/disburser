@@ -41,6 +41,8 @@
         %tr
           %th.repository
             = sortable 'repositories.name', 'Repository'
+          %th.submitted_at
+            = sortable 'submitted_at', 'Submitted'
           %th.title
             = sortable 'title'
           %th.investigator
@@ -61,6 +63,8 @@
           = content_tag_for(:tr, disburser_request) do
             %td.repository
               = disburser_request.repository.name
+            %td.submitted_at
+              = format_date(disburser_request.submitted_at)
             %td.title
               = disburser_request.title
             %td.investigator

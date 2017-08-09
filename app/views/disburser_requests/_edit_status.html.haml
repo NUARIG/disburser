@@ -50,6 +50,7 @@
             = link_to download_file_repository_disburser_request_url(disburser_request.repository, disburser_request, file_type: 'custom_request_form'), 'data-turbolinks' => false, class: 'custom_request_form_url' do
               %i
                 Custom Request Form
+  = render '/disburser_requests/show_supporting_document', disburser_request: disburser_request
 - else
   .row
     .methods_justifications{class: 'small-24 columns' }
@@ -62,6 +63,7 @@
             = link_to download_file_repository_disburser_request_url(disburser_request.repository, disburser_request, file_type: 'methods_justifications'), 'data-turbolinks' => false, class: 'methods_justifications_url' do
               %i
               = disburser_request.methods_justifications.file.filename
+  = render '/disburser_requests/show_supporting_document', disburser_request: disburser_request
   .row
     .cohort_criteria{class: 'small-24 columns' }
       %label{for: 'cohort_criteria' }

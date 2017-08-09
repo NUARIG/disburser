@@ -1,7 +1,7 @@
 require 'rails_helper'
 RSpec.feature 'Repositories', type: :feature do
   before(:each) do
-    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', public: true, committee_email_reminder: true)
+    @moomin_repository = FactoryGirl.create(:repository, name: 'Moomins', public: true, committee_email_reminder: true, notify_repository_administrator: true)
     @peanuts_repository = FactoryGirl.create(:repository, name: 'Peanuts')
     @repository_bossy_bear = FactoryGirl.create(:repository, name: 'Bossy Bear')
     @harold = { username: 'hbaines', first_name: 'Harold', last_name: 'Baines', email: 'hbaines@whitesox.com', administator: true,  committee: false, specimen_coordinator: false, data_coordinator: false }
@@ -56,6 +56,7 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in 'Name', with: repository_rorty_institute[:name]
     check('Public?')
     check('Committee email reminder?')
+    check('Notify Repository Administrator?')
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
     attach_file('Custom Request Form', Rails.root + 'spec/fixtures/files/custom_request_form.docx')
@@ -67,6 +68,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page.has_field?('Name', with: repository_rorty_institute[:name])).to be_truthy
     expect(page.has_checked_field?('Public?')).to be_truthy
     expect(page.has_checked_field?('Committee email reminder?')).to be_truthy
+    expect(page.has_checked_field?('Notify Repository Administrator?')).to be_truthy
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
     expect(page).to have_css('a.custom_request_form_url', text: 'custom_request_form.docx')
@@ -126,6 +128,7 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in 'Name', with: repository_moomin[:name]
     uncheck('Public?')
     uncheck('Committee email reminder?')
+    uncheck('Notify Repository Administrator?')
 
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
@@ -136,6 +139,7 @@ RSpec.feature 'Repositories', type: :feature do
     expect(page.has_field?('Name', with: repository_moomin[:name])).to be_truthy
     expect(page.has_checked_field?('Public?')).to be_falsy
     expect(page.has_checked_field?('Committee email reminder?')).to be_falsy
+    expect(page.has_checked_field?('Notify Repository Administrator? ')).to be_falsy
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
     expect(page).to have_css('a.data_dictionary_url', text: 'peanuts.docx')
 
@@ -163,6 +167,7 @@ RSpec.feature 'Repositories', type: :feature do
     end
 
     click_link('Content')
+    sleep(1)
 
     general_content = 'Be a a good person!'
     data_content = 'Be a good moomin!'
@@ -177,6 +182,7 @@ RSpec.feature 'Repositories', type: :feature do
     fill_in_ckeditor 'repository_data_content', with: data_content
     fill_in_ckeditor 'repository_specimen_content', with: specimen_content
     scroll_to_bottom_of_the_page
+    sleep(1)
     click_button('Save')
     sleep(8)
     expect(page).to have_css('.menu li.repository_content.active')
@@ -300,6 +306,7 @@ RSpec.feature 'Repositories', type: :feature do
 
     attach_file('IRB Template', Rails.root + 'spec/fixtures/files/moomins.docx')
     attach_file('Data Dictionary', Rails.root + 'spec/fixtures/files/peanuts.docx')
+    scroll_to_bottom_of_the_page
     click_button('Save')
 
     expect(page).to have_css('a.irb_template_url', text: 'moomins.docx')
