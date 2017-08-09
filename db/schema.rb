@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727145137) do
+ActiveRecord::Schema.define(version: 20170809172613) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,20 +86,21 @@ ActiveRecord::Schema.define(version: 20170727145137) do
   end
 
   create_table "repositories", force: :cascade do |t|
-    t.string   "name",                       null: false
+    t.string   "name",                            null: false
     t.string   "irb_template"
     t.string   "data_dictionary"
     t.text     "general_content"
     t.text     "data_content"
     t.text     "specimen_content"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.boolean  "public"
     t.text     "custom_request_form"
     t.boolean  "committee_email_reminder"
     t.text     "general_content_published"
     t.text     "data_content_published"
     t.text     "specimen_content_published"
+    t.boolean  "notify_repository_administrator"
   end
 
   create_table "repository_users", force: :cascade do |t|

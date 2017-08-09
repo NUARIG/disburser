@@ -27,6 +27,15 @@
       %span{ class: 'help-text' }
         (Checking this enables a weekly email reminder to committee members to vote on outstanding requests older than 7 days old.)
 .row
+  .notify_repository_administrator
+    %div{class: 'small-14 large-4 columns' }
+      %label{for: 'repository_notify_repository_administrator' }
+        Notify Repository Administrator?
+    %div{class: 'small-10 large-20 columns' }
+      = f.check_box :notify_repository_administrator
+      %span{ class: 'help-text' }
+        (Checking this enables repository administrators to be carbon copied on all email notitications)
+.row
   .irb_template
     %div{class: 'small-14 large-4 columns' }
       %label{for: 'repository_irb_template' }

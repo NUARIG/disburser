@@ -8,10 +8,6 @@ class DisburserRequestStatusMailer < ApplicationMailer
     cc = []
     to << disburser_request.submitter.email
 
-    if disburser_request.repository.repository_administrators.any?
-      cc = disburser_request.repository.repository_administrators.map(&:email)
-    end
-
     mail(to: to, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
   end
 
@@ -23,10 +19,6 @@ class DisburserRequestStatusMailer < ApplicationMailer
 
     if disburser_request.repository.data_coordinators.any?
       to.concat(disburser_request.repository.data_coordinators.map(&:email))
-    end
-
-    if disburser_request.repository.repository_administrators.any?
-      cc = disburser_request.repository.repository_administrators.map(&:email)
     end
 
     if to.any?
@@ -42,10 +34,6 @@ class DisburserRequestStatusMailer < ApplicationMailer
 
     if disburser_request.specimens? && disburser_request.repository.specimen_coordinators.any?
       to.concat(disburser_request.repository.specimen_coordinators.map(&:email))
-    end
-
-    if disburser_request.repository.repository_administrators.any?
-      cc = disburser_request.repository.repository_administrators.map(&:email)
     end
 
     if to.any?
@@ -91,7 +79,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
       to = disburser_request.repository.committee_members.map(&:email)
     end
 
-    if disburser_request.repository.repository_administrators.any?
+    if disburser_request.repository.notify_repository_administrator && disburser_request.repository.repository_administrators.any?
       cc = disburser_request.repository.repository_administrators.map(&:email)
     end
 
@@ -107,7 +95,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     cc = []
     to << disburser_request.submitter.email
 
-    if disburser_request.repository.repository_administrators.any?
+    if disburser_request.repository.notify_repository_administrator && disburser_request.repository.repository_administrators.any?
       cc = disburser_request.repository.repository_administrators.map(&:email)
     end
 
@@ -153,7 +141,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     cc = []
     to << disburser_request.submitter.email
 
-    if disburser_request.repository.repository_administrators.any?
+    if disburser_request.repository.notify_repository_administrator && disburser_request.repository.repository_administrators.any?
       cc = disburser_request.repository.repository_administrators.map(&:email)
     end
 
@@ -167,7 +155,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     cc = []
     to << disburser_request.submitter.email
 
-    if disburser_request.repository.repository_administrators.any?
+    if disburser_request.repository.notify_repository_administrator && disburser_request.repository.repository_administrators.any?
       cc = disburser_request.repository.repository_administrators.map(&:email)
     end
 
@@ -185,7 +173,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
         to.concat(disburser_request.repository.specimen_coordinators.map(&:email))
       end
 
-      if disburser_request.repository.repository_administrators.any?
+      if disburser_request.repository.notify_repository_administrator && disburser_request.repository.repository_administrators.any?
         cc = disburser_request.repository.repository_administrators.map(&:email)
       end
 
@@ -217,7 +205,7 @@ class DisburserRequestStatusMailer < ApplicationMailer
     cc = []
     to << disburser_request.submitter.email
 
-    if disburser_request.repository.repository_administrators.any?
+    if disburser_request.repository.notify_repository_administrator && disburser_request.repository.repository_administrators.any?
       cc = disburser_request.repository.repository_administrators.map(&:email)
     end
 

@@ -70,7 +70,7 @@ class RepositoriesController < ApplicationController
 
   private
     def repository_params
-      params.require(:repository).permit(:name, :public, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :irb_template, :irb_template_cache, :remove_irb_template, :data_dictionary, :data_dictionary_cache, :remove_data_dictionary, :committee_email_reminder, specimen_types_attributes: [:id, :name, :_destroy])
+      params.require(:repository).permit(:name, :public, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :irb_template, :irb_template_cache, :remove_irb_template, :data_dictionary, :data_dictionary_cache, :remove_data_dictionary, :committee_email_reminder, :notify_repository_administrator,  specimen_types_attributes: [:id, :name, :_destroy])
     end
 
     def load_repository
