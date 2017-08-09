@@ -173,10 +173,6 @@ class DisburserRequestStatusMailer < ApplicationMailer
         to.concat(disburser_request.repository.specimen_coordinators.map(&:email))
       end
 
-      if disburser_request.repository.notify_repository_administrator && disburser_request.repository.repository_administrators.any?
-        cc = disburser_request.repository.repository_administrators.map(&:email)
-      end
-
       if to.any?
         mail(to: to, cc: cc, from: Rails.configuration.custom.app_config['support']['sender_address'], subject: subject)
       end
