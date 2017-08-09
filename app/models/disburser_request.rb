@@ -57,6 +57,7 @@ class DisburserRequest < ApplicationRecord
     end
     options = { sort_column: 'title', sort_direction: 'asc' }.merge(options)
     s = DisburserRequest
+    s = s.select("(select max(created_at) FROM disburser_request_statuses WHERE disburser_requests.id = disburser_request_statuses.disburser_request_id AND disburser_request_statuses.status_type = 'status' AND disburser_request_statuses.status = 'submitted') AS submitted_at, disburser_requests.*")
     s = s.joins(:submitter)
     s = s.joins(:repository)
     if search_token

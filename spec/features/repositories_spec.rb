@@ -163,6 +163,7 @@ RSpec.feature 'Repositories', type: :feature do
     end
 
     click_link('Content')
+    sleep(1)
 
     general_content = 'Be a a good person!'
     data_content = 'Be a good moomin!'

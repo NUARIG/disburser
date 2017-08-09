@@ -41,4 +41,8 @@ module ApplicationHelper
   def user_type?(resource, user_class)
     resource.class == user_class
   end
+
+  def format_date(date)
+    date.present? ? date.to_s(:date) : nil
+  end
 end

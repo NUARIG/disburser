@@ -119,6 +119,22 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_1, 1)
       match_disburser_request_row(@disburser_request_2, 2)
 
+      @disburser_request_2.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_2.status_user = @moomintroll_user
+      @disburser_request_2.save!
+
+      click_link('Submitted')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_1, 2)
+
+      click_link('Submitted')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_1, 0)
+      match_disburser_request_row(@disburser_request_2, 1)
+      match_disburser_request_row(@disburser_request_4, 2)
+
       within('.disburser_requests_header') do
         select(@moomin_repository.name, from: 'Repository')
       end
@@ -138,9 +154,10 @@ RSpec.feature 'Disburser Requests', type: :feature do
 
       click_button('Search')
       sleep(1)
-      expect(all('.disburser_request').size).to eq(1)
+      expect(all('.disburser_request').size).to eq(2)
 
-      match_disburser_request_row(@disburser_request_4, 0)
+      match_disburser_request_row(@disburser_request_2, 0)
+      match_disburser_request_row(@disburser_request_4, 1)
 
       @disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
       @disburser_request_1.status_user = @moomintroll_user
@@ -307,6 +324,36 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_administrator_disburser_request_row(@disburser_request_2, 2, 1, 0)
       match_administrator_disburser_request_row(@disburser_request_3, 3, 0, 1)
 
+      submitted_status_detail = @disburser_request_1.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 4
+      submitted_status_detail.save!
+      @disburser_request_1.reload
+
+      submitted_status_detail = @disburser_request_2.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 3
+      submitted_status_detail.save!
+      @disburser_request_2.reload
+
+      submitted_status_detail = @disburser_request_3.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 2
+      submitted_status_detail.save!
+      @disburser_request_3.reload
+
+      click_link('Submitted')
+      sleep(1)
+
+      match_administrator_disburser_request_row(@disburser_request_1, 0, 0, 0)
+      match_administrator_disburser_request_row(@disburser_request_2, 1, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_3, 2, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_4, 3, 1, 1)
+
+      click_link('Submitted')
+      sleep(1)
+      match_administrator_disburser_request_row(@disburser_request_4, 0, 1, 1)
+      match_administrator_disburser_request_row(@disburser_request_3, 1, 0, 1)
+      match_administrator_disburser_request_row(@disburser_request_2, 2, 1, 0)
+      match_administrator_disburser_request_row(@disburser_request_1, 3, 0, 0)
+
       @disburser_request_2.feasibility = 1
       @disburser_request_2.save!
       @disburser_request_4.feasibility = 1
@@ -432,9 +479,21 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_3.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_3.save!
 
+      @disburser_request_3.reload
+      submitted_status_detail = @disburser_request_3.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 2
+      submitted_status_detail.save!
+      @disburser_request_3.reload
+
       @disburser_request_5.status_user = @paul_user
       @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_5.save!
+
+      @disburser_request_5.reload
+      submitted_status_detail = @disburser_request_5.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 1
+      submitted_status_detail.save!
+      @disburser_request_5.reload
 
       @disburser_request_5.status_user = @paul_user
       @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_APPROVED
@@ -497,6 +556,17 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
       match_disburser_request_row(@disburser_request_3, 0)
       match_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Submitted')
+      sleep(1)
+
+      match_disburser_request_row(@disburser_request_3, 0)
+      match_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Submitted')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_5, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
 
       @disburser_request_5.status_user = harold_user
       @disburser_request_5.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED
@@ -598,6 +668,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_3.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_3.save!
 
+      @disburser_request_3.reload
+      submitted_status_detail = @disburser_request_3.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 2
+      submitted_status_detail.save!
+      @disburser_request_3.reload
+
       @disburser_request_3.status_user = harold_user
       @disburser_request_3.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
       @disburser_request_3.save!
@@ -605,6 +681,12 @@ RSpec.feature 'Disburser Requests', type: :feature do
       @disburser_request_5.status_user = @paul_user
       @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_5.save!
+
+      @disburser_request_5.reload
+      submitted_status_detail = @disburser_request_5.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 1
+      submitted_status_detail.save!
+      @disburser_request_5.reload
 
       @disburser_request_5.status_user = harold_user
       @disburser_request_5.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
@@ -653,6 +735,16 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_disburser_request_row(@disburser_request_5, 1)
 
       click_link('Feasibility')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_5, 0)
+      match_disburser_request_row(@disburser_request_3, 1)
+
+      click_link('Submitted')
+      sleep(1)
+      match_disburser_request_row(@disburser_request_3, 0)
+      match_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Submitted')
       sleep(1)
       match_disburser_request_row(@disburser_request_5, 0)
       match_disburser_request_row(@disburser_request_3, 1)
@@ -784,24 +876,53 @@ RSpec.feature 'Disburser Requests', type: :feature do
       sleep(1)
 
       @disburser_request_1.status_user = @moomintroll_user
+      @disburser_request_1.status = DisburserRequest::DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_1.save!
+
+      @disburser_request_1.status_user = @moomintroll_user
       @disburser_request_1.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
       @disburser_request_1.save!
+
+
+      @disburser_request_2.status_user = @moomintroll_user
+      @disburser_request_2.status = DisburserRequest::DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_2.save!
 
       @disburser_request_2.status_user = @moomintroll_user
       @disburser_request_2.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
       @disburser_request_2.save!
 
       @disburser_request_3.status_user = @paul_user
+      @disburser_request_3.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_3.save!
+
+      @disburser_request_3.status_user = @paul_user
       @disburser_request_3.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
       @disburser_request_3.save!
+
+      @disburser_request_3.reload
+      submitted_status_detail = @disburser_request_3.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 2
+      submitted_status_detail.save!
+      @disburser_request_3.reload
 
       @disburser_request_4.status_user = @paul_user
       @disburser_request_4.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
       @disburser_request_4.save!
 
       @disburser_request_5.status_user = @paul_user
+      @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+      @disburser_request_5.save!
+
+      @disburser_request_5.status_user = @paul_user
       @disburser_request_5.status = DisburserRequest::DISBURSER_REQUEST_STATUS_COMMITTEE_REVIEW
       @disburser_request_5.save!
+
+      @disburser_request_5.reload
+      submitted_status_detail = @disburser_request_5.status_detail(DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED)
+      submitted_status_detail.created_at = Date.today - 1
+      submitted_status_detail.save!
+      @disburser_request_5.reload
 
       visit committee_disburser_requests_path
       sleep(1)
@@ -846,6 +967,17 @@ RSpec.feature 'Disburser Requests', type: :feature do
       match_committee_disburser_request_row(@disburser_request_5, 1)
 
       click_link('IRB Number')
+      sleep(1)
+      match_committee_disburser_request_row(@disburser_request_5, 0)
+      match_committee_disburser_request_row(@disburser_request_3, 1)
+
+      click_link('Submitted')
+      sleep(1)
+
+      match_committee_disburser_request_row(@disburser_request_3, 0)
+      match_committee_disburser_request_row(@disburser_request_5, 1)
+
+      click_link('Submitted')
       sleep(1)
       match_committee_disburser_request_row(@disburser_request_5, 0)
       match_committee_disburser_request_row(@disburser_request_3, 1)
@@ -980,6 +1112,7 @@ RSpec.feature 'Disburser Requests', type: :feature do
     end
     sleep(1)
     disburser_request[:status] = DisburserRequest::DISBURSER_REQUEST_STATUS_SUBMITTED
+    disburser_request[:submitted_at] = format_date(Date.today)
     match_disburser_request_row(disburser_request, 0)
     within('.disburser_request:nth-of-type(1)') do
       click_link('Edit')
@@ -1935,6 +2068,11 @@ RSpec.feature 'Disburser Requests', type: :feature do
 end
 
 def match_disburser_request_row(disburser_request, index)
+  if disburser_request.is_a?(Hash)
+    expect(all('.disburser_request')[index].find('.submitted_at')).to have_content(disburser_request[:submitted_at])
+  else
+    expect(all('.disburser_request')[index].find('.submitted_at')).to have_content(format_date(disburser_request.submitted_at))
+  end
   expect(all('.disburser_request')[index].find('.title')).to have_content(disburser_request[:title])
   expect(all('.disburser_request')[index].find('.investigator')).to have_content(disburser_request[:investigator])
   expect(all('.disburser_request')[index].find('.irb_number')).to have_content(disburser_request[:irb_number])
@@ -1945,6 +2083,7 @@ def match_disburser_request_row(disburser_request, index)
 end
 
 def match_committee_disburser_request_row(disburser_request, index)
+  expect(all('.disburser_request')[index].find('.submitted_at')).to have_content(format_date(disburser_request.submitted_at))
   expect(all('.disburser_request')[index].find('.title')).to have_content(disburser_request[:title])
   expect(all('.disburser_request')[index].find('.investigator')).to have_content(disburser_request[:investigator])
   expect(all('.disburser_request')[index].find('.irb_number')).to have_content(disburser_request[:irb_number])
@@ -1952,6 +2091,7 @@ def match_committee_disburser_request_row(disburser_request, index)
 end
 
 def match_administrator_disburser_request_row(disburser_request, index, approve_count, deny_count)
+  expect(all('.disburser_request')[index].find('.submitted_at')).to have_content(format_date(disburser_request.submitted_at))
   expect(all('.disburser_request')[index].find('.title')).to have_content(disburser_request[:title])
   expect(all('.disburser_request')[index].find('.investigator')).to have_content(disburser_request[:investigator])
   expect(all('.disburser_request')[index].find('.irb_number')).to have_content(disburser_request[:irb_number])
@@ -1965,4 +2105,8 @@ end
 
 def not_match_disburser_request(disburser_request)
   expect(page).to_not have_content(disburser_request[:title])
+end
+
+def format_date(date)
+  date.present? ? date.to_s(:date) : nil
 end
