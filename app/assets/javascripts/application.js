@@ -21,3 +21,6 @@
 //= require disburser.repository_user
 //= require disburser.disburser_request
 //= require disburser.disburser_requests
+//= require disburser.disburser_request_edit_data_status
+//= require disburser.disburser_request_edit_specimen_status
+//= require disburser.disburser_request_edit_admin_status

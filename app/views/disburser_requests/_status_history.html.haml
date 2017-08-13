@@ -24,7 +24,7 @@
               %td.status
                 = disburser_request_status.status
               %td.date
-                = disburser_request_status.created_at.to_s(:date)
+                = disburser_request_status.status_at.to_s(:date)
               %td.user
                 = disburser_request_status.user.full_name
               %td.comments
@@ -55,7 +55,7 @@
               %td.status
                 = disburser_request_status.status
               %td.date
-                = disburser_request_status.created_at.to_s(:date)
+                = disburser_request_status.status_at.to_s(:date)
               %td.user
                 = disburser_request_status.user.full_name
               %td.comments
@@ -86,7 +86,7 @@
               %td.status
                 = disburser_request_status.status
               %td.date
-                = disburser_request_status.created_at.to_s(:date)
+                = disburser_request_status.status_at.to_s(:date)
               %td.user
                 = disburser_request_status.user.full_name
               %td.comments

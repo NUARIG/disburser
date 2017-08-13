@@ -38,3 +38,8 @@ Disburser.Url = Url
 
 $(document).on 'turbolinks:load', ->
   Disburser.init()
+  $(".datepicker").datepicker
+    altFormat: "mm/dd/yy"
+    dateFormat: "mm/dd/yy"
+    # dateFormat: "yy-mm-dd"
+  $('.datepicker').datepicker()

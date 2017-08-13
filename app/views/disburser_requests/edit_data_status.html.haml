@@ -13,14 +13,25 @@
             .status{ class: 'large-24 columns' }
               %label{for: 'disburser_request_data_status' }
                 %b
-                  Data Status
-              = f.select :data_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES, selected: f.object.data_status), { include_blank: 'Select a data status' }
-              - if validation_errors?(@disburser_request, :data_status)
-                %p.error=format_validation_errors(@disburser_request, :data_status)
+                  Update Data Status
+              = f.hidden_field :data_status, id: :data_status_original
+              - DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES.each do |disburser_request_data_status|
                 %br
+                = f.radio_button :data_status, disburser_request_data_status, checked: checked?(@disburser_request.data_status, disburser_request_data_status, false)
+                = f.label :data_status, disburser_request_data_status, value: disburser_request_data_status
+                - if @disburser_request.data_status == disburser_request_data_status
+                  = '(current status)'
+            .data_status_status_at
+              %label{for: 'disburser_request_data_status_status_at' }
+                Date
+              = f.text_field :data_status_status_at, disabled: true, class: 'datepicker'
+              - if validation_errors?(@disburser_request, :data_status_status_at)
+                %p.error=format_validation_errors(@disburser_request, :data_status_status_at)
+                %br
+            .data_status_comments
               %label{for: 'disburser_request_data_status_comments' }
                 Data Status Comments
-              = f.text_area :data_status_comments, rows: 3
+              = f.text_area :data_status_comments, rows: 3, disabled: true
           .row
             .navigation{ class: 'large-offset-8 large-16 columns' }
               = f.submit 'Save', class: 'button'

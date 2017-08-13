@@ -20,7 +20,7 @@ class DisburserRequest < ApplicationRecord
 
   after_initialize :set_defaults
   before_save :build_disburser_request_status
-  attr_accessor :status_user, :status_comments, :data_status_comments, :specimen_status_comments
+  attr_accessor :status_user, :status_comments, :data_status_comments, :specimen_status_comments, :status_at, :data_status_status_at, :specimen_status_status_at
 
   DISBURSER_REQUEST_STAUTS_DRAFT = 'draft'
   DISBURSER_REQUEST_STATUS_SUBMITTED = 'submitted'
@@ -175,15 +175,24 @@ class DisburserRequest < ApplicationRecord
 
   def build_disburser_request_status
     if !self.draft? && self.status_changed?
-      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status: self.status, user_id: self.status_user.id, comments: self.status_comments)
+      if self.status_at.blank?
+        self.status_at = DateTime.now
+      end
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status: self.status, user_id: self.status_user.id, comments: self.status_comments, status_at: self.status_at)
     end
 
     if !self.data_status_not_started? && self.data_status_changed?
-      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS, status: self.data_status, user_id: self.status_user.id, comments: self.data_status_comments)
+      if self.data_status_status_at.blank?
+        self.data_status_status_at = DateTime.now
+      end
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS, status: self.data_status, user_id: self.status_user.id, comments: self.data_status_comments, status_at: self.data_status_status_at)
     end
 
     if !self.specimen_status_not_started? && self.specimen_status_changed?
-      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS, status: self.specimen_status, user_id: self.status_user.id, comments: self.specimen_status_comments)
+      if self.specimen_status_status_at.blank?
+        self.specimen_status_status_at = DateTime.now
+      end
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS, status: self.specimen_status, user_id: self.status_user.id, comments: self.specimen_status_comments, status_at: self.specimen_status_status_at)
     end
   end
 

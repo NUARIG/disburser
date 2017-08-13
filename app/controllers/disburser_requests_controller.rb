@@ -134,6 +134,9 @@ class DisburserRequestsController < ApplicationController
   def edit_admin_status
     authorize @disburser_request
     load_specimen_types_from_disburser_request
+    @disburser_request.status_at = DateTime.now.to_s(:date)
+    @disburser_request.data_status_status_at = DateTime.now.to_s(:date)
+    @disburser_request.specimen_status_status_at = DateTime.now.to_s(:date)
   end
 
   def edit_committee_review
@@ -143,10 +146,12 @@ class DisburserRequestsController < ApplicationController
 
   def edit_data_status
     authorize @disburser_request
+    @disburser_request.data_status_status_at = DateTime.now.to_s(:date)
   end
 
   def edit_specimen_status
     authorize @disburser_request
+    @disburser_request.specimen_status_status_at = DateTime.now.to_s(:date)
   end
 
   def data_status
@@ -217,7 +222,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def disburser_request_params
-      params.require(:disburser_request).permit(:data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :supporting_document, :supporting_document_cache, :remove_supporting_document, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
+      params.require(:disburser_request).permit(:status_at, :data_status_status_at, :specimen_status_status_at, :data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :supporting_document, :supporting_document_cache, :remove_supporting_document, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
     end
 
     def load_repository

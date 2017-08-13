@@ -11,11 +11,13 @@
  * It is generally better to create a new file per style scope.
  *
  *= require_self
+ *= require jquery-ui
  */
 
 @import "foundation_and_overrides";
 @import "foundation-icons";
 @import "jquery-ui";
+@import "jquery.ui.override";
 @import "disburser";
 @import "select2";
 @import "devise";
