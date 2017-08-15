@@ -16,7 +16,7 @@
           %a{:href => "#vote-history"} Vote History
       .tabs-content{"data-tabs-content" => "administration-info", class: 'large-24 columns'}
         #status-history.tabs-panel.is-active
-          = render 'status_history', disburser_request: @disburser_request, width: 24
+          = render 'status_history', disburser_request: @disburser_request, width: 24, f: f, allow_edit: true
         #vote-history.tabs-panel
           = render 'vote_history', disburser_request: @disburser_request, width: 24
     .row

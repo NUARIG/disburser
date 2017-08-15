@@ -3,9 +3,14 @@ class DisburserRequest < ApplicationRecord
   belongs_to :repository
   belongs_to :submitter, class_name: 'User', foreign_key: :submitter_id
   has_many :disburser_request_details
-  has_many :disburser_request_statuses
+  has_many :disburser_request_statuses, -> { order(status_at: :asc) } do
+    def by_status_type(status_type)
+      self.select { |disburser_request_status| disburser_request_status.status_type == status_type }
+    end
+  end
   has_many :disburser_request_votes
   accepts_nested_attributes_for :disburser_request_details, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :disburser_request_statuses, allow_destroy: false
   validates_presence_of :investigator, :title, :specimen_status, :data_status, :status
   validates_presence_of :methods_justifications, if: Proc.new { |disburser_reqeust| !disburser_reqeust.use_custom_request_form }
   validates_presence_of :cohort_criteria, if: Proc.new { |disburser_reqeust| !disburser_reqeust.use_custom_request_form }
@@ -13,6 +18,7 @@ class DisburserRequest < ApplicationRecord
   validates_presence_of :irb_number, if: Proc.new { |disburser_reqeust| !disburser_reqeust.feasibility }
   validates_presence_of :custom_request_form, if: Proc.new { |disburser_reqeust| disburser_reqeust.use_custom_request_form }
   validates_associated :disburser_request_details
+  validates_associated :disburser_request_statuses
 
   mount_uploader :methods_justifications, MethodsJustificationsUploader
   mount_uploader :custom_request_form, DisburserRequestCustomRequestFormUploader

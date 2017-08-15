@@ -2,6 +2,7 @@ class DisburserRequestStatus < ApplicationRecord
   has_paper_trail
   belongs_to :disburser_request, required: false
   belongs_to :user
+  validates_presence_of :status_at
 
   after_create :send_email_notificaitons
 
@@ -9,10 +10,6 @@ class DisburserRequestStatus < ApplicationRecord
   DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS = 'data_status'
   DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS = 'specimen_status'
   DISBURSER_REQUEST_STATUS_TYPES = [DISBURSER_REQUEST_STATUS_TYPE_STATUS, DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS, DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS]
-
-  scope :by_status_type, (lambda do |status_type|
-    where(status_type: status_type)
-  end)
 
   def send_email_notificaitons
     if !Rails.env.test?

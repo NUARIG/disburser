@@ -13,7 +13,7 @@
         Indicates required field
       = render 'disburser_request', repository: @repository, f: f
       .row
-        = render 'status_history', disburser_request: @disburser_request, width: 18
+        = render 'status_history', disburser_request: @disburser_request, width: 18, f: f, allow_edit: false
         .status_update{ class: 'large-6 columns' }
           - if @disburser_request.new_record? || @disburser_request.draft?
             %b

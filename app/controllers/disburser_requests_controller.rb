@@ -92,8 +92,6 @@ class DisburserRequestsController < ApplicationController
       flash[:success] = 'You have successfully created a repository request.'
       redirect_to disburser_requests_url
     else
-      Rails.logger.info("here we go")
-      Rails.logger.info("#{@disburser_request.errors.full_messages}")
       flash.now[:alert] = 'Failed to create repository request.'
       render action: 'new'
     end
@@ -162,6 +160,7 @@ class DisburserRequestsController < ApplicationController
       flash[:success] = 'You have successfully updated the status of a repository request.'
       redirect_to data_coordinator_disburser_requests_url
     else
+      @disburser_request.data_status_status_at = DateTime.now.to_s(:date)
       flash.now[:alert] = 'Failed to update the status of a repository request.'
       render action: 'edit_data_status'
     end
@@ -175,6 +174,7 @@ class DisburserRequestsController < ApplicationController
       flash[:success] = 'You have successfully updated the status of a repository request.'
       redirect_to specimen_coordinator_disburser_requests_url
     else
+      @disburser_request.specimen_status_status_at = DateTime.now.to_s(:date)
       flash.now[:alert] = 'Failed to update the status of a repository request.'
       render action: 'edit_specimen_status'
     end
@@ -193,7 +193,9 @@ class DisburserRequestsController < ApplicationController
       flash[:success] = 'You have successfully updated the status of a repository request.'
       redirect_to admin_disburser_requests_url
     else
-      puts 'love the booch'
+      @disburser_request.status_at = DateTime.now.to_s(:date)
+      @disburser_request.data_status_status_at = DateTime.now.to_s(:date)
+      @disburser_request.specimen_status_status_at = DateTime.now.to_s(:date)
       flash.now[:alert] = 'Failed to update the status of a repository request.'
       render action: 'edit_admin_status'
     end
@@ -222,7 +224,7 @@ class DisburserRequestsController < ApplicationController
     end
 
     def disburser_request_params
-      params.require(:disburser_request).permit(:status_at, :data_status_status_at, :specimen_status_status_at, :data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :supporting_document, :supporting_document_cache, :remove_supporting_document, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy])
+      params.require(:disburser_request).permit(:status_at, :data_status_status_at, :specimen_status_status_at, :data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :supporting_document, :supporting_document_cache, :remove_supporting_document, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy], disburser_request_statuses_attributes: [:disburser_request_id, :id, :status_at])
     end
 
     def load_repository
