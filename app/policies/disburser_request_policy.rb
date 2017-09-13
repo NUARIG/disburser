@@ -31,6 +31,19 @@ class DisburserRequestPolicy < ApplicationPolicy
     user.system_administrator || record.repository.repository_administrator?(user) || record.mine?(user) || record.repository.repository_coordinator?(user) || record.repository.committee_member?(user)
   end
 
+  def edit_status_history?
+    user.system_administrator || record.repository.repository_administrator?(user)
+  end
+
+  def edit_specimen_status_history?
+    record.repository.specimen_coordinator?(user) ||user.system_administrator || record.repository.repository_administrator?(user)
+  end
+
+  def edit_data_status_history?
+    record.repository.data_coordinator?(user) ||user.system_administrator || record.repository.repository_administrator?(user)
+  end
+
+
   def edit_admin_status?
     user.system_administrator || record.repository.repository_administrator?(user)
   end

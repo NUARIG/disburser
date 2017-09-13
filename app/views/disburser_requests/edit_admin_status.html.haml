@@ -16,46 +16,79 @@
           %a{:href => "#vote-history"} Vote History
       .tabs-content{"data-tabs-content" => "administration-info", class: 'large-24 columns'}
         #status-history.tabs-panel.is-active
-          = render 'status_history', disburser_request: @disburser_request, width: 24
+          = render 'status_history', disburser_request: @disburser_request, width: 24, f: f, allow_edit: true
         #vote-history.tabs-panel
           = render 'vote_history', disburser_request: @disburser_request, width: 24
     .row
       .status_update{ class: 'large-24 columns' }
-        .status{ class: 'large-8 columns' }
-          %label{for: 'disburser_request_status' }
-            %b
-              Status
-          = f.select :status, options_for_select(DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT, selected: f.object.status), { include_blank: 'Select a status' }
-          - if validation_errors?(@disburser_request, :status)
-            %p.error=format_validation_errors(@disburser_request, :status)
-            %br
-          %label{for: 'disburser_request_status_comments' }
-            Status Comments
-          = f.text_area :status_comments, rows: 3
-
         .data_status{ class: 'large-8 columns' }
-          %label{for: 'disburser_request_data_status' }
-            %b
-              Data Status
-          = f.select :data_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES, selected: f.object.data_status), { include_blank: 'Select a data status' }
-          - if validation_errors?(@disburser_request, :status)
-            %p.error=format_validation_errors(@disburser_request, :status)
-            %br
-          %label{for: 'disburser_request_data_status_comments' }
-            Data Status Comments
-          = f.text_area :data_status_comments, rows: 3
+          .disburser_request_data_status
+            %label{for: 'disburser_request_data_status' }
+              %b
+                Update Data Status
+            = f.hidden_field :data_status, id: :data_status_original
+            - DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES.each do |disburser_request_data_status|
+              %br
+              = f.radio_button :data_status, disburser_request_data_status, checked: checked?(@disburser_request.data_status, disburser_request_data_status, false)
+              = f.label :data_status, disburser_request_data_status, value: disburser_request_data_status
+              - if @disburser_request.data_status == disburser_request_data_status
+                = '(current status)'
+          .disburser_request_data_status_status_at
+            %label{for: 'disburser_request_data_status_status_at' }
+              Date
+            = f.text_field :data_status_status_at, disabled: true, class: 'datepicker'
+            - if validation_errors?(@disburser_request, :data_status_status_at)
+              %p.error=format_validation_errors(@disburser_request, :data_status_status_at)
+              %br
+          .disburser_request_data_status_comments
+            %label{for: 'disburser_request_data_status_comments' }
+              Data Status Comments
+            = f.text_area :data_status_comments, rows: 3, disabled: true
         .specimen_status{ class: 'large-8 columns' }
-          %label{for: 'disburser_request_specimen_status' }
-            %b
-              Specimen Status
-          = f.select :specimen_status, options_for_select(DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUSES, selected: f.object.specimen_status), { include_blank: 'Select a specimen status' }
-          - if validation_errors?(@disburser_request, :specimen_status)
-            %p.error=format_validation_errors(@disburser_request, :specimen_status)
-            %br
-          %label{for: 'disburser_request_specimen_status_comments' }
-            Specimen Status Comments
-          = f.text_area :specimen_status_comments, rows: 3
-
+          .disburser_request_specimen_status
+            %label{for: 'disburser_request_specimen_status' }
+              %b
+                Update Specimen Status
+            = f.hidden_field :specimen_status, id: :speciemn_status_original
+            - DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUSES.each do |disburser_request_specimen_status|
+              %br
+              = f.radio_button :specimen_status, disburser_request_specimen_status, checked: checked?(@disburser_request.specimen_status, disburser_request_specimen_status, false)
+              = f.label :specimen_status, disburser_request_specimen_status, value: disburser_request_specimen_status
+              - if @disburser_request.specimen_status == disburser_request_specimen_status
+                = '(current status)'
+          .disburser_request_specimen_status_status_at
+            %label{for: 'disburser_request_specimen_status_status_at' }
+              Date
+            = f.text_field :specimen_status_status_at, disabled: true, class: 'datepicker'
+            - if validation_errors?(@disburser_request, :specimen_status_status_at)
+              %p.error=format_validation_errors(@disburser_request, :specimen_status_status_at)
+          .disburser_request_specimen_status_comments
+            %label{for: 'disburser_request_specimen_status_comments' }
+              Specimen Status Comments
+            = f.text_area :specimen_status_comments, rows: 3, disabled: true
+        .status{ class: 'large-8 columns' }
+          .disburser_request_status
+            %label{for: 'disburser_request_status' }
+              %b
+                Update Status
+            = f.hidden_field :status, id: :status_original
+            - DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT.each do |disburser_request_status|
+              %br
+              = f.radio_button :status, disburser_request_status, checked: checked?(@disburser_request.status, disburser_request_status, false)
+              = f.label :status, disburser_request_status, value: disburser_request_status
+              - if @disburser_request.status == disburser_request_status
+                = '(current status)'
+          .disburser_request_status_at
+            %label{for: 'disburser_request_status_at' }
+              Date
+            = f.text_field :status_at, disabled: true, class: 'datepicker'
+            - if validation_errors?(@disburser_request, :status_at)
+              %p.error=format_validation_errors(@disburser_request, :status_at)
+              %br
+          .disburser_request_status_comments
+            %label{for: 'disburser_request_status_comments' }
+              Status Comments
+            = f.text_area :status_comments, rows: 3, disabled: true
         .navigation{ class: 'large-offset-16 large-8 columns' }
           = f.submit 'Save', class: 'button'
           = link_to 'Cancel', admin_disburser_requests_url, class: 'cancel-link button warning'
