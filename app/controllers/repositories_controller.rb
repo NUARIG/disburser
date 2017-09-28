@@ -1,5 +1,5 @@
 class RepositoriesController < ApplicationController
-  before_action :authenticate_user!, except: [:show]
+  before_action :authenticate_user!, except: [:show, :download_file]
   before_action :load_repository, only: [:edit, :show, :update, :download_file]
   helper_method :sort_column, :sort_direction
 
