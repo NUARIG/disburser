@@ -6,6 +6,7 @@ require 'net/ldap'
 # through the Northwestern LDAP directory
 class Ldap
 
+  attr_reader :config
   # Singleton pattern
   @@instance = Ldap.new
 
@@ -73,13 +74,44 @@ class Ldap
     find_ldap_entry(Net::LDAP::Filter.eq(key, value))
   end
 
+  # Load ldap configuration
+  # @return [HashWithIndifferentAccess]
+  def get_ldap_config
+    ldap_config = File.join(Rails.root, 'config', 'ldap.yml')
+    if File.exists?(ldap_config)
+      @config ||= ActiveSupport::HashWithIndifferentAccess.new(YAML.load_file(ldap_config))[Rails.env]
+    end
+  end
+
   ##
   # Create the Net::LDAP object
   # @return [Net:LDAP]
   def get_connection
-    Net::LDAP.new({ host: server, port: port })
+    get_ldap_config
+    ldap_args = {
+      host: config[:host],
+      port: config[:port],
+      base: config[:base],
+      auth: {
+        method: :simple,
+        username: config[:admin_user],
+        password: config[:admin_password]
+      }
+    }
+
+    if config[:ssl]
+      ldap_args[:encryption] = ssl_encryption
+    end
+
+    Net::LDAP.new(ldap_args)
   end
+
+
   private :get_connection
+
+  def ssl_encryption
+    {method: :simple_tls, tls_options: OpenSSL::SSL::SSLContext::DEFAULT_PARAMS}
+  end
 
   def find_ldap_entry(filter)
     entries = find_ldap_entries(filter)
@@ -99,16 +131,6 @@ class Ldap
     result
   end
   private :find_ldap_entries
-
-  def server
-    'directory.northwestern.edu'
-  end
-  private :server
-
-  def port
-    389
-  end
-  private :port
 
   def treebase
     'ou=People,dc=northwestern,dc=edu'
