@@ -3,7 +3,7 @@ class User < ApplicationRecord
   has_many :repositories, through: :repository_users
   has_many :disburser_requests, foreign_key: :submitter_id
 
-  validates :email, uniqueness: true
+  validates :email, uniqueness: true, :allow_blank => true
 
   USER_TYPE_NORTHWESTERN = 'Northwestern'
   USER_TYPE_EXTERNAL = 'External'
