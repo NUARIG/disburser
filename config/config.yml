@@ -1,20 +1,20 @@
 ---
 application: disburser
 repository: https://github.com/NUBIC/disburser.git
-deployer: disburser-deployer
+deployer: deploy
 development:
   server_name: disburser.dev
 test:
   server_name: disburser.dev
 staging:
-  app_host: vtfsmnubicapps01.fsm.northwestern.edu
+  app_host: vtfsmqdscapp1.fsm.northwestern.edu
   server_name: disburser-staging.cancer.northwestern.edu
   server_alias: disburser-staging.cancer.northwestern.edu
   cert_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_cert.cer
   chain_file: /etc/pki/tls/certs/disburser-staging_cancer_northwestern_edu_interm.cer
   key_file: /etc/pki/tls/private/disburser-staging_cancer_northwestern_edu.key
 production:
-  app_host: vfsmnubicapps01.fsm.northwestern.edu
+  app_host: vfsmqdscapp1.fsm.northwestern.edu
   server_name: disburser.cancer.northwestern.edu
   server_alias: disburser.cancer.northwestern.edu
   cert_file: /etc/pki/tls/certs/disburser_cancer_northwestern_edu_cert.cer
