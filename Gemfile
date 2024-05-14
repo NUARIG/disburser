@@ -26,7 +26,7 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 
 gem 'american_date'
-gem 'carrierwave', '>= 1.0.0.rc', '< 2.0'
+gem 'carrierwave', '1.1.0'
 gem 'chronic'
 gem 'ckeditor'
 gem 'cocoon'
