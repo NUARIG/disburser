@@ -236,11 +236,11 @@ class DisburserRequestsController < ApplicationController
     end
 
     def sort_column
-      ['title', 'submitted_at', 'investigator', 'irb_number', 'feasibility', 'status', 'data_status', 'specimen_status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'title'
+      ['title', 'submitted_at', 'investigator', 'irb_number', 'feasibility', 'status', 'data_status', 'specimen_status', 'users.last_name', 'repositories.name'].include?(params[:sort]) ? params[:sort] : 'submitted_at'
     end
 
     def sort_direction
-      %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
+      %w[asc desc].include?(params[:direction]) ? params[:direction] : 'desc'
     end
 
     def remove_file_uload(file)
