@@ -17,9 +17,9 @@ production:
   app_host: vfsmqdscapp1.fsm.northwestern.edu
   server_name: disburser.cancer.northwestern.edu
   server_alias: disburser.cancer.northwestern.edu
-  cert_file: /etc/pki/tls/certs/disburser_cancer_northwestern_edu_cert.cer
+  cert_file: /etc/letsencrypt/live/disburser.cancer.northwestern.edu/fullchain.pem
   chain_file: /etc/pki/tls/certs/disburser_cancer_northwestern_edu_interm.cer
-  key_file: /etc/pki/tls/private/disburser_cancer_northwestern_edu.key
+  key_file: /etc/letsencrypt/live/disburser.cancer.northwestern.edu/privkey.pem
 support:
   recepients:
     - disburser@northwestern.edu
