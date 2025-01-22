@@ -252,7 +252,7 @@ RSpec.describe DisburserRequest, type: :model do
     expect(disburser_request_1.disburser_request_statuses.first.comments).to eq(data_status_comments)
   end
 
-  it "saves a disburser request status once the data status reaches anything but 'not started' (but only once)", focus: false do
+  it "saves a disburser request status once the data status reaches anything but 'not started' (but only once if not data checked)", focus: false do
     disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user)
     expect(disburser_request_1.disburser_request_statuses.size).to eq(0)
     expect(disburser_request_1.data_status).to eq(DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_NOT_STARTED)
@@ -273,6 +273,16 @@ RSpec.describe DisburserRequest, type: :model do
     disburser_request_1.data_status_comments = data_status_comments
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
+    disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
+    data_status_comments = 'data check 1'
+    disburser_request_1.data_status_comments = data_status_comments
+    disburser_request_1.save!
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(2)
+    disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
+    data_status_comments = 'data check 2'
+    disburser_request_1.data_status_comments = data_status_comments
+    disburser_request_1.save!
+    expect(disburser_request_1.disburser_request_statuses.size).to eq(3)
   end
 
   it "can return disburser requests that do not have a status of 'draft'", focus: false do

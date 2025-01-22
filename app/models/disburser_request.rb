@@ -187,7 +187,7 @@ class DisburserRequest < ApplicationRecord
       disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status: self.status, user_id: self.status_user.id, comments: self.status_comments, status_at: self.status_at)
     end
 
-    if !self.data_status_not_started? && self.data_status_changed?
+    if !self.data_status_not_started? && (self.data_status_changed? || self.data_status == DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED)
       if self.data_status_status_at.blank?
         self.data_status_status_at = DateTime.now
       end

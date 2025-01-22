@@ -1,3 +1,4 @@
+- disabled = @disburser_request.data_status == 'data checked' ? false : true
 - content_for(:title) do
   Request
 #disburser_request_show
@@ -23,14 +24,14 @@
           .data_status_status_at
             %label{for: 'disburser_request_data_status_status_at' }
               Date
-              = f.text_field :data_status_status_at, disabled: true, class: 'datepicker'
+              = f.text_field :data_status_status_at, disabled: disabled, class: 'datepicker'
               - if validation_errors?(@disburser_request, :data_status_status_at)
                 %p.error=format_validation_errors(@disburser_request, :data_status_status_at)
                 %br
           .data_status_comments
             %label{for: 'disburser_request_data_status_comments' }
               Data Status Comments
-            = f.text_area :data_status_comments, rows: 3, disabled: true
+            = f.text_area :data_status_comments, rows: 3, disabled: disabled
         .row
           .navigation{ class: 'large-offset-8 large-16 columns' }
             = f.submit 'Save', class: 'button'

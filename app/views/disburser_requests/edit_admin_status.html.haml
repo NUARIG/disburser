@@ -1,3 +1,4 @@
+- data_disabled = @disburser_request.data_status == DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED ? false : true
 - content_for(:title) do
   Request
 #disburser_request
@@ -36,14 +37,14 @@
           .disburser_request_data_status_status_at
             %label{for: 'disburser_request_data_status_status_at' }
               Date
-            = f.text_field :data_status_status_at, disabled: true, class: 'datepicker'
+            = f.text_field :data_status_status_at, disabled: data_disabled, class: 'datepicker'
             - if validation_errors?(@disburser_request, :data_status_status_at)
               %p.error=format_validation_errors(@disburser_request, :data_status_status_at)
               %br
           .disburser_request_data_status_comments
             %label{for: 'disburser_request_data_status_comments' }
               Data Status Comments
-            = f.text_area :data_status_comments, rows: 3, disabled: true
+            = f.text_area :data_status_comments, rows: 3, disabled: data_disabled
         .specimen_status{ class: 'large-8 columns' }
           .disburser_request_specimen_status
             %label{for: 'disburser_request_specimen_status' }

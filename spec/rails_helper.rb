@@ -100,6 +100,13 @@ RSpec.configure do |config|
   end
 end
 
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
+
 def human_boolean(boolean)
   boolean ? 'Yes' : 'No'
 end
