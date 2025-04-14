@@ -1,3 +1,4 @@
+- specimen_disabled = @disburser_request.specimen_status == DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_PARTIALLY_FULFILLED ? false : true
 - content_for(:title) do
   Request
 #disburser_request
@@ -23,9 +24,13 @@
       .status_update{ class: 'large-24 columns' }
         .data_status{ class: 'large-8 columns' }
           .disburser_request_data_status
-            %label{for: 'disburser_request_data_status' }
-              %b
-                Update Data Status
+            .title{style: 'display: flex; flex-direction: row; justify-content: space-between;'}
+              %label{for: 'disburser_request_data_status' }
+                %b
+                  Update Data Status
+              .update-checkbox{style: 'display: flex;'}
+                = f.label :update_data_status, "Update?", style: 'font-weight: bold;'
+                = f.check_box :update_data_status , style: 'margin-bottom: 0; margin-left: 5px;'
             = f.hidden_field :data_status, id: :data_status_original
             - DisburserRequest::DISBURSER_REQUEST_DATA_STATUSES.each do |disburser_request_data_status|
               %br
@@ -46,9 +51,13 @@
             = f.text_area :data_status_comments, rows: 3, disabled: true
         .specimen_status{ class: 'large-8 columns' }
           .disburser_request_specimen_status
-            %label{for: 'disburser_request_specimen_status' }
-              %b
-                Update Specimen Status
+            .title{style: 'display: flex; flex-direction: row; justify-content: space-between;'}
+              %label{for: 'disburser_request_specimen_status'}
+                %b
+                  Update Specimen Status
+              .update-checkbox{style: 'display: flex;'}
+                = f.label :update_specimen_status, 'Update?', style: 'font-weight: bold;'
+                = f.check_box :update_specimen_status , style: 'margin-bottom: 0; margin-left: 5px;'
             = f.hidden_field :specimen_status, id: :speciemn_status_original
             - DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUSES.each do |disburser_request_specimen_status|
               %br
@@ -56,21 +65,33 @@
               = f.label :specimen_status, disburser_request_specimen_status, value: disburser_request_specimen_status
               - if @disburser_request.specimen_status == disburser_request_specimen_status
                 = '(current status)'
+          .specimen_name
+            %label{for: 'disburser_request_specimen_name' }
+              Specimen Name
+            = f.select :specimen_type_id, options_for_select(SpecimenType.where(repository_id: @disburser_request.repository_id).map{|specimen_type| [specimen_type.name, specimen_type.id]}), {include_blank: 'Select Specimen'},{disabled: specimen_disabled}
+          .specimen_quantity
+            %label{for: 'disburser_request_specimen_quantity' }
+              Quantity
+            = f.number_field :specimen_quantity, disabled: specimen_disabled, min: 1
           .disburser_request_specimen_status_status_at
             %label{for: 'disburser_request_specimen_status_status_at' }
               Date
-            = f.text_field :specimen_status_status_at, disabled: true, class: 'datepicker'
+            = f.text_field :specimen_status_status_at, disabled: specimen_disabled, class: 'datepicker'
             - if validation_errors?(@disburser_request, :specimen_status_status_at)
               %p.error=format_validation_errors(@disburser_request, :specimen_status_status_at)
           .disburser_request_specimen_status_comments
             %label{for: 'disburser_request_specimen_status_comments' }
               Specimen Status Comments
-            = f.text_area :specimen_status_comments, rows: 3, disabled: true
+            = f.text_area :specimen_status_comments, rows: 3, disabled: specimen_disabled
         .status{ class: 'large-8 columns' }
           .disburser_request_status
-            %label{for: 'disburser_request_status' }
-              %b
-                Update Status
+            .title{style: 'display: flex; flex-direction: row; justify-content: space-between;'}
+              %label{for: 'disburser_request_status' }
+                %b
+                  Update Status
+              .update-checkbox{style: 'display: flex;'}
+                = f.label :update_status, "Update?", style: 'font-weight: bold;'
+                = f.check_box :update_status , style: 'margin-bottom: 0; margin-left: 5px;'
             = f.hidden_field :status, id: :status_original
             - DisburserRequest::DISBURSER_REQUEST_STATUSES_SANS_DRAFT.each do |disburser_request_status|
               %br
@@ -89,6 +110,6 @@
             %label{for: 'disburser_request_status_comments' }
               Status Comments
             = f.text_area :status_comments, rows: 3, disabled: true
-        .navigation{ class: 'large-offset-16 large-8 columns' }
+        .navigation{ class: 'large-offset-16 large-4 columns' }
           = f.submit 'Save', class: 'button'
           = link_to 'Cancel', admin_disburser_requests_url, class: 'cancel-link button warning'

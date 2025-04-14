@@ -224,7 +224,12 @@ class DisburserRequestsController < ApplicationController
     end
 
     def disburser_request_params
-      params.require(:disburser_request).permit(:status_at, :data_status_status_at, :specimen_status_status_at, :data_status_comments, :specimen_status_comments, :status_comments, :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache, :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :supporting_document, :supporting_document_cache, :remove_supporting_document, disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy], disburser_request_statuses_attributes: [:disburser_request_id, :id, :status_at])
+      params.require(:disburser_request).permit(:status_at, :data_status_status_at, :specimen_status_status_at, :data_status_comments, :specimen_status_comments, :status_comments, :specimen_name, :specimen_quantity, :specimen_type_id,
+                                                :status, :data_status, :specimen_status, :title, :investigator, :irb_number, :feasibility, :cohort_criteria, :data_for_cohort, :methods_justifications, :methods_justifications_cache,
+                                                :remove_methods_justifications, :custom_request_form, :custom_request_form_cache, :remove_custom_request_form, :supporting_document, :supporting_document_cache, :remove_supporting_document,
+                                                :update_data_status, :update_status, :update_specimen_status,
+                                                disburser_request_details_attributes: [:disburser_request_id, :id, :specimen_type_id, :quantity, :volume, :comments, :_destroy],
+                                                disburser_request_statuses_attributes: [:disburser_request_id, :id, :status_at])
     end
 
     def load_repository

@@ -1,3 +1,4 @@
+- disabled = @disburser_request.specimen_status == DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_PARTIALLY_FULFILLED ? false : true
 - content_for(:title) do
   Request
 #disburser_request_show
@@ -6,6 +7,7 @@
   = render 'edit_status', disburser_request: @disburser_request
   .row
     = form_for @disburser_request, url: specimen_status_disburser_request_url(@disburser_request), html: { class: 'status_disburser_request_form', id: "status_disburser_request_#{@disburser_request.id}"  } do |f|
+      = f.hidden_field :update_specimen_status, value: '1'
       = render 'status_history', disburser_request: @disburser_request, width: 18, f: f, allow_edit: true
       .status_update{ class: 'large-6 columns' }
         .row
@@ -20,17 +22,25 @@
               = f.label :specimen_status, disburser_request_specimen_status, value: disburser_request_specimen_status
               - if @disburser_request.specimen_status == disburser_request_specimen_status
                 = '(current status)'
+          .specimen_name
+            %label{for: 'disburser_request_specimen_name' }
+              Specimen Name
+            = f.select :specimen_type_id, options_for_select(@disburser_request.disburser_request_details.map(&:specimen_type).uniq.map{|specimen_type| [specimen_type.name, specimen_type.id]}), {include_blank: 'Select Specimen'},{disabled: disabled}
+          .specimen_quantity
+            %label{for: 'disburser_request_specimen_quantity' }
+              Quantity
+            = f.number_field :specimen_quantity, disabled: disabled, min: 1
           .specimen_status_status_at
             %label{for: 'disburser_request_specimen_status_status_at' }
               Date
-            = f.text_field :specimen_status_status_at, disabled: true, class: 'datepicker'
+            = f.text_field :specimen_status_status_at, disabled: disabled, class: 'datepicker'
             - if validation_errors?(@disburser_request, :specimen_status_status_at)
               %p.error=format_validation_errors(@disburser_request, :specimen_status_status_at)
               %br
           .specimen_status_comments
             %label{for: 'disburser_request_specimen_status_comments' }
               Specimen Status Comments
-            = f.text_area :specimen_status_comments, rows: 3, disabled: true
+            = f.text_area :specimen_status_comments, rows: 3, disabled: disabled
         .row
           .navigation{ class: 'large-offset-8 large-16 columns' }
             = f.submit 'Save', class: 'button'

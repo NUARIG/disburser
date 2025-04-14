@@ -25,8 +25,9 @@ class DisburserRequest < ApplicationRecord
   mount_uploader :supporting_document, DisburserRequestSupportingDocumentUploader
 
   after_initialize :set_defaults
-  before_save :build_disburser_request_status
-  attr_accessor :status_user, :status_comments, :data_status_comments, :specimen_status_comments, :status_at, :data_status_status_at, :specimen_status_status_at
+  before_validation :build_disburser_request_status
+  attr_accessor :status_user, :status_comments, :data_status_comments, :specimen_status_comments, :status_at, :data_status_status_at, :specimen_status_status_at, :specimen_type_id, :specimen_quantity,
+                :update_data_status, :update_status, :update_specimen_status
 
   DISBURSER_REQUEST_STAUTS_DRAFT = 'draft'
   DISBURSER_REQUEST_STATUS_SUBMITTED = 'submitted'
@@ -48,8 +49,9 @@ class DisburserRequest < ApplicationRecord
   DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED = 'not started'
   DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_CHECKED = 'inventory checked'
   DISBURSER_REQUEST_SPECIMEN_STATUS_INSUFFICIENT_SPECIMENS = 'insufficient specimens'
+  DISBURSER_REQUEST_SPECIMEN_STATUS_PARTIALLY_FULFILLED = 'partially fulfilled'
   DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED = 'inventory fulfilled'
-  DISBURSER_REQUEST_SPECIMEN_STATUSES = [DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED, DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_CHECKED, DISBURSER_REQUEST_SPECIMEN_STATUS_INSUFFICIENT_SPECIMENS, DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED]
+  DISBURSER_REQUEST_SPECIMEN_STATUSES = [DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED, DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_CHECKED, DISBURSER_REQUEST_SPECIMEN_STATUS_INSUFFICIENT_SPECIMENS, DISBURSER_REQUEST_SPECIMEN_STATUS_PARTIALLY_FULFILLED, DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED]
   DISBURSER_REQUEST_SPECIMEN_STATUSES_SANS_NOT_STARTED = DISBURSER_REQUEST_SPECIMEN_STATUSES - [DISBURSER_REQUEST_SPECIMEN_STATUS_NOT_STARTED]
 
   DISBURSER_REQUEST_VOTE_STATUS_PENDING_MY_VOTE = 'pending my vote'
@@ -180,25 +182,27 @@ class DisburserRequest < ApplicationRecord
   end
 
   def build_disburser_request_status
-    if !self.draft? && self.status_changed?
+    if !self.draft? && self.status_changed? && self.update_status == "1"
       if self.status_at.blank?
         self.status_at = DateTime.now
       end
       disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS, status: self.status, user_id: self.status_user.id, comments: self.status_comments, status_at: self.status_at)
     end
 
-    if !self.data_status_not_started? && self.data_status_changed?
+    if !self.data_status_not_started? && self.data_status_changed? && self.update_data_status == "1"
       if self.data_status_status_at.blank?
         self.data_status_status_at = DateTime.now
       end
       disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS, status: self.data_status, user_id: self.status_user.id, comments: self.data_status_comments, status_at: self.data_status_status_at)
     end
 
-    if !self.specimen_status_not_started? && self.specimen_status_changed?
+    if !self.specimen_status_not_started? && (self.specimen_status_changed? || self.specimen_status == DISBURSER_REQUEST_SPECIMEN_STATUS_PARTIALLY_FULFILLED) && self.update_specimen_status == "1"
       if self.specimen_status_status_at.blank?
         self.specimen_status_status_at = DateTime.now
       end
-      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS, status: self.specimen_status, user_id: self.status_user.id, comments: self.specimen_status_comments, status_at: self.specimen_status_status_at)
+
+      disburser_request_statuses.build(status_type: DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS, status: self.specimen_status, user_id: self.status_user.id, comments: self.specimen_status_comments,
+                                       status_at: self.specimen_status_status_at, specimen_type_id: self.specimen_type_id, specimen_quantity: self.specimen_quantity)
     end
   end
 
