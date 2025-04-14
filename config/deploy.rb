@@ -108,7 +108,6 @@ NameVirtualHost *:443
 
   SSLEngine On
   SSLCertificateFile #{ APP_CONFIG[ fetch(:stage).to_s ]['cert_file'] }
-  SSLCertificateChainFile #{ APP_CONFIG[ fetch(:stage).to_s ]['chain_file'] }
   SSLCertificateKeyFile #{ APP_CONFIG[ fetch(:stage).to_s ]['key_file'] }
 
   DocumentRoot #{ fetch(:deploy_to) }/current/public

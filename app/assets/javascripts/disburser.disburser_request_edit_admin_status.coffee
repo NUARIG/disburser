@@ -2,7 +2,7 @@ class Disburser.DisburserRequestEditAdminStatus
   constructor: () ->
   render: () ->
     $("input[name='disburser_request[data_status]']").on 'change', (e) ->
-      if $(this).val() == $('#data_status_original').val()
+      if ($(this).val() != 'data checked' && $(this).val() == $('#data_status_original').val())
         $('#disburser_request_data_status_comments').val('');
         $('#disburser_request_data_status_comments').attr('disabled', true)
         $('#disburser_request_data_status_status_at').attr('disabled', true)
