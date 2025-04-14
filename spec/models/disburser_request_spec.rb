@@ -244,6 +244,7 @@ RSpec.describe DisburserRequest, type: :model do
     disburser_request_1.status_user = @little_my_user
     data_status_comments = 'Moomin fulfilled'
     disburser_request_1.data_status_comments = data_status_comments
+    disburser_request_1.update_data_status = '1'
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
     expect(disburser_request_1.disburser_request_statuses.first.status_type).to eq(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS)
@@ -260,6 +261,7 @@ RSpec.describe DisburserRequest, type: :model do
     disburser_request_1.status_user = @little_my_user
     data_status_comments = 'Moomin fulfilled'
     disburser_request_1.data_status_comments = data_status_comments
+    disburser_request_1.update_data_status = '1'
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
     expect(disburser_request_1.disburser_request_statuses.first.status_type).to eq(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS)
@@ -271,16 +273,19 @@ RSpec.describe DisburserRequest, type: :model do
     disburser_request_1.status_user = @little_my_user
     data_status_comments = 'Moomin fulfilled again'
     disburser_request_1.data_status_comments = data_status_comments
+    disburser_request_1.update_data_status = '1'
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(1)
     disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
     data_status_comments = 'data check 1'
     disburser_request_1.data_status_comments = data_status_comments
+    disburser_request_1.update_data_status = '1'
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(2)
     disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_DATA_CHECKED
     data_status_comments = 'data check 2'
     disburser_request_1.data_status_comments = data_status_comments
+    disburser_request_1.update_data_status = '1'
     disburser_request_1.save!
     expect(disburser_request_1.disburser_request_statuses.size).to eq(3)
   end
@@ -394,7 +399,7 @@ RSpec.describe DisburserRequest, type: :model do
   end
 
   it 'gets the latest data status detail by data status', focus: false do
-    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, status_user: @moomintroll_user, data_status_comments: 'moomintroll comment')
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, data_status: DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_QUERY_FULFILLED, status_user: @moomintroll_user, data_status_comments: 'moomintroll comment', update_data_status: '1')
     disburser_request_1.data_status = DisburserRequest::DISBURSER_REQUEST_DATA_STATUS_INSUFFICIENT_DATA
     disburser_request_1.status_user = @moomintroll_user
     disburser_request_1.data_status_comments = 'moomintroll comment'
@@ -411,7 +416,7 @@ RSpec.describe DisburserRequest, type: :model do
   end
 
   it 'gets the latest specimen status detail by data status', focus: false do
-    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, status_user: @moomintroll_user, specimen_status_comments: 'moomintroll comment')
+    disburser_request_1 = FactoryGirl.create(:disburser_request, repository: @moomin_repository, submitter: @moomintroll_user, specimen_status: DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INVENTORY_FULFILLED, status_user: @moomintroll_user, specimen_status_comments: 'moomintroll comment', update_specimen_status: '1')
     disburser_request_1.specimen_status = DisburserRequest::DISBURSER_REQUEST_SPECIMEN_STATUS_INSUFFICIENT_SPECIMENS
     disburser_request_1.status_user = @moomintroll_user
     disburser_request_1.specimen_status_comments = 'moomintroll comment'

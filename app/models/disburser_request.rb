@@ -182,7 +182,7 @@ class DisburserRequest < ApplicationRecord
   end
 
   def build_disburser_request_status
-    if !self.draft? && self.status_changed? && self.update_status == "1"
+    if !self.draft? && self.status_changed?
       if self.status_at.blank?
         self.status_at = DateTime.now
       end
