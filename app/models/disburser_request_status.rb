@@ -2,6 +2,8 @@ class DisburserRequestStatus < ApplicationRecord
   has_paper_trail
   belongs_to :disburser_request, required: false
   belongs_to :user
+  belongs_to :specimen_type
+
   validates_presence_of :status_at
 
   after_create :send_email_notificaitons

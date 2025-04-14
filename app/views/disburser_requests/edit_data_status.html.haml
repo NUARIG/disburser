@@ -7,6 +7,7 @@
   = render 'edit_status', disburser_request: @disburser_request
   .row
     = form_for @disburser_request, url: data_status_disburser_request_url(@disburser_request), html: { class: 'status_disburser_request_form', id: "status_disburser_request_#{@disburser_request.id}"  } do |f|
+      = f.hidden_field :update_data_status, value: '1'
       = render 'status_history', disburser_request: @disburser_request, width: 18, f: f, allow_edit: true
       .status_update{ class: 'large-6 columns' }
         .row

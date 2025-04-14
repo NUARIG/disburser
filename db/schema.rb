@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170811204713) do
+ActiveRecord::Schema.define(version: 20250214150335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,9 @@ ActiveRecord::Schema.define(version: 20170811204713) do
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
     t.datetime "status_at",            null: false
+    t.integer  "specimen_quantity"
+    t.integer  "specimen_type_id"
+    t.index ["specimen_type_id"], name: "index_disburser_request_statuses_on_specimen_type_id", using: :btree
   end
 
   create_table "disburser_request_votes", force: :cascade do |t|
@@ -145,7 +148,6 @@ ActiveRecord::Schema.define(version: 20170811204713) do
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
-    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
     t.index ["username"], name: "index_users_on_username", unique: true, using: :btree
   end

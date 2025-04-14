@@ -19,23 +19,17 @@
             %th.comments{ width: 200 }
               Comments
         %tbody
-          = f.fields_for :disburser_request_statuses do |disburser_request_status|
-            - if disburser_request_status.object.status_type  == DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS
-              = content_tag_for(:tr, disburser_request_status.object) do
+          - @disburser_request.disburser_request_statuses.each do |disburser_request_status|
+            - if disburser_request_status.status_type  == DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_STATUS
+              = content_tag_for(:tr, disburser_request_status) do
                 %td.status
-                  = disburser_request_status.object.status
+                  = disburser_request_status.status
                 %td.date
-                  - if policy(@disburser_request).edit_status_history? && allow_edit
-                    = disburser_request_status.text_field :status_at, class: 'datepicker status_at', value: format_date(disburser_request_status.object.status_at), placeholder: 'Date'
-                    = disburser_request_status.hidden_field :id
-                    - if validation_errors?(disburser_request_status.object, :status_at)
-                      %p.error= format_validation_errors(disburser_request_status.object, :status_at)
-                  - else
-                    = format_date(disburser_request_status.object.status_at)
+                  = format_date(disburser_request_status.status_at)
                 %td.user
-                  = disburser_request_status.object.user.full_name
+                  = disburser_request_status.user.full_name
                 %td.comments
-                  = disburser_request_status.object.comments
+                  = disburser_request_status.comments
   - disburser_request_statuses = @disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS)
   .data_statuses
     %b
@@ -56,23 +50,17 @@
             %th.comments{ width: 200 }
               Comments
         %tbody
-          = f.fields_for :disburser_request_statuses do |disburser_request_status|
-            - if disburser_request_status.object.status_type  == DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS
-              = content_tag_for(:tr, disburser_request_status.object) do
+          - @disburser_request.disburser_request_statuses.each do |disburser_request_status|
+            - if disburser_request_status.status_type  == DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_DATA_STATUS
+              = content_tag_for(:tr, disburser_request_status) do
                 %td.status
-                  = disburser_request_status.object.status
+                  = disburser_request_status.status
                 %td.date
-                  - if policy(@disburser_request).edit_data_status_history? && allow_edit
-                    = disburser_request_status.text_field :status_at, class: 'datepicker status_at', value: format_date(disburser_request_status.object.status_at), placeholder: 'Date'
-                    = disburser_request_status.hidden_field :id
-                    - if validation_errors?(disburser_request_status.object, :status_at)
-                      %p.error= format_validation_errors(disburser_request_status.object, :status_at)
-                  - else
-                    = format_date(disburser_request_status.object.status_at)
+                  = format_date(disburser_request_status.status_at)
                 %td.user
-                  = disburser_request_status.object.user.full_name
+                  = disburser_request_status.user.full_name
                 %td.comments
-                  = disburser_request_status.object.comments
+                  = disburser_request_status.comments
 
   - disburser_request_statuses = @disburser_request.disburser_request_statuses.by_status_type(DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS)
   .specimen_statuses
@@ -85,29 +73,31 @@
       %table.hack_stack
         %thead
           %tr
-            %th.status{ width: 200 }
+            %th.status{ width: 100 }
               Status
-            %th.date{ width: 200 }
+            %th.name{ width: 100 }
+              Type
+            %th.quantity{ width: 50 }
+              Quantity
+            %th.date{ width: 100 }
               Date
-            %th.user{ width: 200 }
+            %th.user{ width: 100 }
               User
-            %th.comments{ width: 200 }
+            %th.comments{ width: 150 }
               Comments
         %tbody
-          = f.fields_for :disburser_request_statuses do |disburser_request_status|
-            - if disburser_request_status.object.status_type  == DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS
-              = content_tag_for(:tr, disburser_request_status.object) do
+          - @disburser_request.disburser_request_statuses.each do |disburser_request_status|
+            - if disburser_request_status.status_type  == DisburserRequestStatus::DISBURSER_REQUEST_STATUS_TYPE_SPECIMEN_STATUS
+              = content_tag_for(:tr, disburser_request_status) do
                 %td.status
-                  = disburser_request_status.object.status
+                  = disburser_request_status.status
+                %td.status-name
+                  = disburser_request_status&.specimen_type&.name
+                %td.status-quantity
+                  = disburser_request_status.specimen_quantity
                 %td.date
-                  - if policy(@disburser_request).edit_specimen_status_history? && allow_edit
-                    = disburser_request_status.text_field :status_at, class: 'datepicker status_at', value: format_date(disburser_request_status.object.status_at), placeholder: 'Date'
-                    - if validation_errors?(disburser_request_status.object, :status_at)
-                      %p.error= format_validation_errors(disburser_request_status.object, :status_at)
-                    = disburser_request_status.hidden_field :id
-                  - else
-                    = format_date(disburser_request_status.object.status_at)
+                  = format_date(disburser_request_status.status_at)
                 %td.user
-                  = disburser_request_status.object.user.full_name
+                  = disburser_request_status.user.full_name
                 %td.comments
-                  = disburser_request_status.object.comments
+                  = disburser_request_status.comments

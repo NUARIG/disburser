@@ -45,6 +45,7 @@ gem 'record_tag_helper'
 gem 'whenever', :require => false
 gem 'will_paginate'
 gem 'will_paginate-foundation'
+gem 'webdrivers', '~> 5.3', '>= 5.3.1'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
