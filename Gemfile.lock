@@ -225,6 +225,8 @@ GEM
       activesupport (>= 3.0.0)
     racc (1.7.3)
     rack (2.2.9)
+    rack-attack (6.7.0)
+      rack (>= 1.0, < 4)
     rack-protection (3.2.0)
       base64 (>= 0.1.0)
       rack (~> 2.2, >= 2.2.4)
@@ -417,6 +419,7 @@ DEPENDENCIES
   pry
   puma (~> 3.0)
   pundit
+  rack-attack
   rails (~> 5.0.0, >= 5.0.0.1)
   record_tag_helper
   rspec
