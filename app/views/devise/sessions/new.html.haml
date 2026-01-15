@@ -29,6 +29,7 @@
           = f.label :remember_me
       .actions
         .row
+          = recaptcha_tags
           = f.submit "Submit", class: 'button'
           = link_to 'Cancel', login_url, class: 'cancel-link button warning'
           = render "devise/shared/links"

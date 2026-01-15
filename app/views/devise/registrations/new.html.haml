@@ -56,6 +56,7 @@
           %p.error= format_validation_errors(resource, :password_confirmation)
   .row
     .actions{class: 'small-24 columns' }
+      = recaptcha_tags
       = f.submit 'Submit', class: 'button'
       = link_to 'Cancel', login_url, class: 'cancel-link button warning'
       = render "devise/shared/links"

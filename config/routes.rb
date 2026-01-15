@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :external_users, controllers: { registrations: 'registrations' }
-  devise_for :northwestern_users, controllers: { registrations: 'registrations' }
+
+  devise_for :external_users, controllers: { registrations: 'registrations', sessions: 'users/sessions' }
+  devise_for :northwestern_users, controllers: { registrations: 'registrations', sessions: 'users/sessions' }
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'login', to: 'users#login'
 

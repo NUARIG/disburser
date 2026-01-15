@@ -3,7 +3,7 @@
     = link_to "Profile (#{current_user.username})", user_url(current_user)
 - else
   %li.login.menu-text
-  %li.login.menu-text{ class: active?('active', controller: 'devise/sessions', action: 'new') }
+  %li.login.menu-text{ class: active?('active', controller: 'users/sessions', action: 'new') }
     = link_to 'Login', login_path
 %li.log_out.menu-text
   - if northwestern_user_signed_in?

@@ -16,11 +16,11 @@ class Rack::Attack
       # Normalize the email, using the same logic as your authentication process, to
       # protect against rate limit bypasses.
       req.params['northwestern_user']['username'].to_s.downcase.gsub(/\s+/, "")
-    elsif req.path == '/external_users/sign_in' && req.post?  
+    elsif req.path == '/external_users/sign_in' && req.post?
       req.params['external_user']['email'].to_s.downcase.gsub(/\s+/, "")
     end
   end
-  
+
   # # Alternative: throttle by both IP and search query to prevent repeated identical searches
   # throttle('search/ip/query', limit: 5, period: 60) do |req|
   #   if req.path == '/search' && req.get?
