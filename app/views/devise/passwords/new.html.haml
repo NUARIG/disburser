@@ -11,6 +11,7 @@
           %p.error= format_validation_errors(resource, :email)
   .row
     .actions{class: 'small-24 columns' }
+      = recaptcha_tags
       = f.submit "Send me reset password instructions", class: 'button'
       = link_to 'Cancel', login_url, class: 'cancel-link button warning'
       = render "devise/shared/links"
