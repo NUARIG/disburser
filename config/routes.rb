@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
-
-  devise_for :external_users, controllers: { registrations: 'registrations', sessions: 'users/sessions' }
+  devise_for :external_users, controllers: { registrations: 'registrations', sessions: 'users/sessions', passwords: 'users/passwords'}
   devise_for :northwestern_users, controllers: { registrations: 'registrations', sessions: 'users/sessions' }
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'login', to: 'users#login'
@@ -48,4 +47,5 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :show]
 
   root 'home#index'
+  
 end
