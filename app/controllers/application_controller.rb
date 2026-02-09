@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  alksfjals
   UNAUTHORIZED_MESSAGE = "You are not authorized to perform this action."
   protect_from_forgery with: :exception
   include Pundit
