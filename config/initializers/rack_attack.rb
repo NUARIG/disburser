@@ -26,9 +26,7 @@ class Rack::Attack
   Rack::Attack.throttle('requests by ip', limit: 30, period: 1.minute) do |req|
     req.ip
   end
-  
-  Rack::Attack.blocklist_ip("34.223.64.16')
-  
+    
   # # Log blocked and throttled requests
   # ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, payload|
   #   request = payload[:request]
