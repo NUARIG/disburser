@@ -23,7 +23,7 @@ class Rack::Attack
   end
 
   # General request throttle to catch scanning/probing - 300 requests per minute per IP
-  Rack::Attack.throttle('requests by ip', limit: 300, period: 1.minute) do |req|
+  Rack::Attack.throttle('requests by ip', limit: 30, period: 1.minute) do |req|
     req.ip
   end
   
