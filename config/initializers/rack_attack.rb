@@ -27,13 +27,15 @@ class Rack::Attack
     req.ip
   end
   
-  # Log blocked and throttled requests
-  ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, payload|
-    request = payload[:request]
-    if request.env['rack.attack.matched']
-      Rails.logger.warn "[Rack::Attack] #{request.env['rack.attack.match_type']} #{request.ip} #{request.request_method} #{request.fullpath} (#{request.env['rack.attack.matched']})"
-    end
-  end
+  Rack::Attack.blocklist_ip("34.223.64.16')
+  
+  # # Log blocked and throttled requests
+  # ActiveSupport::Notifications.subscribe('rack.attack') do |name, start, finish, request_id, payload|
+  #   request = payload[:request]
+  #   if request.env['rack.attack.matched']
+  #     Rails.logger.warn "[Rack::Attack] #{request.env['rack.attack.match_type']} #{request.ip} #{request.request_method} #{request.fullpath} (#{request.env['rack.attack.matched']})"
+  #   end
+  # end
   
   # # Alternative: throttle by both IP and search query to prevent repeated identical searches
   # throttle('search/ip/query', limit: 5, period: 60) do |req|
